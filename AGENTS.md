@@ -27,3 +27,4 @@
 ## 4. Communication
 * Be concise. Explain trade-offs, identify risks, and highlight assumptions.
 * If uncertain, **ask clarifying questions**. Do not guess. Explicit clarification is always preferred.
+* When writing pull request bodies or comments, use GitHub-flavored Markdown with clear headings, bullets, and code blocks where they improve readability.
