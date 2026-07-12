@@ -1,4 +1,8 @@
-# development_workflow.md
+# Development workflow
+
+Implementation changes follow `AGENTS.md`: use a feature branch, write a
+failing test first where practical, update the relevant canonical document, run
+the checks, and obtain human approval before committing.
 
 ## Writing a New Post
 
@@ -10,6 +14,8 @@ Write Markdown
 Add images
 ↓
 Preview locally
+↓
+Request review and approval
 ↓
 Commit
 ↓
@@ -45,7 +51,7 @@ Reader submits comment
 ↓
 Discord notification
 ↓
-Click approve/reject link
+Open review page and confirm approve/reject
 ↓
 Comment state updated
 ```

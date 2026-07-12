@@ -1,74 +1,31 @@
-# requirements_definition.md
+# Requirements definition
 
-## Project Overview
+## Project overview
 
-**monipy.org** is a personal website and blog that documents the author's learning journey, explores ideas in technology, programming, mathematics, investing, and personal growth, and occasionally shares thoughts about daily life.
-
-The site is intended for readers who enjoy following someone's learning process and are interested in technology, programming, mathematics, investing, and self-improvement.
-
----
+**monipy.org** is a personal website and blog documenting the author's learning
+journey and ideas in technology, programming, mathematics, investing, personal
+growth, and daily life.
 
 ## Goals
 
-* Publish articles written in Markdown.
-* Maintain complete ownership of content.
-* Keep infrastructure simple and low-maintenance.
-* Prioritize static generation wherever possible.
-* Support mathematical expressions and code-heavy articles.
-* Provide search and filtering functionality.
-* Allow moderated comments without requiring user accounts.
+* Publish Markdown articles with complete content ownership.
+* Keep infrastructure static-first, simple, and low-maintenance.
+* Support mathematics, code-heavy articles, search, filtering, and moderated comments.
 
----
+## Non-goals
 
-## Non-Goals
+No CMS/admin dashboard, user registration, social features, real-time editing,
+nested comments, or portfolio functionality.
 
-* CMS or admin dashboard.
-* User registration.
-* Social features.
-* Real-time content editing.
-* Nested comments.
-* Portfolio functionality.
+## Site structure
 
----
+* **Home:** personal introduction, site description, latest five posts.
+* **Blog:** post list, Pagefind search, category/tag/year/month filters.
+* **Post:** title, date, category, tags, summary, content, and comments.
 
-## Site Structure
+## Post metadata
 
-### Home
-
-Contains:
-
-* Personal introduction
-* Site description
-* Recent posts (latest 5 posts)
-
-### Blog
-
-Contains:
-
-* Post list
-* Search
-* Category filter
-* Tag filter
-* Year filter
-* Month filter
-
-### Post Page
-
-Contains:
-
-* Title
-* Publication date
-* Category
-* Tags
-* Summary
-* Content
-* Comments section
-
----
-
-## Post Metadata
-
-Required:
+Required frontmatter:
 
 ```yaml
 title: Learning TypeScript
@@ -81,109 +38,26 @@ summary: Notes from learning TypeScript.
 draft: false
 ```
 
-Optional:
+Optional `image: cover.png` selects the Open Graph image; otherwise the
+site-wide default is used. Categories and tags are arbitrary strings generated
+at build time. See `markdown_authoring_guide.md` for authoring syntax.
 
-```yaml
-image: cover.png
-```
+## Search and comments
 
-Used as the Open Graph image when present.
+Pagefind indexes title, summary, category, tags, and full article content, and
+filters by category, tag, year, and month. Comments contain only name and
+comment, require moderation before display, and have no email, website, login,
+or avatar. See their respective design documents for behavior.
 
----
+## Platform requirements
 
-## Categories
+Support light, dark, and system themes; Cloudflare Web Analytics; RSS;
+`sitemap.xml`, `robots.txt`, canonical URLs, and Open Graph tags.
 
-Categories are arbitrary strings.
+## Acceptance criteria
 
-Examples:
-
-* Programming
-* Mathematics
-* Learning
-* Investing
-* Life
-* Rust
-
-Category lists are generated automatically during build.
-
----
-
-## Tags
-
-Tags are arbitrary strings.
-
-Tags are generated automatically during build.
-
----
-
-## Search
-
-Implemented using Pagefind.
-
-Searches:
-
-* Title
-* Summary
-* Category
-* Tags
-* Full article content
-
-Filters:
-
-* Category
-* Tag
-* Year
-* Month
-
----
-
-## Comments
-
-Fields:
-
-* Name
-* Comment
-
-No:
-
-* Email
-* Website
-* Login
-* Avatar
-
-Moderation required before publication.
-
----
-
-## Themes
-
-Supported themes:
-
-* Light
-* Dark
-* System
-
----
-
-## Analytics
-
-Cloudflare Web Analytics.
-
----
-
-## RSS
-
-RSS feed available.
-
----
-
-## SEO
-
-Support:
-
-* sitemap.xml
-* robots.txt
-* Open Graph tags
-* Canonical URLs
-
----
+* Drafts are excluded from production post lists, feeds, search, sitemap, and direct public pages.
+* Every published post has a canonical URL, RSS entry, sitemap entry, and Open Graph metadata.
+* Search covers the stated fields and filters without a database.
+* Submitted comments are invisible until approved; rejected comments never appear publicly.
+* Reading posts remains usable without client-side JavaScript.

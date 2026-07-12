@@ -1,4 +1,4 @@
-# markdown_authoring_guide.md
+# Markdown authoring guide
 
 ## New Post
 
@@ -34,7 +34,7 @@ image: cover.png
 
 ---
 
-## OGP Images
+## Images
 
 Optional:
 
@@ -42,9 +42,8 @@ Optional:
 image: cover.png
 ```
 
-When specified, the image is used for Open Graph previews.
-
-If omitted, the site-wide default image is used.
+When specified, this is used for Open Graph previews; otherwise the site-wide
+default image is used. Other post images can be placed beside `index.md`.
 
 Example:
 
@@ -56,7 +55,7 @@ Example:
 
 ---
 
-## Mathematics
+## Mathematics and code
 
 Inline:
 

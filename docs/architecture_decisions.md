@@ -99,3 +99,28 @@ Priority:
 2. site-wide default image
 
 ---
+
+## ADR-009
+
+Comment moderation state changes require a confirmed `POST` request.
+
+Reason:
+
+* Link previews and crawlers may follow `GET` links
+* Prevent accidental approval or rejection
+* One-time tokens can be consumed atomically
+
+---
+
+## ADR-010
+
+Comment-system data follows a minimal retention schedule and is deleted by a
+daily Worker Cron Trigger.
+
+Reason:
+
+* Keep only the data needed for public discussion and short-term abuse control
+* Limit retention of pseudonymous IP-derived data
+* Avoid a manual cleanup burden
+
+---

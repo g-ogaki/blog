@@ -25,6 +25,11 @@
 ## Hosting
 
 * Cloudflare Workers
+* `@opennextjs/cloudflare` (OpenNext adapter and deployment CLI)
+* Wrangler (Cloudflare bindings and local Worker support)
+
+Use the Next.js Node.js runtime with OpenNext; do not use the Next.js Edge
+runtime. OpenNext is the approved deployment integration for this project.
 
 ## Database
 

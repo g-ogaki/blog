@@ -1,155 +1,28 @@
-# content_rendering_design.md
+# Content rendering design
 
-## Rendering Pipeline
-
-```text
-Markdown
-↓
-Parse
-↓
-Math Rendering
-↓
-Code Highlighting
-↓
-Link Preview Extraction
-↓
-HTML
-```
-
----
-
-## Mathematics
-
-Libraries:
-
-* remark-math
-* rehype-katex
-
-Supports:
-
-Inline:
-
-```latex
-$e^{i\pi}+1=0$
-```
-
-Block:
-
-```latex
-\[
-\int_0^1 x^2dx
-\]
-```
-
----
-
-## Code Highlighting
-
-Library:
-
-* Shiki
-
-Supports:
-
-* Inline code
-* Code blocks
-
----
-
-## Images
-
-Images are colocated with posts.
-
-Example:
+## Rendering pipeline
 
 ```text
-20260503-learning-typescript/
-├── index.md
-└── diagram.png
+Markdown → parse → math rendering → code highlighting → link-preview extraction → HTML
 ```
 
----
+## Mathematics and code
 
-## Link Cards
+Use `remark-math` and `rehype-katex` for inline and block mathematics, and
+Shiki for inline code and fenced code blocks.
 
-### Rule
+## Images and Open Graph
 
-Standalone URL paragraph:
+Images are colocated with a post's `index.md`. Every published page generates
+title, description, canonical URL, and Open Graph metadata. The OGP-image
+frontmatter and fallback priority are defined in `requirements_definition.md`;
+the fallback is `public/og/default.png`.
 
-```md
-https://nextjs.org
-```
+## Link cards
 
-renders as:
-
-```text
-Link Card
-```
-
-Inline links remain normal hyperlinks.
-
----
-
-## Metadata Extraction
-
-Build-time only.
-
-Sources:
-
-* Open Graph
-* Twitter Card metadata
-
-Supported:
-
-* YouTube
-* X
-* GitHub
-* Generic Open Graph pages
-
-Fallback:
-
-* Normal hyperlink
-
----
-
-## Open Graph Metadata
-
-Every page generates:
-
-- title
-- description
-- canonical URL
-- Open Graph metadata
-
-### OGP Image Selection
-
-Priority:
-
-1. frontmatter image
-2. site-wide default image
-
-Example:
-
-```yaml
-image: cover.png
-```
-
-Directory:
-
-```text
-20260503-learning-typescript/
-├── index.md
-└── cover.png
-```
-
-Generated:
-
-```html
-<meta property="og:image" content="https://monipy.org/.../cover.png">
-```
-
-If no image field exists:
-
-```html
-<meta property="og:image" content="https://monipy.org/og/default.png">
-```
+A standalone URL paragraph becomes a link card; inline links stay hyperlinks.
+Metadata is fetched only at build time from Open Graph or Twitter Card tags.
+Support YouTube, X, GitHub, and generic Open Graph pages; fall back to a normal
+link when metadata is absent or unavailable. Fetch only `https` URLs, enforce
+short time and response-size limits, and never fetch private, loopback, or
+link-local network addresses.
