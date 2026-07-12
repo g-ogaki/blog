@@ -8,7 +8,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "monipy.org",
+	"name": "blog",
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2026-07-12",
 	"compatibility_flags": [
@@ -29,12 +29,19 @@
 			// Self-reference service binding, the service name must match the worker name
 			// see https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
-			"service": "monipy.org"
+			"service": "blog"
 		}
 	],
 	"observability": {
 		"enabled": true
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "blog",
+			"database_id": "7d39c6de-5c17-4dac-a097-42b0e28b9cc2"
+		}
+	],
 	"upload_source_maps": true
 	/**
 	 * Smart Placement
