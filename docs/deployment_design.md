@@ -1,0 +1,80 @@
+# Deployment design
+
+## Domain
+
+```text
+https://monipy.org
+```
+
+---
+
+## Hosting
+
+Cloudflare Workers.
+
+---
+
+## Build Pipeline
+
+```text
+git push
+↓
+Cloudflare Build
+↓
+OpenNext Worker Build
+↓
+Generate Static Pages
+↓
+Generate RSS
+↓
+Generate Sitemap
+↓
+Generate Pagefind Index
+↓
+Deploy
+```
+
+The deployment commands are provided by `@opennextjs/cloudflare`: build with
+`opennextjs-cloudflare build`, preview with `opennextjs-cloudflare preview`,
+and deploy with `opennextjs-cloudflare deploy`. The Worker uses the Next.js
+Node.js runtime.
+
+---
+
+## Environment Variables
+
+```text
+DISCORD_WEBHOOK_URL
+TURNSTILE_SECRET_KEY
+IP_HASH_SECRET
+```
+
+Secrets are configured in Cloudflare, never committed, and are required only by
+comment-related routes. Production and preview environments use different
+secrets and Discord webhooks.
+
+---
+
+## Static Assets
+
+Required global asset:
+
+```text
+public/og/default.png
+```
+
+Used when a post does not specify an image in frontmatter.
+
+## Release checks
+
+Before deployment, the build must fail on invalid frontmatter, broken internal
+links, missing referenced post images, or duplicate post URLs. Preview deploys
+are used for human review before production.
+
+## Scheduled cleanup
+
+A daily Cloudflare Workers Cron Trigger deletes expired comment-system data as
+defined in `comment_moderation_design.md`. It performs no content generation or
+post-data writes.
+
+---
