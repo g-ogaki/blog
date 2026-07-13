@@ -67,6 +67,12 @@ Pending-comment creation uses one D1 batch to:
 Any SQL error rolls back the batch. A counter that is already at 10 produces no
 comment or token rows and is reported as `CommentRateLimitError`.
 
+If Discord delivery fails after creation, `rollbackPendingComment` uses one D1
+batch to delete both moderation tokens and the still-pending comment, decrement
+its `(ip_hash, window_start)` counter, and remove a zero counter row. It cannot
+delete an approved or rejected comment and returns `false` if compensation was
+already applied.
+
 Moderation also uses one D1 batch. It validates the hash, action, expiry,
 single-use state, and pending comment status; marks both tokens for the comment
 used; and changes the comment status. Unknown, mismatched, expired, used, or

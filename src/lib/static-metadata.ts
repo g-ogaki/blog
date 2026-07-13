@@ -12,6 +12,8 @@ export function writeStaticMetadata(posts: readonly Post[], outputDirectory: str
 
 export function writePublishedPostManifest(posts: readonly Post[], outputPath: string) {
 	mkdirSync(path.dirname(outputPath), { recursive: true });
-	const slugs = posts.filter((post) => !post.metadata.draft).map((post) => post.slug);
-	writeFileSync(outputPath, `${JSON.stringify(slugs, null, "\t")}\n`);
+	const manifest = posts
+		.filter((post) => !post.metadata.draft)
+		.map((post) => ({ slug: post.slug, title: post.metadata.title, url: post.url }));
+	writeFileSync(outputPath, `${JSON.stringify(manifest, null, "\t")}\n`);
 }

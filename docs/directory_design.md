@@ -17,10 +17,13 @@
 ├── src/
 │   ├── app/
 │   │   ├── api/comments/route.ts
-│   │   └── blog/
-│   │       ├── page.tsx
-│   │       └── [year]/[post]/page.tsx
+│   │   ├── api/comments/moderate/route.ts
+│   │   ├── blog/
+│   │   │   ├── page.tsx
+│   │   │   └── [year]/[post]/page.tsx
+│   │   └── comments/moderate/page.tsx
 │   ├── components/
+│   │   ├── moderation-confirmation.tsx
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
 │   │   ├── search-archive.tsx
@@ -28,11 +31,13 @@
 │   │   ├── site-header.tsx
 │   │   └── theme-switcher.tsx
 │   ├── generated/
-│   │   └── published-post-slugs.json
+│   │   └── published-posts.json
 │   ├── lib/
 │   │   ├── comments/
 │   │   │   ├── api.ts
+│   │   │   ├── discord.ts
 │   │   │   ├── hashing.ts
+│   │   │   ├── moderation-api.ts
 │   │   │   ├── repository.ts
 │   │   │   ├── tokens.ts
 │   │   │   └── turnstile.ts
@@ -77,9 +82,10 @@
 Pagefind loader is tracked because it is the stable browser entry point for the
 generated search API.
 
-`src/generated/published-post-slugs.json` is a tracked, build-generated manifest
-used by the dynamic comment API. It keeps filesystem Markdown parsing out of
-the Worker request bundle and is refreshed by `npm run generate:metadata`.
+`src/generated/published-posts.json` is a tracked, build-generated manifest of
+published slugs, titles, and URLs used by the dynamic comment API and Discord
+notification. It keeps filesystem Markdown parsing out of the Worker request
+bundle and is refreshed by `npm run generate:metadata`.
 
 ## Post URL Structure
 

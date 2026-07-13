@@ -11,12 +11,27 @@ const validBody = {
 
 function dependencies(overrides: Partial<CommentApiDependencies> = {}): CommentApiDependencies {
 	return {
-		createComment: vi.fn().mockResolvedValue({}),
+		createComment: vi.fn().mockResolvedValue({
+			comment: validBody.comment,
+			created_at: "2026-07-14T03:00:00.000Z",
+			id: 1,
+			ip_hash: "hash",
+			moderated_at: null,
+			name: "Ada",
+			post_slug: validBody.post_slug,
+			status: "pending",
+		}),
 		createToken: vi.fn().mockReturnValueOnce("approve-token").mockReturnValueOnce("reject-token"),
 		db: {} as D1Database,
+		discordWebhookUrl: "https://discord.com/api/webhooks/id/token",
+		findPublishedPost: (slug) => slug === validBody.post_slug
+			? { slug, title: "TypeScript", url: `https://monipy.org/blog/${slug}` }
+			: undefined,
 		ipHashSecret: "ip-secret",
-		isPublishedPost: (slug) => slug === validBody.post_slug,
 		listComments: vi.fn().mockResolvedValue([]),
+		moderationUrl: "https://monipy.org/comments/moderate",
+		notifyModerator: vi.fn().mockResolvedValue(undefined),
+		rollbackComment: vi.fn().mockResolvedValue(true),
 		turnstileSecretKey: "turnstile-secret",
 		verifyChallenge: vi.fn().mockResolvedValue(true),
 		...overrides,
@@ -52,6 +67,16 @@ describe("comment API contract", () => {
 			postSlug: validBody.post_slug,
 			rejectToken: "reject-token",
 		});
+		expect(deps.notifyModerator).toHaveBeenCalledWith({
+			approveToken: "approve-token",
+			comment: validBody.comment,
+			moderationUrl: "https://monipy.org/comments/moderate",
+			name: "Ada",
+			postTitle: "TypeScript",
+			postUrl: `https://monipy.org/blog/${validBody.post_slug}`,
+			rejectToken: "reject-token",
+			webhookUrl: "https://discord.com/api/webhooks/id/token",
+		});
 	});
 
 	it("rejects invalid, unpublished, and failed-challenge submissions before writing", async () => {
@@ -74,6 +99,27 @@ describe("comment API contract", () => {
 		const response = await handlePostComment(postRequest(validBody), deps);
 		expect(response.status).toBe(429);
 		expect(deps.verifyChallenge).toHaveBeenCalledOnce();
+	});
+
+	it("removes the pending record and quota when Discord delivery fails", async () => {
+		const notificationError = new Error("notification failed");
+		const storedComment = {
+			comment: validBody.comment,
+			created_at: "2026-07-14T03:00:00.000Z",
+			id: 1,
+			ip_hash: "hash",
+			moderated_at: null,
+			name: "Ada",
+			post_slug: validBody.post_slug,
+			status: "pending" as const,
+		};
+		const deps = dependencies({
+			createComment: vi.fn().mockResolvedValue(storedComment),
+			notifyModerator: vi.fn().mockRejectedValue(notificationError),
+		});
+
+		await expect(handlePostComment(postRequest(validBody), deps)).rejects.toBe(notificationError);
+		expect(deps.rollbackComment).toHaveBeenCalledWith(deps.db, storedComment);
 	});
 
 	it("requires Cloudflare's trusted client IP header", async () => {

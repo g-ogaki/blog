@@ -51,10 +51,12 @@ describe("writeStaticMetadata", () => {
 	it("writes a runtime manifest containing published slugs only", () => {
 		const outputDirectory = mkdtempSync(path.join(tmpdir(), "monipy-manifest-"));
 		temporaryDirectories.push(outputDirectory);
-		const outputPath = path.join(outputDirectory, "published-post-slugs.json");
+		const outputPath = path.join(outputDirectory, "published-posts.json");
 
 		writePublishedPostManifest([post("Published post", false), post("Hidden draft", true)], outputPath);
 
-		expect(JSON.parse(readFileSync(outputPath, "utf8"))).toEqual(["2026/20260503-synthetic"]);
+		expect(JSON.parse(readFileSync(outputPath, "utf8"))).toEqual([
+			{ slug: "2026/20260503-synthetic", title: "Published post", url: "/blog/2026/20260503-synthetic" },
+		]);
 	});
 });

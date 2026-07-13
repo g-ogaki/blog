@@ -2,8 +2,10 @@ import {
 	CommentRateLimitError,
 	createPendingComment,
 	listApprovedComments,
+	rollbackPendingComment,
 	type PublicComment,
 } from "./repository";
+import { sendDiscordCommentNotification } from "./discord";
 import { createModerationToken } from "./tokens";
 import { verifyTurnstile } from "./turnstile";
 
@@ -42,15 +44,28 @@ function parseSubmission(value: unknown): CommentSubmission | null {
 	return record as unknown as CommentSubmission;
 }
 
-export interface CommentApiDependencies {
+export interface CommentReadDependencies {
+	db: D1Database;
+	findPublishedPost: (slug: string) => PublishedPostReference | undefined;
+	listComments?: typeof listApprovedComments;
+}
+
+export interface CommentApiDependencies extends CommentReadDependencies {
 	createComment?: typeof createPendingComment;
 	createToken?: typeof createModerationToken;
-	db: D1Database;
+	discordWebhookUrl: string;
 	ipHashSecret: string;
-	isPublishedPost: (slug: string) => boolean;
-	listComments?: typeof listApprovedComments;
+	moderationUrl: string;
+	notifyModerator?: typeof sendDiscordCommentNotification;
+	rollbackComment?: typeof rollbackPendingComment;
 	turnstileSecretKey: string;
 	verifyChallenge?: typeof verifyTurnstile;
+}
+
+export interface PublishedPostReference {
+	slug: string;
+	title: string;
+	url: string;
 }
 
 function json(body: unknown, status = 200) {
@@ -70,7 +85,9 @@ export async function handlePostComment(request: Request, dependencies: CommentA
 	}
 
 	const parsed = parseSubmission(body);
-	if (!parsed || !dependencies.isPublishedPost(parsed.post_slug)) return invalidInput();
+	if (!parsed) return invalidInput();
+	const post = dependencies.findPublishedPost(parsed.post_slug);
+	if (!post) return invalidInput();
 
 	const ipAddress = request.headers.get("cf-connecting-ip");
 	if (!ipAddress) return json({ success: false, error: "Comment service is unavailable." }, 500);
@@ -85,15 +102,18 @@ export async function handlePostComment(request: Request, dependencies: CommentA
 
 	const createToken = dependencies.createToken ?? createModerationToken;
 	const createComment = dependencies.createComment ?? createPendingComment;
+	const approveToken = createToken();
+	const rejectToken = createToken();
+	let storedComment;
 	try {
-		await createComment(dependencies.db, {
-			approveToken: createToken(),
+		storedComment = await createComment(dependencies.db, {
+			approveToken,
 			comment: parsed.comment,
 			ipAddress,
 			ipHashSecret: dependencies.ipHashSecret,
 			name: parsed.name.trim(),
 			postSlug: parsed.post_slug,
-			rejectToken: createToken(),
+			rejectToken,
 		});
 	} catch (error) {
 		if (error instanceof CommentRateLimitError) {
@@ -102,12 +122,30 @@ export async function handlePostComment(request: Request, dependencies: CommentA
 		throw error;
 	}
 
+	const notifyModerator = dependencies.notifyModerator ?? sendDiscordCommentNotification;
+	try {
+		await notifyModerator({
+			approveToken,
+			comment: storedComment.comment,
+			moderationUrl: dependencies.moderationUrl,
+			name: storedComment.name,
+			postTitle: post.title,
+			postUrl: post.url,
+			rejectToken,
+			webhookUrl: dependencies.discordWebhookUrl,
+		});
+	} catch (error) {
+		const rollbackComment = dependencies.rollbackComment ?? rollbackPendingComment;
+		await rollbackComment(dependencies.db, storedComment);
+		throw error;
+	}
+
 	return json({ success: true }, 201);
 }
 
-export async function handleGetComments(request: Request, dependencies: CommentApiDependencies) {
+export async function handleGetComments(request: Request, dependencies: CommentReadDependencies) {
 	const post = new URL(request.url).searchParams.get("post");
-	if (!isValidPostSlug(post) || !dependencies.isPublishedPost(post)) return invalidInput();
+	if (!isValidPostSlug(post) || !dependencies.findPublishedPost(post)) return invalidInput();
 
 	const listComments = dependencies.listComments ?? listApprovedComments;
 	const comments: PublicComment[] = await listComments(dependencies.db, post);

@@ -98,6 +98,33 @@ export async function listApprovedComments(db: D1Database, postSlug: string) {
 	return result.results;
 }
 
+export async function rollbackPendingComment(db: D1Database, comment: StoredComment) {
+	const windowStart = comment.created_at.slice(0, 10);
+	const [, commentResult] = await db.batch<{ id: number }>([
+		db.prepare(`
+			DELETE FROM moderation_tokens
+			WHERE comment_id = ?1
+				AND EXISTS (SELECT 1 FROM comments WHERE id = ?1 AND status = 'pending')
+		`).bind(comment.id),
+		db.prepare(`
+			DELETE FROM comments
+			WHERE id = ?1 AND status = 'pending'
+			RETURNING id
+		`).bind(comment.id),
+		db.prepare(`
+			UPDATE comment_rate_limits
+			SET submission_count = submission_count - 1
+			WHERE ip_hash = ?1 AND window_start = ?2 AND changes() = 1
+		`).bind(comment.ip_hash, windowStart),
+		db.prepare(`
+			DELETE FROM comment_rate_limits
+			WHERE ip_hash = ?1 AND window_start = ?2 AND submission_count = 0
+		`).bind(comment.ip_hash, windowStart),
+	]);
+
+	return Boolean(commentResult.results[0]);
+}
+
 export async function moderateComment(
 	db: D1Database,
 	input: ModerateCommentInput,
