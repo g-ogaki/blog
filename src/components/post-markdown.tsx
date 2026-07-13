@@ -1,7 +1,12 @@
-import rehypeShiki from "@shikijs/rehype";
+import typescript from "@shikijs/langs/typescript";
+import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
+import githubDark from "@shikijs/themes/github-dark";
+import githubLight from "@shikijs/themes/github-light";
 import rehypeKatex from "rehype-katex";
 import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
+import { createHighlighterCore } from "shiki/core";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import {
 	extractStandaloneLinkUrls,
 	extractStandaloneInternalLinkUrls,
@@ -17,6 +22,12 @@ interface PostMarkdownProps {
 	post: Post;
 	posts?: readonly Post[];
 }
+
+const highlighterPromise = createHighlighterCore({
+	engine: createJavaScriptRegexEngine(),
+	langs: [typescript],
+	themes: [githubLight, githubDark],
+});
 
 function isAbsoluteOrFragmentUrl(url: string) {
 	return url.startsWith("/") || url.startsWith("#") || /^[a-z][a-z\d+.-]*:/i.test(url);
@@ -47,6 +58,7 @@ function LinkCard({ preview }: { preview: LinkPreview }) {
 }
 
 export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
+	const highlighter = await highlighterPromise;
 	const previewEntries = await Promise.all(
 		extractStandaloneLinkUrls(post.content).map(async (url) => [url, await loadLinkPreview(url)] as const),
 	);
@@ -81,14 +93,13 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 		rehypePlugins: [
 			rehypeKatex,
 			[
-				rehypeShiki,
+				rehypeShikiFromHighlighter,
+				highlighter,
 				{
 					themes: { light: "github-light", dark: "github-dark" },
 					defaultColor: false,
 					fallbackLanguage: "text",
 					inline: "tailing-curly-colon",
-					langs: ["text"],
-					lazy: true,
 				},
 			],
 		],

@@ -16,6 +16,7 @@
 │
 ├── src/
 │   ├── app/
+│   │   ├── api/comments/route.ts
 │   │   └── blog/
 │   │       ├── page.tsx
 │   │       └── [year]/[post]/page.tsx
@@ -26,10 +27,15 @@
 │   │   ├── site-footer.tsx
 │   │   ├── site-header.tsx
 │   │   └── theme-switcher.tsx
+│   ├── generated/
+│   │   └── published-post-slugs.json
 │   ├── lib/
 │   │   ├── comments/
+│   │   │   ├── api.ts
 │   │   │   ├── hashing.ts
-│   │   │   └── repository.ts
+│   │   │   ├── repository.ts
+│   │   │   ├── tokens.ts
+│   │   │   └── turnstile.ts
 │   │   ├── content/
 │   │   │   ├── assets.ts
 │   │   │   ├── link-preview.ts
@@ -70,6 +76,10 @@
 `public/pagefind/` and `public/post-assets/` are generated and ignored. The
 Pagefind loader is tracked because it is the stable browser entry point for the
 generated search API.
+
+`src/generated/published-post-slugs.json` is a tracked, build-generated manifest
+used by the dynamic comment API. It keeps filesystem Markdown parsing out of
+the Worker request bundle and is refreshed by `npm run generate:metadata`.
 
 ## Post URL Structure
 

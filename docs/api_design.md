@@ -28,6 +28,13 @@ Failures: `400` invalid input, `403` failed Turnstile verification, `429` rate
 limited, `500` unexpected server error. Do not disclose post existence in an
 input-validation error.
 
+The route trusts only Cloudflare's `CF-Connecting-IP` header for the quota key
+and Turnstile `remoteip`; it does not fall back to client-controlled forwarding
+headers. A missing trusted IP or unavailable/malformed Siteverify response is a
+`500`, while a well-formed Siteverify rejection is a `403`. Turnstile is checked
+before the repository performs its atomic quota increment and pending-comment
+insert. Raw IP addresses, Turnstile tokens, and secrets are never logged.
+
 ## GET /api/comments
 
 Returns approved comments for `post=2026/20260503-learning-typescript` (the
@@ -42,6 +49,13 @@ path after `/blog/`).
 ```
 
 Failures: `400` missing or invalid `post`, `500` unexpected server error.
+Unpublished and unknown post paths use the same `400` response as malformed
+paths, so validation does not disclose content state.
+
+Published-post validation reads the build-generated slug manifest rather than
+loading Markdown from the filesystem at request time. This preserves the
+static-first content boundary and avoids bundling the authoring toolchain into
+the dynamic Worker route.
 
 ## GET /comments/moderate
 
