@@ -47,6 +47,12 @@ npm run build         # Next.js output
 npm run build:worker  # .open-next/worker.js deployment artifact
 ```
 
+`npm run build` validates content, publishes colocated post assets, and writes
+`public/rss.xml`, `public/sitemap.xml`, and `public/robots.txt` before invoking
+Next.js. Keeping these content-derived outputs as public files prevents the
+filesystem Markdown loader and parser dependencies from entering the Worker
+runtime bundle.
+
 Cloudflare Workers Builds uses these commands:
 
 ```text
@@ -71,9 +77,9 @@ TURNSTILE_SECRET_KEY
 IP_HASH_SECRET
 ```
 
-Secrets are configured in Cloudflare, never committed, and are required only by
-comment-related routes. Production and preview environments use different
-secrets and Discord webhooks.
+These values are secrets configured in Cloudflare, never committed, and
+required only by comment-related routes. Production and preview environments
+use different secrets and Discord webhooks.
 
 ---
 
@@ -87,8 +93,12 @@ public/cat.jpg
 
 Used when a post does not specify an image in frontmatter.
 
-Cloudflare Web Analytics is optional until the domain and analytics site are
-registered. A missing analytics token must not fail local or preview builds.
+Cloudflare Web Analytics is enabled for the proxied `monipy.org` hostname from
+the Cloudflare dashboard. Cloudflare injects the beacon at the edge, so the
+application contains no analytics script or token. Local development and
+Workers preview URLs require no analytics configuration and are not part of the
+production analytics site. Do not add `no-transform` to HTML `Cache-Control`
+headers because it prevents Cloudflare's automatic beacon injection.
 
 ## Static page cache
 

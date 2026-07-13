@@ -31,7 +31,10 @@
 │   │   │   ├── link-preview.ts
 │   │   │   ├── posts.ts
 │   │   │   └── taxonomy.ts
-│   │   └── format-date.ts
+│   │   ├── format-date.ts
+│   │   ├── site.ts
+│   │   ├── static-metadata.ts
+│   │   └── syndication.ts
 │   ├── styles/
 │   └── test/
 │
@@ -43,6 +46,7 @@
 │   └── post-assets/ (generated, ignored)
 │
 ├── scripts/
+│   ├── generate-static-metadata.ts
 │   ├── publish-post-assets.ts
 │   └── validate-content.ts
 │
