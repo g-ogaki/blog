@@ -47,5 +47,29 @@ link when metadata is absent or unavailable. Fetch only `https` URLs, enforce
 short time and response-size limits, and never fetch private, loopback, or
 link-local network addresses.
 
-Link-preview extraction is implemented separately in issue #6 and does not
-change the safe Markdown renderer contract.
+Only a paragraph containing exactly one absolute `https` URL is a candidate.
+Candidates are discovered from the Markdown syntax tree, deduplicated per post,
+and cached by URL for the lifetime of the build process. Inline URLs, explicit
+Markdown links, `http` URLs, and URLs with credentials are never fetched.
+
+The loader applies these limits to each preview operation:
+
+* 3-second total deadline, including DNS and response streaming
+* 512 KiB maximum response body, with `Content-Length` preflight when present
+* 3 redirects, with full URL and network validation repeated for every hop
+* successful `text/html` responses only
+
+DNS resolution is conservative: every returned address must be globally
+routable. Private, loopback, link-local, carrier-grade NAT, multicast, reserved,
+documentation, and IPv4-mapped private IPv6 addresses are rejected. The HTTPS
+connection is pinned to one validated address while preserving the original
+hostname for the `Host` header and TLS certificate verification, preventing a
+second unvalidated DNS lookup. Redirect response bodies are released before the
+next hop.
+
+Metadata precedence is Open Graph, then Twitter Card, then the HTML `title` and
+description tag. Relative preview images resolve against the final URL and must
+use HTTPS. YouTube, X, and GitHub hosts receive stable provider labels; generic
+pages use `og:site_name` or the hostname. Missing metadata, network errors, limit
+violations, and security rejections all produce a normal HTTPS hyperlink so a
+third-party failure cannot fail the site build.
