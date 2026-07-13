@@ -30,6 +30,8 @@ export async function PostMarkdown({ post }: PostMarkdownProps) {
 					defaultColor: false,
 					fallbackLanguage: "text",
 					inline: "tailing-curly-colon",
+					langs: ["text"],
+					lazy: true,
 				},
 			],
 		],

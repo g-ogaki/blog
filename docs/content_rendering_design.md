@@ -16,7 +16,9 @@ ignored, and `react-markdown`'s default URL sanitizer remains enabled.
 Use `remark-math` and `rehype-katex` for inline and block mathematics, and
 Shiki's official rehype adapter for fenced code blocks and language-marked
 inline code. Shiki emits both GitHub light and dark theme variables; CSS selects
-the appropriate values from the user's color-scheme preference.
+the appropriate values from the user's color-scheme preference. The highlighter
+initializes with plain text only and loads requested language grammars on demand
+to avoid paying the full bundled-language startup cost for ordinary Markdown.
 
 Fenced code uses its info string as the language. Inline code opts into syntax
 highlighting with a trailing `{:language}` marker. Unmarked inline code remains
