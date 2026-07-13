@@ -14,6 +14,11 @@ Inside:
 index.md
 ```
 
+The directory year and `YYYYMMDD` prefix must match the frontmatter date. Use
+canonical `/blog/YYYY/YYYYMMDD-slug` URLs when linking between posts. Relative
+images and files must remain inside the post directory and exist before a build
+can succeed.
+
 ---
 
 ## Frontmatter
