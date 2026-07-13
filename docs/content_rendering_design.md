@@ -80,3 +80,7 @@ summary, and image come directly from the validated target post metadata, so no
 HTTP request is made. Internal links embedded in a sentence remain ordinary
 anchors. If the target is unavailable, rendering falls back to the authored
 Markdown link.
+
+Link cards use a horizontal text-and-image layout when space permits. On phone
+widths, the image moves above the text at a 16:9 ratio and the description wraps
+so the card remains readable without horizontal overflow.

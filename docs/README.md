@@ -17,6 +17,7 @@ Read these documents in this order before changing the project:
 | Content discovery and validation | `content_loading_design.md` |
 | Rendering and link-card behavior | `content_rendering_design.md` |
 | Public routes and page metadata | `routing_design.md` |
+| Site shell, responsive layout, and themes | `site_interface_design.md` |
 | Search | `search_design.md` |
 | Comment lifecycle and abuse controls | `comment_moderation_design.md` |
 | HTTP contract | `api_design.md` |

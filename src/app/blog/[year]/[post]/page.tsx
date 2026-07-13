@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostMarkdown } from "@/components/post-markdown";
 import { loadPosts, type Post } from "@/lib/content/posts";
+import { formatPostDate } from "@/lib/format-date";
 
 interface PostPageProps {
 	params: Promise<{ year: string; post: string }>;
@@ -51,14 +52,14 @@ export default async function PostPage({ params }: PostPageProps) {
 	if (!post) notFound();
 	const content = await PostMarkdown({ post, posts });
 	return (
-		<main className="site-shell">
+		<main className="site-shell" id="main-content">
 			<nav className="post-nav" aria-label="パンくず"><Link href="/blog">ブログ</Link><span>/</span><span>{post.year}</span></nav>
 			<article className="post-article">
 				<header className="post-header">
 					<p className="eyebrow">{post.metadata.category}</p>
 					<h1>{post.metadata.title}</h1>
 					<p className="post-summary">{post.metadata.summary}</p>
-					<div className="post-byline"><time dateTime={post.metadata.date}>{post.metadata.date}</time><span>moni</span></div>
+					<div className="post-byline"><time dateTime={post.metadata.date}>{formatPostDate(post.metadata.date)}</time><span>moni</span></div>
 				</header>
 				{content}
 			</article>

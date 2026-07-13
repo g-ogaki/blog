@@ -1,52 +1,39 @@
-import Image from "next/image";
+import Link from "next/link";
+import { PostList } from "@/components/post-list";
+import { loadPosts } from "@/lib/content/posts";
+import { latestPosts } from "@/lib/content/taxonomy";
 
 export default function Home() {
+	const posts = latestPosts(loadPosts({ includeDrafts: false }));
 	return (
-		<div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-				<Image className="dark:invert" src="/next.svg" alt="Next.js logo" width={180} height={38} priority />
-				<ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
-						<code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-							src/app/page.tsx
-						</code>
-						.
-					</li>
-					<li className="tracking-[-.01em]">Save and see your changes instantly.</li>
-				</ol>
-
-				<div className="flex gap-4 items-center flex-col sm:flex-row">
-					<a
-						className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Read our docs
-					</a>
+		<main id="main-content">
+			<section className="home-hero">
+				<div className="hero-orbit" aria-hidden="true"><span>記</span><span>録</span></div>
+				<div className="hero-copy">
+					<p className="eyebrow">Personal notes / Tokyo</p>
+					<h1>学びの途中を、<br /><em>記録する。</em></h1>
+					<p className="hero-description">技術、数学、投資、そして日々の暮らし。考えたことや試したことを、未来の自分へ残すための個人サイトです。</p>
+					<Link className="text-link" href="/blog">記事を読む <span aria-hidden="true">→</span></Link>
 				</div>
-			</main>
-			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image aria-hidden src="/file.svg" alt="File icon" width={16} height={16} />
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image aria-hidden src="/globe.svg" alt="Globe icon" width={16} height={16} />
-					Go to nextjs.org →
-				</a>
-			</footer>
-		</div>
+				<p className="hero-side-note" aria-hidden="true">MONI PAGE · SINCE 2026</p>
+			</section>
+
+			<section className="home-section latest-section" aria-labelledby="latest-heading">
+				<div className="section-heading">
+					<div><p className="eyebrow">Latest notes</p><h2 id="latest-heading">最新の記事</h2></div>
+					<Link className="text-link" href="/blog">すべての記事を見る <span aria-hidden="true">→</span></Link>
+				</div>
+				<PostList posts={posts} />
+			</section>
+
+			<section className="home-section about-section" aria-labelledby="about-heading">
+				<p className="about-number" aria-hidden="true">私<br />について</p>
+				<div className="about-copy">
+					<p className="eyebrow">About moni</p>
+					<h2 id="about-heading">わからないことを、<br />ひとつずつ。</h2>
+					<p>moniです。プログラミングを中心に、興味を持ったことを学んでいます。この場所では、完成した答えだけでなく、迷った過程も含めて記録します。</p>
+				</div>
+			</section>
+		</main>
 	);
 }

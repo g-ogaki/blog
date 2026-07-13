@@ -7,6 +7,7 @@ tags:
   - learning
 summary: TypeScriptの型を試しながら学ぶためのサンプル記事です。
 draft: false
+image: cat.png
 ---
 
 このサイトのコンテンツ読み込みを確認するためのサンプル記事です。
