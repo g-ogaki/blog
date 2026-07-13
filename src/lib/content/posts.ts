@@ -242,7 +242,9 @@ export function validateUniquePostUrls(posts: readonly Pick<Post, "sourcePath" |
 }
 
 export function loadPosts(options: LoadPostsOptions = {}) {
-	const contentDirectory = path.resolve(options.contentDirectory ?? path.join(process.cwd(), "content", "posts"));
+	const contentDirectory = options.contentDirectory
+		? path.resolve(/*turbopackIgnore: true*/ options.contentDirectory)
+		: path.join(/*turbopackIgnore: true*/ process.cwd(), "content", "posts");
 	const includeDrafts = options.includeDrafts ?? process.env.NODE_ENV !== "production";
 	const posts = discoverPostFiles(contentDirectory).map((sourcePath) => loadPost(sourcePath, contentDirectory));
 	validateUniquePostUrls(posts);
