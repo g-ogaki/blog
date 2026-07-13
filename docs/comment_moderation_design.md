@@ -61,3 +61,9 @@ Use a daily scheduled cleanup job to minimize personal data:
 No raw IP address is logged or stored by the application. A moderator may
 remove an approved comment at any time; removal deletes the comment and its
 associated moderation tokens.
+
+The daily cleanup runs at `03:00 UTC`. It deletes pending/rejected comments at
+the 30-day cutoff, tokens at seven days after use or expiry, and UTC-day quota
+counters at the two-day cutoff. It also removes approved comments whose slug is
+absent from the build-generated published-post manifest. The job receives that
+manifest as data and never reads, changes, or generates Markdown content.

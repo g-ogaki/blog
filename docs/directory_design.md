@@ -23,6 +23,7 @@
 │   │   │   └── [year]/[post]/page.tsx
 │   │   └── comments/moderate/page.tsx
 │   ├── components/
+│   │   ├── comment-section.tsx
 │   │   ├── moderation-confirmation.tsx
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
@@ -35,6 +36,7 @@
 │   ├── lib/
 │   │   ├── comments/
 │   │   │   ├── api.ts
+│   │   │   ├── cleanup.ts
 │   │   │   ├── discord.ts
 │   │   │   ├── hashing.ts
 │   │   │   ├── moderation-api.ts
@@ -56,7 +58,8 @@
 │   └── test/
 │
 ├── migrations/
-│   └── 0001_init.sql
+│   ├── 0001_init.sql
+│   └── 0002_retention_indexes.sql
 │
 ├── public/
 │   ├── pagefind/
@@ -73,7 +76,9 @@
 │       ├── comment-repository.test.ts
 │       └── setup.ts
 │
+├── custom-worker.ts
 ├── vitest.d1.config.mts
+├── wrangler.jsonc
 │
 └── docs/
 ```

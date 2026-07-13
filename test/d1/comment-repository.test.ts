@@ -9,6 +9,7 @@ import {
 	rollbackPendingComment,
 } from "../../src/lib/comments/repository";
 import { hashIpAddress, hashModerationToken } from "../../src/lib/comments/hashing";
+import { cleanupExpiredCommentData } from "../../src/lib/comments/cleanup";
 
 const now = new Date("2026-07-14T03:00:00.000Z");
 
@@ -105,5 +106,47 @@ describe("comment repository", () => {
 		});
 		expect(await moderateComment(env.DB, { action: "approve", now, token: "approve-1" })).toBeNull();
 		expect(await listApprovedComments(env.DB, pendingInput().postSlug)).toEqual([]);
+	});
+
+	it("deletes only data beyond the documented retention boundaries", async () => {
+		await env.DB.batch([
+			env.DB.prepare(`
+				INSERT INTO comments (id, post_slug, name, comment, status, ip_hash, created_at, moderated_at) VALUES
+					(101, '2026/active', 'A', 'keep approved', 'approved', 'h1', '2026-01-01T00:00:00.000Z', '2026-01-02T00:00:00.000Z'),
+					(102, '2026/removed', 'B', 'remove orphan', 'approved', 'h2', '2026-07-13T00:00:00.000Z', '2026-07-13T01:00:00.000Z'),
+					(103, '2026/active', 'C', 'remove pending', 'pending', 'h3', '2026-06-13T03:00:00.000Z', NULL),
+					(104, '2026/active', 'D', 'remove boundary', 'rejected', 'h4', '2026-06-14T03:00:00.000Z', '2026-06-14T04:00:00.000Z'),
+					(105, '2026/active', 'E', 'keep recent', 'pending', 'h5', '2026-07-13T00:00:00.000Z', NULL)
+			`),
+			env.DB.prepare(`
+				INSERT INTO moderation_tokens (comment_id, token_hash, action, expires_at, used_at) VALUES
+					(101, 'expired', 'approve', '2026-07-07T03:00:00.000Z', NULL),
+					(102, 'removed-post', 'approve', '2026-08-01T00:00:00.000Z', NULL),
+					(103, 'old-pending', 'approve', '2026-08-01T00:00:00.000Z', NULL),
+					(104, 'old-rejected', 'reject', '2026-08-01T00:00:00.000Z', NULL),
+					(105, 'recent', 'approve', '2026-08-01T00:00:00.000Z', NULL)
+			`),
+			env.DB.prepare(`
+				INSERT INTO comment_rate_limits (ip_hash, window_start, submission_count) VALUES
+					('old', '2026-07-12', 1),
+					('recent', '2026-07-13', 1)
+			`),
+		]);
+
+		const result = await cleanupExpiredCommentData(env.DB, {
+			now: new Date("2026-07-14T03:00:00.000Z"),
+			publishedPostSlugs: ["2026/active"],
+		});
+
+		expect(result).toEqual({ comments: 3, rateLimits: 1, tokens: 4 });
+		expect(await env.DB.prepare("SELECT id FROM comments ORDER BY id").all()).toMatchObject({
+			results: [{ id: 101 }, { id: 105 }],
+		});
+		expect(await env.DB.prepare("SELECT token_hash FROM moderation_tokens").all()).toMatchObject({
+			results: [{ token_hash: "recent" }],
+		});
+		expect(await env.DB.prepare("SELECT window_start FROM comment_rate_limits").all()).toMatchObject({
+			results: [{ window_start: "2026-07-13" }],
+		});
 	});
 });

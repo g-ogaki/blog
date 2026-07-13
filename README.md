@@ -39,6 +39,15 @@ Follow the issue, feature branch, human review, and commit workflow in
 `npm run build:worker` runs the Next.js build through OpenNext and generates the
 Cloudflare Worker artifact.
 
+Apply reviewed forward-only D1 migrations deliberately before deploying code
+that depends on them:
+
+```sh
+npm run db:migrate:remote
+```
+
+Preview builds never apply migrations to the production database automatically.
+
 ## AI development workflow
 
 Agents may commit and push completed work directly to issue-specific feature
