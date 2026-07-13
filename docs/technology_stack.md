@@ -52,4 +52,12 @@ Used only for:
 
 * Discord Webhook
 
+## Testing and quality
+
+* Vitest
+* React Testing Library
+* jsdom
+* ESLint
+* GitHub Actions
+
 ---

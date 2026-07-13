@@ -20,7 +20,7 @@
 * **Static-First**: Follow a static-first architecture (Markdown → Build → Static Pages). Avoid dynamic infrastructure unless strictly required.
 * **Search**: Exclusively use **Pagefind**. Do not introduce Elasticsearch, Algolia, Meilisearch, or DB-backed search.
 * **Comments**: Exclusively use **D1** for storage. Requires moderation, Discord notifications, and Turnstile verification. Do not introduce user accounts, authentication, or nested comments. No blog content in D1.
-* **Dependencies**: Prefer existing platform capabilities. Justify and seek approval before adding new dependencies.
+* **Dependencies**: Prefer existing platform capabilities. Dependencies required by the documented architecture or automated testing may be added without separate approval; justify them in the pull request.
 * **Scope**: Implement *only* what is required for the current issue. No unrelated refactors or unnecessary file renaming.
 * **Incremental Changes**: Prefer small, reviewable pull requests over large multi-feature changes.
 

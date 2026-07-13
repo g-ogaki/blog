@@ -17,8 +17,10 @@ limit before writing to D1.
 }
 ```
 
-All fields are required. `post_slug` is the path after `/blog/` and must identify a published post. The server
-enforces length limits and escapes or sanitizes comment content before display.
+All fields are required. `post_slug` is the path after `/blog/` and must identify
+a published post. `name` contains 1-80 characters and `comment` contains
+1-2,000 characters. Comments are stored and returned as plain text; clients
+preserve line breaks and never interpret comment content as markup.
 
 Success (`201`): `{ "success": true }`
 

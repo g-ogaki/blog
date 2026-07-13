@@ -60,10 +60,13 @@ secrets and Discord webhooks.
 Required global asset:
 
 ```text
-public/og/default.png
+public/cat.jpg
 ```
 
 Used when a post does not specify an image in frontmatter.
+
+Cloudflare Web Analytics is optional until the domain and analytics site are
+registered. A missing analytics token must not fail local or preview builds.
 
 ## Release checks
 

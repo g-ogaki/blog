@@ -27,6 +27,10 @@ submissions to 10 comments per IP per UTC day. Store `SHA256(IP + SECRET)`,
 never the raw IP. The D1 counter is incremented atomically with comment
 creation; invalid Turnstile submissions do not consume quota.
 
+Names contain 1-80 characters and comments contain 1-2,000 characters. Comment
+content is plain text with line breaks preserved; HTML and Markdown are not
+interpreted.
+
 ## Token safety
 
 * Generate opaque cryptographically random tokens.
