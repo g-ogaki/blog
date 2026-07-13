@@ -17,8 +17,11 @@
 ├── src/
 │   ├── app/
 │   ├── components/
+│   │   └── post-markdown.tsx
 │   ├── lib/
 │   │   └── content/
+│   │       ├── assets.ts
+│   │       └── posts.ts
 │   ├── styles/
 │   └── test/
 │
@@ -26,9 +29,11 @@
 │   └── 0001_init.sql
 │
 ├── public/
-│   └── pagefind/
+│   ├── pagefind/
+│   └── post-assets/ (generated, ignored)
 │
 ├── scripts/
+│   ├── publish-post-assets.ts
 │   └── validate-content.ts
 │
 └── docs/

@@ -32,3 +32,11 @@ build. Failures include the source path and stop the build.
 Draft metadata and local files are always validated. Drafts may be returned for
 local development but are excluded from production loading, public routes,
 feeds, search, and sitemap generation.
+
+## Asset publication
+
+Validated files colocated with `index.md` are published at build time under
+`public/post-assets/<slug>/`. Production publication receives only non-draft
+posts; local development includes drafts. `index.md` is never copied, and stale
+generated assets are removed before each publication. Rendering rewrites
+relative Markdown URLs to the matching `/post-assets/<slug>/...` URL.

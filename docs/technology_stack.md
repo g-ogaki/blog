@@ -19,7 +19,12 @@
 * react-markdown
 * remark-math
 * rehype-katex
-* Shiki
+* KaTeX
+* Shiki and its official rehype adapter
+
+Rendering is asynchronous on the server and produces static React output. Post
+assets are copied to the public output during development and production builds;
+no runtime content-file endpoint is used.
 
 ## Search
 

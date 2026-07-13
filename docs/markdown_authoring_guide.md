@@ -71,9 +71,9 @@ $e^{i\pi}+1=0$
 Block:
 
 ```latex
-\[
+$$
 \int_0^1 x^2dx
-\]
+$$
 ```
 
 ---
@@ -85,6 +85,16 @@ Block:
 const x = 42;
 ```
 ````
+
+To syntax-highlight inline code, append a Shiki language marker inside the
+backticks:
+
+```md
+`const x = 42{:ts}`
+```
+
+Inline code without a marker remains normal inline code. Raw HTML is ignored;
+write content using Markdown rather than embedded HTML.
 
 ---
 
