@@ -26,11 +26,13 @@ not require Cloudflare secrets.
 
 ```sh
 npm run check
-npm run build
+npm run build:worker
 ```
 
 `npm run check` runs ESLint, TypeScript, and the Vitest suite. Follow the issue,
 feature branch, human review, and commit workflow in [`AGENTS.md`](AGENTS.md).
+`npm run build:worker` runs the Next.js build through OpenNext and generates the
+Cloudflare Worker artifact.
 
 ## Documentation
 
