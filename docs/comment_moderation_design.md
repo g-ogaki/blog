@@ -35,7 +35,8 @@ interpreted.
 
 * Generate opaque cryptographically random tokens.
 * Store only a SHA-256 token hash.
-* Create one token per action, expire it after 24 hours, and mark it used when consumed.
+* Create one token per action and expire it after 24 hours.
+* When either action is confirmed, mark both tokens for that comment used so the sibling action cannot be applied later.
 * Respond identically for expired, used, and unknown tokens.
 
 ## Retention and deletion

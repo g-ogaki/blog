@@ -76,7 +76,12 @@ Used only for:
 * Vitest
 * React Testing Library
 * jsdom
+* Cloudflare Vitest Workers integration with local D1
 * ESLint
 * GitHub Actions
+
+`npm run test:unit` runs the jsdom suite. `npm run test:d1` applies repository
+migrations to isolated local D1 storage in the Workers runtime. `npm test` runs
+both; production or remote D1 is never used by automated tests.
 
 ---
