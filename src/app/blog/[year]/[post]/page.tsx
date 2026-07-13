@@ -12,8 +12,8 @@ function publishedPosts() {
 	return loadPosts({ includeDrafts: false });
 }
 
-function findPost({ year, post }: Awaited<PostPageProps["params"]>) {
-	return publishedPosts().find((candidate) => candidate.year === year && candidate.directoryName === post);
+function findPost({ year, post }: Awaited<PostPageProps["params"]>, posts = publishedPosts()) {
+	return posts.find((candidate) => candidate.year === year && candidate.directoryName === post);
 }
 
 function openGraphImage(post: Post) {
@@ -46,9 +46,10 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-	const post = findPost(await params);
+	const posts = publishedPosts();
+	const post = findPost(await params, posts);
 	if (!post) notFound();
-	const content = await PostMarkdown({ post });
+	const content = await PostMarkdown({ post, posts });
 	return (
 		<main className="site-shell">
 			<nav className="post-nav" aria-label="パンくず"><Link href="/blog">ブログ</Link><span>/</span><span>{post.year}</span></nav>

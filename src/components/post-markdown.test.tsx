@@ -23,8 +23,8 @@ function createPost(content: string): Post {
 	};
 }
 
-async function renderMarkdown(content: string, loadLinkPreview?: LinkPreviewLoader) {
-	const element = await PostMarkdown({ post: createPost(content), loadLinkPreview });
+async function renderMarkdown(content: string, loadLinkPreview?: LinkPreviewLoader, posts?: readonly Post[]) {
+	const element = await PostMarkdown({ post: createPost(content), loadLinkPreview, posts });
 	return render(element);
 }
 
@@ -112,6 +112,31 @@ describe("PostMarkdown", () => {
 
 		const link = screen.getByRole("link", { name: "https://example.com/unavailable" });
 		expect(link).toHaveAttribute("href", "https://example.com/unavailable");
+		expect(link).not.toHaveClass("link-card");
+	});
+
+	it("renders a standalone internal Markdown link from post metadata", async () => {
+		const target = createPost("Target content");
+		target.metadata.title = "Linked post";
+		target.metadata.summary = "Local metadata summary.";
+		target.url = "/blog/2026/20260503-learning-typescript";
+		await renderMarkdown("[Read this](/blog/2026/20260503-learning-typescript)", undefined, [target]);
+
+		const card = screen.getByRole("link", { name: /Linked post/ });
+		expect(card).toHaveClass("link-card");
+		expect(card).toHaveAttribute("href", target.url);
+		expect(screen.getByText("Local metadata summary.")).toBeInTheDocument();
+	});
+
+	it("keeps inline internal Markdown links as ordinary links", async () => {
+		const target = createPost("Target content");
+		await renderMarkdown(
+			"Read the [TypeScript article](/blog/2026/20260503-learning-typescript) next.",
+			undefined,
+			[target],
+		);
+
+		const link = screen.getByRole("link", { name: "TypeScript article" });
 		expect(link).not.toHaveClass("link-card");
 	});
 });

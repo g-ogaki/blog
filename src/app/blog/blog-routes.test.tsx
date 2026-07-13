@@ -18,6 +18,7 @@ describe("blog routes", () => {
 
 	it("generates parameters only for published posts", () => {
 		expect(generateStaticParams()).toEqual([
+			{ year: "2026", post: "20260605-hoge-huga" },
 			{ year: "2026", post: "20260503-learning-typescript" },
 		]);
 	});

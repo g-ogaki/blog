@@ -4,7 +4,9 @@ import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
 import {
 	extractStandaloneLinkUrls,
+	extractStandaloneInternalLinkUrls,
 	loadCachedLinkPreview,
+	remarkMarkInternalLinkCards,
 	type LinkPreview,
 	type LinkPreviewLoader,
 } from "@/lib/content/link-preview";
@@ -13,6 +15,7 @@ import type { Post } from "@/lib/content/posts";
 interface PostMarkdownProps {
 	loadLinkPreview?: LinkPreviewLoader;
 	post: Post;
+	posts?: readonly Post[];
 }
 
 function isAbsoluteOrFragmentUrl(url: string) {
@@ -43,21 +46,38 @@ function LinkCard({ preview }: { preview: LinkPreview }) {
 	);
 }
 
-export async function PostMarkdown({ post, loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
+export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
 	const previewEntries = await Promise.all(
 		extractStandaloneLinkUrls(post.content).map(async (url) => [url, await loadLinkPreview(url)] as const),
 	);
 	const previews = new Map(previewEntries);
+	const internalPreviews = new Map(
+		extractStandaloneInternalLinkUrls(post.content).map((url) => {
+			const target = posts.find((candidate) => candidate.url === url);
+			return [url, target ? {
+				url,
+				title: target.metadata.title,
+				description: target.metadata.summary,
+				image: target.metadata.image ? `/post-assets/${target.slug}/${target.metadata.image}` : "/cat.jpg",
+				provider: "moni's page",
+			} : null] as const;
+		}),
+	);
 	const content = await MarkdownAsync({
 		children: post.content,
 		components: {
-			p({ children }) {
+			p({ children, node }) {
+				const internalUrl = node?.properties?.["data-internal-link-card"] ?? node?.properties?.dataInternalLinkCard;
+				if (typeof internalUrl === "string") {
+					const preview = internalPreviews.get(internalUrl);
+					return preview ? <LinkCard preview={preview} /> : <p>{children}</p>;
+				}
 				if (typeof children !== "string" || !previews.has(children)) return <p>{children}</p>;
 				const preview = previews.get(children);
 				return preview ? <LinkCard preview={preview} /> : <p><a href={children}>{children}</a></p>;
 			},
 		},
-		remarkPlugins: [remarkMath],
+		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards],
 		rehypePlugins: [
 			rehypeKatex,
 			[

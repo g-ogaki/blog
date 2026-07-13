@@ -1,7 +1,7 @@
 import { lookup } from "node:dns/promises";
 import { request as httpsRequest } from "node:https";
 import { isIP } from "node:net";
-import type { Root, Text } from "mdast";
+import type { Link, Root, Text } from "mdast";
 import { Parser } from "htmlparser2";
 import ipaddr from "ipaddr.js";
 import remarkParse from "remark-parse";
@@ -202,6 +202,31 @@ export function extractStandaloneLinkUrls(markdown: string) {
 		}
 	});
 	return urls;
+}
+
+export function extractStandaloneInternalLinkUrls(markdown: string) {
+	const tree = unified().use(remarkParse).parse(markdown) as Root;
+	const urls: string[] = [];
+	visit(tree, "paragraph", (paragraph) => {
+		if (paragraph.children.length !== 1 || paragraph.children[0].type !== "link") return;
+		const url = (paragraph.children[0] as Link).url;
+		if (url.startsWith("/blog/") && !urls.includes(url)) urls.push(url);
+	});
+	return urls;
+}
+
+export function remarkMarkInternalLinkCards() {
+	return (tree: Root) => {
+		visit(tree, "paragraph", (paragraph) => {
+			if (paragraph.children.length !== 1 || paragraph.children[0].type !== "link") return;
+			const url = (paragraph.children[0] as Link).url;
+			if (!url.startsWith("/blog/")) return;
+			paragraph.data = {
+				...paragraph.data,
+				hProperties: { ...paragraph.data?.hProperties, "data-internal-link-card": url },
+			};
+		});
+	};
 }
 
 export async function loadLinkPreview(urlValue: string, dependencies: LinkPreviewDependencies = {}) {

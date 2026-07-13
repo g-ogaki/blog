@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
 	extractStandaloneLinkUrls,
+	extractStandaloneInternalLinkUrls,
 	isPublicIpAddress,
 	loadLinkPreview,
 	type PreviewResponse,
@@ -26,6 +27,16 @@ describe("extractStandaloneLinkUrls", () => {
 				"https://example.com\n\nInline https://example.com/inline stays text.\n\nhttp://example.com\n\nhttps://example.com",
 			),
 		).toEqual(["https://example.com"]);
+	});
+});
+
+describe("extractStandaloneInternalLinkUrls", () => {
+	it("returns standalone internal Markdown links but not inline links", () => {
+		expect(
+			extractStandaloneInternalLinkUrls(
+				"[Standalone](/blog/2026/first)\n\nRead [inline](/blog/2026/second) here.",
+			),
+		).toEqual(["/blog/2026/first"]);
 	});
 });
 

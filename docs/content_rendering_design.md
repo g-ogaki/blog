@@ -73,3 +73,10 @@ use HTTPS. YouTube, X, and GitHub hosts receive stable provider labels; generic
 pages use `og:site_name` or the hostname. Missing metadata, network errors, limit
 violations, and security rejections all produce a normal HTTPS hyperlink so a
 third-party failure cannot fail the site build.
+
+A paragraph containing only an internal Markdown link such as
+`[Related post](/blog/YYYY/YYYYMMDD-slug)` also becomes a card. Its title,
+summary, and image come directly from the validated target post metadata, so no
+HTTP request is made. Internal links embedded in a sentence remain ordinary
+anchors. If the target is unavailable, rendering falls back to the authored
+Markdown link.
