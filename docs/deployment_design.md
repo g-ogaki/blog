@@ -75,13 +75,11 @@ entry point required by Wrangler.
 DISCORD_WEBHOOK_URL
 TURNSTILE_SECRET_KEY
 IP_HASH_SECRET
-NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN (optional, public)
 ```
 
-The first three values are secrets configured in Cloudflare, never committed,
-and required only by comment-related routes. Production and preview
-environments use different secrets and Discord webhooks. The analytics token is
-a public build-time value and may remain empty.
+These values are secrets configured in Cloudflare, never committed, and
+required only by comment-related routes. Production and preview environments
+use different secrets and Discord webhooks.
 
 ---
 
@@ -95,14 +93,12 @@ public/cat.jpg
 
 Used when a post does not specify an image in frontmatter.
 
-For the proxied production domain, prefer Cloudflare Web Analytics automatic
-setup and leave `NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` empty. If the Web
-Analytics site is configured for manual JavaScript installation instead, set
-that variable to the site token in the production build environment. The root
-layout emits Cloudflare's deferred beacon only for a non-empty token. Do not
-enable automatic injection and the manual token together, because that would
-load the beacon twice. A missing token does not affect local, preview, or
-production builds.
+Cloudflare Web Analytics is enabled for the proxied `monipy.org` hostname from
+the Cloudflare dashboard. Cloudflare injects the beacon at the edge, so the
+application contains no analytics script or token. Local development and
+Workers preview URLs require no analytics configuration and are not part of the
+production analytics site. Do not add `no-transform` to HTML `Cache-Control`
+headers because it prevents Cloudflare's automatic beacon injection.
 
 ## Static page cache
 

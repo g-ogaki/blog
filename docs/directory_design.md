@@ -20,7 +20,6 @@
 │   │       ├── page.tsx
 │   │       └── [year]/[post]/page.tsx
 │   ├── components/
-│   │   ├── cloudflare-web-analytics.tsx
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
 │   │   ├── site-footer.tsx

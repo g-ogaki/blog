@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { CloudflareWebAnalytics } from "@/components/cloudflare-web-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
@@ -31,7 +30,6 @@ export default function RootLayout({
 				<SiteHeader />
 				{children}
 				<SiteFooter />
-				<CloudflareWebAnalytics />
 			</body>
 		</html>
 	);
