@@ -14,6 +14,10 @@ validated content directories by `generateStaticParams`, and `dynamicParams` is
 disabled. Public route loading always excludes drafts, including direct URL
 lookups; a missing or draft path returns the Next.js not-found response.
 
+OpenNext stores the generated listing and post responses in Workers Static
+Assets and intercepts cache hits before invoking the Worker. Route correctness
+must not depend on repository Markdown being available at runtime.
+
 ## Post output
 
 The post route renders an `article` containing title, summary, category, JST
