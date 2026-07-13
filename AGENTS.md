@@ -2,10 +2,11 @@
 
 ## 1. Role & Workflow
 * **Role**: Act as a software engineer under human supervision. Prioritize maintainable code, test-driven development (TDD), and architecture consistency.
-* **Workflow**: Issue → Feature Branch (`feature/<issue>-<desc>`) → TDD (Failing Test → Implement → Pass) → Document → Human Review → Commit.
+* **Workflow**: Issue → Feature Branch (`feature/<issue>-<desc>`) → TDD (Failing Test → Implement → Pass) → Document → Commit and Push → Pull Request → Human Review → Merge.
 * **Branch Strategy**: *Never* work directly on the `main` branch.
-* **Commits**: *Never* commit automatically. Summarize changes, list modified files, and report test results to request explicit human approval first.
-* **Definition of Done**: Requirements met, tests pass, documentation updated, no regressions, human approved.
+* **Commits**: Commit and push completed issue work without requesting separate approval. Keep commits scoped and use descriptive messages.
+* **Human Review**: A pull request is the required human-in-the-loop gate. Never merge a pull request automatically; leave review and merge decisions to the human supervisor.
+* **Definition of Done**: Requirements met, tests pass, documentation updated, no regressions, pull request opened, and human approved.
 
 ## 2. Source of Truth & Documentation
 * **Docs First**: Always consult `docs/*.md` (e.g., requirements, architecture, API, schemas) before implementation. If implementation conflicts with documentation or requires changing an architectural decision, stop and ask the user for guidance. Key documents include:
@@ -26,5 +27,6 @@
 
 ## 4. Communication
 * Be concise. Explain trade-offs, identify risks, and highlight assumptions.
+* Prefer detailed issue and pull request descriptions that record scope, decisions, acceptance criteria, testing, risks, and follow-up work.
 * If uncertain, **ask clarifying questions**. Do not guess. Explicit clarification is always preferred.
 * When writing pull request bodies or comments, use GitHub-flavored Markdown with clear headings, bullets, and code blocks where they improve readability.

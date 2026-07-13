@@ -1,0 +1,34 @@
+# Content loading design
+
+## Discovery
+
+Posts are discovered synchronously at build time from:
+
+```text
+content/posts/YYYY/YYYYMMDD-slug/index.md
+```
+
+The year and `YYYYMMDD` directory prefix must match the required frontmatter
+date. The canonical slug is `YYYY/YYYYMMDD-slug`, and the canonical URL is
+`/blog/<slug>`. URLs must be unique when compared case-insensitively.
+
+## Validation
+
+Every post, including a draft, must have valid YAML frontmatter and a valid
+calendar date. Frontmatter accepts only the required fields documented in
+`requirements_definition.md` and the optional `image` field.
+
+Frontmatter images, Markdown images, and relative file links must resolve to
+files inside the post directory. Internal links beginning with `/blog/` must
+identify a discovered post. In production validation, a published post cannot
+link to a draft-only post. External URLs, fragment links, and application routes
+outside `/blog/` are not resolved by the content loader.
+
+Validation runs during `npm run check`, `npm run build`, and the OpenNext Worker
+build. Failures include the source path and stop the build.
+
+## Drafts
+
+Draft metadata and local files are always validated. Drafts may be returned for
+local development but are excluded from production loading, public routes,
+feeds, search, and sitemap generation.

@@ -2,7 +2,9 @@
 
 Implementation changes follow `AGENTS.md`: use a feature branch, write a
 failing test first where practical, update the relevant canonical document, run
-the checks, and obtain human approval before committing.
+the checks, commit and push the completed issue, and open a detailed pull
+request. Human review is required before merge, and agents never merge pull
+requests automatically.
 
 ## Writing a New Post
 
@@ -15,11 +17,13 @@ Add images
 ↓
 Preview locally
 ↓
-Request review and approval
-↓
 Commit
 ↓
 Push
+↓
+Open pull request
+↓
+Request review and approval
 ↓
 Cloudflare Build
 ↓

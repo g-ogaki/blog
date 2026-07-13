@@ -48,6 +48,10 @@ site-wide default at `public/cat.jpg` is used. Categories and tags are arbitrary
 strings generated at build time. See `markdown_authoring_guide.md` for authoring
 syntax.
 
+The directory year and `YYYYMMDD` prefix must match the frontmatter date. Post
+URLs are unique case-insensitively. Every post is validated during builds,
+including drafts; see `content_loading_design.md` for validation behavior.
+
 ## Search and comments
 
 Pagefind indexes title, summary, category, tags, and full article content, and

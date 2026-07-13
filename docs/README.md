@@ -14,6 +14,7 @@ Read these documents in this order before changing the project:
 | Product features and post frontmatter | `requirements_definition.md` |
 | Architecture decisions and invariants | `architecture_decisions.md` |
 | Post-writing instructions | `markdown_authoring_guide.md` |
+| Content discovery and validation | `content_loading_design.md` |
 | Rendering and link-card behavior | `content_rendering_design.md` |
 | Search | `search_design.md` |
 | Comment lifecycle and abuse controls | `comment_moderation_design.md` |
