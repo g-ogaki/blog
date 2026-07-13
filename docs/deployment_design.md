@@ -83,6 +83,10 @@ These values are secrets configured in Cloudflare, never committed, and
 required only by comment-related routes. Production and preview environments
 use different secrets and Discord webhooks.
 
+`DISCORD_WEBHOOK_URL` is consumed only by the internal typed comment notifier;
+there is no generic webhook server action. The notifier treats network,
+timeout, rate-limit, and other non-success responses as delivery failures.
+
 The Turnstile widget also requires this non-secret, build-time variable:
 
 ```text

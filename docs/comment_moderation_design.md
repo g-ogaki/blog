@@ -16,9 +16,16 @@ Confirmation page → approve or reject
 Published when approved
 ```
 
-The Discord message includes post title, public URL, author name, comment, and
-a review URL. The review URL opens a confirmation page; a `GET` request must
-never approve or reject a comment. See `api_design.md` for the HTTP contract.
+The typed Discord message includes post title, public URL, author name, comment,
+and separate approve/reject review URLs. User-controlled mentions are disabled.
+Each review URL opens a confirmation page; a `GET` request must never approve or
+reject a comment. See `api_design.md` for the HTTP contract.
+
+D1 creation happens before Discord delivery so every delivered review link
+identifies a stored token. If delivery fails, an atomic compensation batch
+removes the still-pending comment, its tokens, and its quota increment. The API
+then returns `500`, allowing a new submission rather than retaining an orphan
+that cannot be moderated.
 
 ## Spam protection
 
@@ -38,6 +45,7 @@ interpreted.
 * Create one token per action and expire it after 24 hours.
 * When either action is confirmed, mark both tokens for that comment used so the sibling action cannot be applied later.
 * Respond identically for expired, used, and unknown tokens.
+* Put tokens only in Discord review URLs and the confirmation POST body; do not log them.
 
 ## Retention and deletion
 

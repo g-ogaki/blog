@@ -76,6 +76,10 @@ Used only for:
 
 * Discord Webhook
 
+The webhook is wrapped by an internal typed comment-notification service. It
+sends bounded embeds with mentions disabled and is not exposed as a generic
+application action.
+
 ## Testing and quality
 
 * Vitest

@@ -1,29 +1,50 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import publishedPostSlugs from "@/generated/published-post-slugs.json";
-import { handleGetComments, handlePostComment, type CommentApiDependencies } from "@/lib/comments/api";
+import publishedPostManifest from "@/generated/published-posts.json";
+import {
+	handleGetComments,
+	handlePostComment,
+	type CommentApiDependencies,
+	type CommentReadDependencies,
+} from "@/lib/comments/api";
+import { absoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 type CommentEnvironment = CloudflareEnv & {
+	DISCORD_WEBHOOK_URL?: string;
 	IP_HASH_SECRET?: string;
 	TURNSTILE_SECRET_KEY?: string;
 };
 
-const publishedPosts = new Set<string>(publishedPostSlugs);
+const publishedPosts = new Map(publishedPostManifest.map((post) => [post.slug, post]));
+
+function findPublishedPost(slug: string) {
+	const post = publishedPosts.get(slug);
+	return post ? { ...post, url: absoluteUrl(post.url) } : undefined;
+}
+
+async function getReadDependencies(): Promise<CommentReadDependencies> {
+	const { env } = await getCloudflareContext({ async: true });
+	if (!env.DB) throw new Error("D1 database binding is not configured");
+	return { db: env.DB, findPublishedPost };
+}
 
 async function getDependencies(): Promise<CommentApiDependencies> {
 	const { env } = await getCloudflareContext({ async: true });
 	const commentEnv = env as CommentEnvironment;
+	const discordWebhookUrl = commentEnv.DISCORD_WEBHOOK_URL ?? process.env.DISCORD_WEBHOOK_URL;
 	const ipHashSecret = commentEnv.IP_HASH_SECRET ?? process.env.IP_HASH_SECRET;
 	const turnstileSecretKey = commentEnv.TURNSTILE_SECRET_KEY ?? process.env.TURNSTILE_SECRET_KEY;
-	if (!commentEnv.DB || !ipHashSecret || !turnstileSecretKey) {
+	if (!commentEnv.DB || !discordWebhookUrl || !ipHashSecret || !turnstileSecretKey) {
 		throw new Error("Comment API bindings are not configured");
 	}
 
 	return {
 		db: commentEnv.DB,
+		discordWebhookUrl,
+		findPublishedPost,
 		ipHashSecret,
-		isPublishedPost: (slug) => publishedPosts.has(slug),
+		moderationUrl: absoluteUrl("/comments/moderate"),
 		turnstileSecretKey,
 	};
 }
@@ -43,7 +64,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
 	try {
-		return await handleGetComments(request, await getDependencies());
+		return await handleGetComments(request, await getReadDependencies());
 	} catch (error) {
 		return serverError(error);
 	}

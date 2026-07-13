@@ -35,6 +35,12 @@ headers. A missing trusted IP or unavailable/malformed Siteverify response is a
 before the repository performs its atomic quota increment and pending-comment
 insert. Raw IP addresses, Turnstile tokens, and secrets are never logged.
 
+After the D1 write, the route sends a typed Discord notification containing the
+post, comment, and separate approve/reject review links. A Discord transport or
+non-success response produces `500`; before returning, the route atomically
+removes the still-pending comment, both token hashes, and that submission's
+quota increment so a retry does not leave an unreviewable record.
+
 ## GET /api/comments
 
 Returns approved comments for `post=2026/20260503-learning-typescript` (the
@@ -59,8 +65,13 @@ the dynamic Worker route.
 
 ## GET /comments/moderate
 
-Shows a confirmation page for a Discord review token. It never changes state,
-so link scanners and preview bots are safe.
+Shows a confirmation page for a Discord review token. It performs no database
+lookup and never changes state, so link scanners and preview bots are safe.
+Syntactically valid links all render the same confirmation without disclosing
+token state; malformed links show a generic unavailable message. After the
+confirmed POST, unknown, expired, and used tokens share that same unavailable
+message. The page sets `noindex`, `nofollow`, and a `no-referrer` policy, and
+mutation is performed only after the moderator presses the confirmation button.
 
 ## POST /api/comments/moderate
 
@@ -74,3 +85,7 @@ Confirms an action from the moderation page:
 stored only as hashes. Consuming the token and updating the comment must occur
 in one transaction. Failures: `400` invalid action, `404` invalid/expired/used
 token, `500` unexpected server error.
+
+Success (`200`): `{ "success": true, "status": "approved" }` or the equivalent
+`rejected` status. Unknown, malformed, expired, used, action-mismatched, and
+already-moderated tokens share the same `404` response.

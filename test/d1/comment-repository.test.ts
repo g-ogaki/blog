@@ -6,6 +6,7 @@ import {
 	dailyCommentLimit,
 	listApprovedComments,
 	moderateComment,
+	rollbackPendingComment,
 } from "../../src/lib/comments/repository";
 import { hashIpAddress, hashModerationToken } from "../../src/lib/comments/hashing";
 
@@ -85,5 +86,24 @@ describe("comment repository", () => {
 		await expect(createPendingComment(env.DB, input)).rejects.toThrow();
 		expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM comments").first()).toEqual({ count: 0 });
 		expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM comment_rate_limits").first()).toEqual({ count: 0 });
+	});
+
+	it("compensates a failed notification without leaving pending data or quota", async () => {
+		const stored = await createPendingComment(env.DB, pendingInput());
+		expect(await rollbackPendingComment(env.DB, stored)).toBe(true);
+		expect(await rollbackPendingComment(env.DB, stored)).toBe(false);
+		expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM comments").first()).toEqual({ count: 0 });
+		expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM moderation_tokens").first()).toEqual({ count: 0 });
+		expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM comment_rate_limits").first()).toEqual({ count: 0 });
+	});
+
+	it("rejects with a valid token and makes both moderation links single-use", async () => {
+		const stored = await createPendingComment(env.DB, pendingInput());
+		expect(await moderateComment(env.DB, { action: "reject", now, token: "reject-1" })).toMatchObject({
+			id: stored.id,
+			status: "rejected",
+		});
+		expect(await moderateComment(env.DB, { action: "approve", now, token: "approve-1" })).toBeNull();
+		expect(await listApprovedComments(env.DB, pendingInput().postSlug)).toEqual([]);
 	});
 });

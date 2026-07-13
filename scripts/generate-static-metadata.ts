@@ -4,6 +4,6 @@ import { writePublishedPostManifest, writeStaticMetadata } from "../src/lib/stat
 
 const posts = loadPosts({ includeDrafts: false });
 writeStaticMetadata(posts, path.join(process.cwd(), "public"));
-writePublishedPostManifest(posts, path.join(process.cwd(), "src", "generated", "published-post-slugs.json"));
+writePublishedPostManifest(posts, path.join(process.cwd(), "src", "generated", "published-posts.json"));
 
 console.log(`Generated RSS, sitemap, and robots files from ${posts.length} published post${posts.length === 1 ? "" : "s"}.`);
