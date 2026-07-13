@@ -52,6 +52,8 @@ npm run build:worker  # .open-next/worker.js deployment artifact
 then generates `public/pagefind/` from the prerendered HTML. Keeping these
 content-derived outputs as public files prevents the filesystem Markdown loader,
 parser, and Pagefind dependencies from entering the Worker runtime bundle.
+Shiki is composed from fine-grained theme and language imports so unused grammar
+catalogs are likewise excluded from the Worker artifact.
 
 Cloudflare Workers Builds uses these commands:
 
@@ -89,6 +91,11 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 Next.js exposes it to the browser for the comment UI. `TURNSTILE_SECRET_KEY`
 remains server-only and must never use the `NEXT_PUBLIC_` prefix.
+
+The comment API reads secrets from Cloudflare runtime bindings in deployed
+Workers and from Next.js `process.env` during `npm run dev`. The local `.env`
+names therefore match the production binding names; neither value is exposed to
+client code.
 
 ---
 

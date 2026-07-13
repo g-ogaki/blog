@@ -9,3 +9,9 @@ export function writeStaticMetadata(posts: readonly Post[], outputDirectory: str
 	writeFileSync(path.join(outputDirectory, "sitemap.xml"), buildSitemapXml(posts));
 	writeFileSync(path.join(outputDirectory, "robots.txt"), buildRobotsText());
 }
+
+export function writePublishedPostManifest(posts: readonly Post[], outputPath: string) {
+	mkdirSync(path.dirname(outputPath), { recursive: true });
+	const slugs = posts.filter((post) => !post.metadata.draft).map((post) => post.slug);
+	writeFileSync(outputPath, `${JSON.stringify(slugs, null, "\t")}\n`);
+}

@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Post } from "@/lib/content/posts";
-import { writeStaticMetadata } from "./static-metadata";
+import { writePublishedPostManifest, writeStaticMetadata } from "./static-metadata";
 
 const temporaryDirectories: string[] = [];
 
@@ -46,5 +46,15 @@ describe("writeStaticMetadata", () => {
 		expect(rss).not.toContain("Hidden draft");
 		expect(sitemap).toContain("https://monipy.org/blog/2026/20260503-synthetic");
 		expect(robots).toContain("Sitemap: https://monipy.org/sitemap.xml");
+	});
+
+	it("writes a runtime manifest containing published slugs only", () => {
+		const outputDirectory = mkdtempSync(path.join(tmpdir(), "monipy-manifest-"));
+		temporaryDirectories.push(outputDirectory);
+		const outputPath = path.join(outputDirectory, "published-post-slugs.json");
+
+		writePublishedPostManifest([post("Published post", false), post("Hidden draft", true)], outputPath);
+
+		expect(JSON.parse(readFileSync(outputPath, "utf8"))).toEqual(["2026/20260503-synthetic"]);
 	});
 });
