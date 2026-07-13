@@ -47,6 +47,12 @@ npm run build         # Next.js output
 npm run build:worker  # .open-next/worker.js deployment artifact
 ```
 
+`npm run build` validates content, publishes colocated post assets, and writes
+`public/rss.xml`, `public/sitemap.xml`, and `public/robots.txt` before invoking
+Next.js. Keeping these content-derived outputs as public files prevents the
+filesystem Markdown loader and parser dependencies from entering the Worker
+runtime bundle.
+
 Cloudflare Workers Builds uses these commands:
 
 ```text

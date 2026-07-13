@@ -6,8 +6,8 @@
     "node": ">=20.19.0"
   },
   "scripts": {
-    "dev": "npm run publish:assets -- --include-drafts && next dev",
-    "build": "npm run validate:content && npm run publish:assets && next build",
+    "dev": "npm run publish:assets -- --include-drafts && npm run generate:metadata && next dev",
+    "build": "npm run validate:content && npm run publish:assets && npm run generate:metadata && next build",
     "build:worker": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint .",
@@ -15,6 +15,7 @@
     "test": "vitest run",
     "validate:content": "node --import tsx scripts/validate-content.ts",
     "publish:assets": "node --import tsx scripts/publish-post-assets.ts",
+    "generate:metadata": "node --import tsx scripts/generate-static-metadata.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run validate:content",
     "deploy": "npm run build:worker && opennextjs-cloudflare deploy",
     "upload": "npm run build:worker && opennextjs-cloudflare upload",

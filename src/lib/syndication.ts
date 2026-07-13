@@ -1,6 +1,10 @@
-import type { MetadataRoute } from "next";
 import type { Post } from "@/lib/content/posts";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
+
+interface SitemapEntry {
+	lastModified?: Date;
+	url: string;
+}
 
 function publishedPosts(posts: readonly Post[]) {
 	return posts.filter((post) => !post.metadata.draft);
@@ -49,10 +53,10 @@ ${items.join("\n")}
 `;
 }
 
-export function buildSitemap(posts: readonly Post[]): MetadataRoute.Sitemap {
+export function buildSitemap(posts: readonly Post[]): SitemapEntry[] {
 	const visiblePosts = publishedPosts(posts);
 	const latestDate = visiblePosts[0]?.metadata.date;
-	const sharedEntries: MetadataRoute.Sitemap = [
+	const sharedEntries: SitemapEntry[] = [
 		{ url: SITE_ORIGIN, ...(latestDate ? { lastModified: jstDate(latestDate) } : {}) },
 		{ url: absoluteUrl("/blog"), ...(latestDate ? { lastModified: jstDate(latestDate) } : {}) },
 	];
@@ -64,4 +68,25 @@ export function buildSitemap(posts: readonly Post[]): MetadataRoute.Sitemap {
 			lastModified: jstDate(post.metadata.date),
 		})),
 	];
+}
+
+export function buildSitemapXml(posts: readonly Post[]) {
+	const entries = buildSitemap(posts).map((entry) => `<url>
+  <loc>${xmlEscape(entry.url)}</loc>${entry.lastModified ? `\n  <lastmod>${entry.lastModified.toISOString()}</lastmod>` : ""}
+</url>`);
+
+	return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries.join("\n")}
+</urlset>
+`;
+}
+
+export function buildRobotsText() {
+	return `User-Agent: *
+Allow: /
+
+Host: ${SITE_ORIGIN}
+Sitemap: ${SITE_ORIGIN}/sitemap.xml
+`;
 }

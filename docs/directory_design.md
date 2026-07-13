@@ -16,12 +16,9 @@
 │
 ├── src/
 │   ├── app/
-│   │   ├── blog/
-│   │   │   ├── page.tsx
-│   │   │   └── [year]/[post]/page.tsx
-│   │   ├── rss.xml/route.ts
-│   │   ├── robots.ts
-│   │   └── sitemap.ts
+│   │   └── blog/
+│   │       ├── page.tsx
+│   │       └── [year]/[post]/page.tsx
 │   ├── components/
 │   │   ├── cloudflare-web-analytics.tsx
 │   │   ├── post-list.tsx
@@ -37,6 +34,7 @@
 │   │   │   └── taxonomy.ts
 │   │   ├── format-date.ts
 │   │   ├── site.ts
+│   │   ├── static-metadata.ts
 │   │   └── syndication.ts
 │   ├── styles/
 │   └── test/
@@ -49,6 +47,7 @@
 │   └── post-assets/ (generated, ignored)
 │
 ├── scripts/
+│   ├── generate-static-metadata.ts
 │   ├── publish-post-assets.ts
 │   └── validate-content.ts
 │

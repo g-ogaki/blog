@@ -34,11 +34,12 @@ OpenNext stores the generated listing and post responses in Workers Static
 Assets and intercepts cache hits before invoking the Worker. Route correctness
 must not depend on repository Markdown being available at runtime.
 
-`/rss.xml` is a force-static RSS 2.0 route. `/sitemap.xml` and `/robots.txt` use
-the Next.js metadata-file conventions, which cache their output by default.
-RSS and sitemap entries are derived from published posts only, use absolute
-`https://monipy.org` URLs, and interpret frontmatter publication dates at JST
-midnight. The root metadata advertises `/rss.xml` for feed discovery.
+The build writes RSS 2.0, sitemap, and robots files into `public/` before Next.js
+runs, so OpenNext deploys them as static assets instead of retaining the
+filesystem content loader in the Worker bundle. RSS and sitemap entries are
+derived from published posts only, use absolute `https://monipy.org` URLs, and
+interpret frontmatter publication dates at JST midnight. The root metadata
+advertises `/rss.xml` for feed discovery. Generated files are ignored by Git.
 
 ## Post output
 

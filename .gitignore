@@ -6,4 +6,7 @@ node_modules
 *.tsbuildinfo
 coverage
 public/post-assets
+public/rss.xml
+public/sitemap.xml
+public/robots.txt
 next-env.d.ts
