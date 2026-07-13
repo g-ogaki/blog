@@ -39,6 +39,28 @@ The deployment commands are provided by `@opennextjs/cloudflare`: build with
 and deploy with `opennextjs-cloudflare deploy`. The Worker uses the Next.js
 Node.js runtime.
 
+The repository scripts keep the raw Next.js build and Worker build separate
+because OpenNext invokes `npm run build` internally:
+
+```text
+npm run build         # Next.js output
+npm run build:worker  # .open-next/worker.js deployment artifact
+```
+
+Cloudflare Workers Builds uses these commands:
+
+```text
+Build command:   npm run build:worker
+Deploy command:  npx @opennextjs/cloudflare deploy
+Version command: npx @opennextjs/cloudflare upload
+```
+
+The deploy command promotes production builds. The version command uploads
+non-production branch builds without promoting them. Do not use the repository's
+`npm run deploy` in Workers Builds because that local convenience script runs
+the Worker build again. Running only `npm run build` does not create the Worker
+entry point required by Wrangler.
+
 ---
 
 ## Environment Variables
@@ -60,10 +82,13 @@ secrets and Discord webhooks.
 Required global asset:
 
 ```text
-public/og/default.png
+public/cat.jpg
 ```
 
 Used when a post does not specify an image in frontmatter.
+
+Cloudflare Web Analytics is optional until the domain and analytics site are
+registered. A missing analytics token must not fail local or preview builds.
 
 ## Release checks
 

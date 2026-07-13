@@ -16,7 +16,7 @@ Shiki for inline code and fenced code blocks.
 Images are colocated with a post's `index.md`. Every published page generates
 title, description, canonical URL, and Open Graph metadata. The OGP-image
 frontmatter and fallback priority are defined in `requirements_definition.md`;
-the fallback is `public/og/default.png`.
+the fallback is `public/cat.jpg`.
 
 ## Link cards
 

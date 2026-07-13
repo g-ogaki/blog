@@ -6,6 +6,11 @@
 journey and ideas in technology, programming, mathematics, investing, personal
 growth, and daily life.
 
+The site title is **moni's page**, the displayed author is **moni**, and the
+primary language is Japanese (`ja`). Dates are interpreted and displayed in
+Japan Standard Time (`Asia/Tokyo`). Until final copy is supplied, use concise
+synthetic Japanese text for the homepage introduction and default description.
+
 ## Goals
 
 * Publish Markdown articles with complete content ownership.
@@ -39,15 +44,18 @@ draft: false
 ```
 
 Optional `image: cover.png` selects the Open Graph image; otherwise the
-site-wide default is used. Categories and tags are arbitrary strings generated
-at build time. See `markdown_authoring_guide.md` for authoring syntax.
+site-wide default at `public/cat.jpg` is used. Categories and tags are arbitrary
+strings generated at build time. See `markdown_authoring_guide.md` for authoring
+syntax.
 
 ## Search and comments
 
 Pagefind indexes title, summary, category, tags, and full article content, and
 filters by category, tag, year, and month. Comments contain only name and
-comment, require moderation before display, and have no email, website, login,
-or avatar. See their respective design documents for behavior.
+comment. Names contain 1-80 characters and comments contain 1-2,000 characters.
+Comments are plain text with line breaks preserved, require moderation before
+display, and have no email, website, login, or avatar. See their respective
+design documents for behavior.
 
 ## Platform requirements
 

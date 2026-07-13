@@ -31,6 +31,7 @@ Deploy
 * Year
 * Month
 
-No database required.
+Filtering is client-side and may require JavaScript. Article pages and their
+content remain readable without client-side JavaScript. No database is required.
 
 ---
