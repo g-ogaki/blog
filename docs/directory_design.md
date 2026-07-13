@@ -16,10 +16,14 @@
 │
 ├── src/
 │   ├── app/
-│   │   └── blog/
-│   │       ├── page.tsx
-│   │       └── [year]/[post]/page.tsx
+│   │   ├── blog/
+│   │   │   ├── page.tsx
+│   │   │   └── [year]/[post]/page.tsx
+│   │   ├── rss.xml/route.ts
+│   │   ├── robots.ts
+│   │   └── sitemap.ts
 │   ├── components/
+│   │   ├── cloudflare-web-analytics.tsx
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
 │   │   ├── site-footer.tsx
@@ -31,7 +35,9 @@
 │   │   │   ├── link-preview.ts
 │   │   │   ├── posts.ts
 │   │   │   └── taxonomy.ts
-│   │   └── format-date.ts
+│   │   ├── format-date.ts
+│   │   ├── site.ts
+│   │   └── syndication.ts
 │   ├── styles/
 │   └── test/
 │

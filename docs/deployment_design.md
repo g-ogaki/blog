@@ -69,11 +69,13 @@ entry point required by Wrangler.
 DISCORD_WEBHOOK_URL
 TURNSTILE_SECRET_KEY
 IP_HASH_SECRET
+NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN (optional, public)
 ```
 
-Secrets are configured in Cloudflare, never committed, and are required only by
-comment-related routes. Production and preview environments use different
-secrets and Discord webhooks.
+The first three values are secrets configured in Cloudflare, never committed,
+and required only by comment-related routes. Production and preview
+environments use different secrets and Discord webhooks. The analytics token is
+a public build-time value and may remain empty.
 
 ---
 
@@ -87,8 +89,14 @@ public/cat.jpg
 
 Used when a post does not specify an image in frontmatter.
 
-Cloudflare Web Analytics is optional until the domain and analytics site are
-registered. A missing analytics token must not fail local or preview builds.
+For the proxied production domain, prefer Cloudflare Web Analytics automatic
+setup and leave `NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` empty. If the Web
+Analytics site is configured for manual JavaScript installation instead, set
+that variable to the site token in the production build environment. The root
+layout emits Cloudflare's deferred beacon only for a non-empty token. Do not
+enable automatic injection and the manual token together, because that would
+load the beacon twice. A missing token does not affect local, preview, or
+production builds.
 
 ## Static page cache
 

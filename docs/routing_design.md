@@ -7,6 +7,9 @@ Published Markdown posts generate these static routes:
 ```text
 /blog
 /blog/YYYY/YYYYMMDD-slug
+/rss.xml
+/sitemap.xml
+/robots.txt
 ```
 
 `/blog` lists published posts newest first. Post parameters are derived from the
@@ -30,6 +33,12 @@ of issue #10; until then they resolve to the complete, usable static archive.
 OpenNext stores the generated listing and post responses in Workers Static
 Assets and intercepts cache hits before invoking the Worker. Route correctness
 must not depend on repository Markdown being available at runtime.
+
+`/rss.xml` is a force-static RSS 2.0 route. `/sitemap.xml` and `/robots.txt` use
+the Next.js metadata-file conventions, which cache their output by default.
+RSS and sitemap entries are derived from published posts only, use absolute
+`https://monipy.org` URLs, and interpret frontmatter publication dates at JST
+midnight. The root metadata advertises `/rss.xml` for feed discovery.
 
 ## Post output
 

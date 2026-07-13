@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
+import { CloudflareWebAnalytics } from "@/components/cloudflare-web-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
 import "./globals.css";
 
 const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t}}catch(e){}})()`;
 
 export const metadata: Metadata = {
-	metadataBase: new URL("https://monipy.org"),
-	title: { default: "moni's page", template: "%s | moni's page" },
-	description: "moniが技術や日々の学びを記録する個人サイトです。",
-	openGraph: { siteName: "moni's page", locale: "ja_JP", type: "website" },
+	metadataBase: new URL(SITE_ORIGIN),
+	title: { default: SITE_TITLE, template: `%s | ${SITE_TITLE}` },
+	description: SITE_DESCRIPTION,
+	openGraph: { siteName: SITE_TITLE, locale: "ja_JP", type: "website" },
+	alternates: { types: { "application/rss+xml": `${SITE_ORIGIN}/rss.xml` } },
 };
 
 export default function RootLayout({
@@ -28,6 +31,7 @@ export default function RootLayout({
 				<SiteHeader />
 				{children}
 				<SiteFooter />
+				<CloudflareWebAnalytics />
 			</body>
 		</html>
 	);
