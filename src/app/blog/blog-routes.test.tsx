@@ -28,7 +28,7 @@ describe("blog routes", () => {
 
 		expect(screen.getByRole("article")).toBeInTheDocument();
 		expect(screen.getByRole("heading", { level: 1, name: "TypeScriptを学び始めました" })).toBeInTheDocument();
-		expect(document.querySelector("pre")).toHaveTextContent("const answer: number = 42;");
+		expect(document.querySelector("pre")).toHaveTextContent("const answer: Answer");
 	});
 
 	it("generates canonical and fallback Open Graph metadata", async () => {
