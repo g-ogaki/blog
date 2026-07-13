@@ -20,15 +20,17 @@ lookups; a missing or draft path returns the Next.js not-found response.
 The archive exposes stable taxonomy navigation URLs:
 
 ```text
+/blog?q=<query>
 /blog?category=<category>
 /blog?tag=<tag>
 /blog?year=YYYY
 /blog?month=YYYY-MM
 ```
 
-Taxonomy values are URL encoded. The site shell creates these links from
-published post metadata. Pagefind activates their client-side filtering as part
-of issue #10; until then they resolve to the complete, usable static archive.
+Search and taxonomy values are URL encoded. Pagefind reads these parameters and
+performs client-side keyword search and filtering. Without JavaScript or before
+the search index is available, taxonomy URLs still resolve to the complete,
+usable static archive.
 
 OpenNext stores the generated listing and post responses in Workers Static
 Assets and intercepts cache hits before invoking the Worker. Route correctness

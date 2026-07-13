@@ -1,9 +1,19 @@
 import Link from "next/link";
-import type { Post } from "@/lib/content/posts";
 import { formatPostDate } from "@/lib/format-date";
 
+export interface PostListPost {
+	metadata: {
+		category: string;
+		date: string;
+		summary: string;
+		tags: readonly string[];
+		title: string;
+	};
+	url: string;
+}
+
 interface PostListProps {
-	posts: readonly Post[];
+	posts: readonly PostListPost[];
 }
 
 export function PostList({ posts }: PostListProps) {

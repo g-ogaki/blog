@@ -54,12 +54,26 @@ export default async function PostPage({ params }: PostPageProps) {
 	return (
 		<main className="site-shell" id="main-content">
 			<nav className="post-nav" aria-label="パンくず"><Link href="/blog">ブログ</Link><span>/</span><span>{post.year}</span></nav>
-			<article className="post-article">
+			<article
+				className="post-article"
+				data-category={post.metadata.category}
+				data-date={post.metadata.date}
+				data-month={post.metadata.date.slice(0, 7)}
+				data-pagefind-body=""
+				data-pagefind-filter="category[data-category], year[data-year], month[data-month]"
+				data-pagefind-meta="category[data-category], tags[data-tags], date[data-date], url[data-url]"
+				data-tags={post.metadata.tags.join(",")}
+				data-url={post.url}
+				data-year={post.year}
+			>
 				<header className="post-header">
 					<p className="eyebrow">{post.metadata.category}</p>
-					<h1>{post.metadata.title}</h1>
-					<p className="post-summary">{post.metadata.summary}</p>
+					<h1 data-pagefind-meta="title">{post.metadata.title}</h1>
+					<p className="post-summary" data-pagefind-meta="summary">{post.metadata.summary}</p>
 					<div className="post-byline"><time dateTime={post.metadata.date}>{formatPostDate(post.metadata.date)}</time><span>moni</span></div>
+					<ul className="tag-list" aria-label="タグ">
+						{post.metadata.tags.map((tag) => <li data-pagefind-filter="tag" key={tag}>{tag}</li>)}
+					</ul>
 				</header>
 				{content}
 			</article>

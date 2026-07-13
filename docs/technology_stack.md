@@ -36,6 +36,9 @@ is used for preview metadata.
 
 * Pagefind
 
+Pagefind runs after the Next.js build and ships only its generated static index
+and browser API. It is not imported into the Worker runtime and uses no database.
+
 ## Hosting
 
 * Cloudflare Workers
