@@ -45,7 +45,7 @@ describe("blog routes", () => {
 		expect(document.querySelector("pre")).toHaveTextContent("const answer: Answer");
 	});
 
-	it("generates canonical and fallback Open Graph metadata", async () => {
+	it("generates canonical and post-specific Open Graph metadata", async () => {
 		const metadata = await generateMetadata({
 			params: Promise.resolve({ year: "2026", post: "20260503-learning-typescript" }),
 		});
@@ -54,7 +54,7 @@ describe("blog routes", () => {
 		expect(metadata.description).toBe("TypeScriptの型を試しながら学ぶためのサンプル記事です。");
 		expect(metadata.openGraph).toMatchObject({
 			type: "article",
-			images: ["/cat.jpg"],
+			images: ["/post-assets/2026/20260503-learning-typescript/cat.png"],
 		});
 	});
 });

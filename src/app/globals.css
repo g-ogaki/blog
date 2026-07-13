@@ -756,6 +756,20 @@ input:focus-visible + span {
 }
 
 @media (max-width: 36rem) {
+	.link-card {
+		flex-direction: column;
+	}
+
+	.link-card-copy span {
+		white-space: normal;
+	}
+
+	.link-card-image {
+		order: -1;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+	}
+
 	.site-header-inner {
 		min-height: 4.5rem;
 	}
