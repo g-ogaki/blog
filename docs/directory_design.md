@@ -20,12 +20,18 @@
 │   │       ├── page.tsx
 │   │       └── [year]/[post]/page.tsx
 │   ├── components/
-│   │   └── post-markdown.tsx
+│   │   ├── post-list.tsx
+│   │   ├── post-markdown.tsx
+│   │   ├── site-footer.tsx
+│   │   ├── site-header.tsx
+│   │   └── theme-switcher.tsx
 │   ├── lib/
-│   │   └── content/
-│   │       ├── assets.ts
-│   │       ├── link-preview.ts
-│   │       └── posts.ts
+│   │   ├── content/
+│   │   │   ├── assets.ts
+│   │   │   ├── link-preview.ts
+│   │   │   ├── posts.ts
+│   │   │   └── taxonomy.ts
+│   │   └── format-date.ts
 │   ├── styles/
 │   └── test/
 │

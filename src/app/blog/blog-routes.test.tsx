@@ -16,6 +16,19 @@ describe("blog routes", () => {
 		expect(screen.queryByText("Rust学習メモ")).not.toBeInTheDocument();
 	});
 
+	it("renders taxonomy navigation with stable filter URLs", () => {
+		render(<BlogPage />);
+
+		expect(screen.getByRole("navigation", { name: "記事の分類" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "Programming" })).toHaveAttribute(
+			"href",
+			"/blog?category=Programming",
+		);
+		expect(screen.getByRole("link", { name: "typescript" })).toHaveAttribute("href", "/blog?tag=typescript");
+		expect(screen.getByRole("link", { name: "2026年" })).toHaveAttribute("href", "/blog?year=2026");
+		expect(screen.getByRole("link", { name: "2026年6月" })).toHaveAttribute("href", "/blog?month=2026-06");
+	});
+
 	it("generates parameters only for published posts", () => {
 		expect(generateStaticParams()).toEqual([
 			{ year: "2026", post: "20260605-hoge-huga" },
