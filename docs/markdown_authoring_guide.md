@@ -108,6 +108,10 @@ https://nextjs.org
 
 creates a link card.
 
+The paragraph must contain only one absolute `https` URL. Metadata is fetched
+during the static build; if the remote page is unavailable or has no usable
+metadata, the URL is rendered as a normal link.
+
 Inline URL:
 
 ```md

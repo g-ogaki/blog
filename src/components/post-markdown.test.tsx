@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Post } from "@/lib/content/posts";
+import type { LinkPreviewLoader } from "@/lib/content/link-preview";
 import { PostMarkdown } from "./post-markdown";
 
 function createPost(content: string): Post {
@@ -22,8 +23,8 @@ function createPost(content: string): Post {
 	};
 }
 
-async function renderMarkdown(content: string) {
-	const element = await PostMarkdown({ post: createPost(content) });
+async function renderMarkdown(content: string, loadLinkPreview?: LinkPreviewLoader) {
+	const element = await PostMarkdown({ post: createPost(content), loadLinkPreview });
 	return render(element);
 }
 
@@ -84,5 +85,33 @@ describe("PostMarkdown", () => {
 		expect(container.querySelector("script")).not.toBeInTheDocument();
 		expect(screen.queryByRole("img", { name: "raw" })).not.toBeInTheDocument();
 		expect(screen.getByText("Unsafe").closest("a")).toHaveAttribute("href", "");
+	});
+
+	it("renders standalone URLs as static cards while inline URLs remain unchanged", async () => {
+		const loadLinkPreview = vi.fn(async (url: string) => ({
+			url,
+			title: "Example preview",
+			description: "Fetched during the build.",
+			image: "https://example.com/card.png",
+			siteName: "Example",
+			provider: "Website",
+		}));
+		await renderMarkdown(
+			"https://example.com/post\n\nInline https://example.com/inline remains text.",
+			loadLinkPreview,
+		);
+
+		expect(screen.getByRole("link", { name: /Example preview/ })).toHaveClass("link-card");
+		expect(screen.getByText("Fetched during the build.")).toBeInTheDocument();
+		expect(screen.getByText(/Inline https:\/\/example.com\/inline remains text/)).toBeInTheDocument();
+		expect(loadLinkPreview).toHaveBeenCalledTimes(1);
+	});
+
+	it("falls back to a normal link when preview metadata is unavailable", async () => {
+		await renderMarkdown("https://example.com/unavailable", async () => null);
+
+		const link = screen.getByRole("link", { name: "https://example.com/unavailable" });
+		expect(link).toHaveAttribute("href", "https://example.com/unavailable");
+		expect(link).not.toHaveClass("link-card");
 	});
 });

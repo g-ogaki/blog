@@ -21,10 +21,16 @@
 * rehype-katex
 * KaTeX
 * Shiki and its official rehype adapter
+* htmlparser2 for tolerant link-preview metadata parsing
+* ipaddr.js for SSRF address classification
 
 Rendering is asynchronous on the server and produces static React output. Post
 assets are copied to the public output during development and production builds;
 no runtime content-file endpoint is used.
+
+Link previews use the Node.js DNS and HTTPS APIs during static rendering. HTTPS
+connections are pinned to DNS-vetted public addresses; no runtime Worker fetch
+is used for preview metadata.
 
 ## Search
 
