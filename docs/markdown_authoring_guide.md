@@ -120,4 +120,13 @@ I used https://nextjs.org.
 
 remains a normal hyperlink.
 
+Standalone internal post card:
+
+```md
+[TypeScriptの記事](/blog/2026/20260503-learning-typescript)
+```
+
+The target post metadata is used directly without an HTTP request. Place the
+same Markdown link inside a sentence when a normal inline link is preferred.
+
 ---

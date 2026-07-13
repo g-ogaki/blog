@@ -90,6 +90,15 @@ Used when a post does not specify an image in frontmatter.
 Cloudflare Web Analytics is optional until the domain and analytics site are
 registered. A missing analytics token must not fail local or preview builds.
 
+## Static page cache
+
+OpenNext uses its read-only Workers Static Assets incremental cache with cache
+interception enabled. This is required for SSG routes because Markdown is read
+from the repository only during the build and is not available through the
+Worker runtime filesystem. Both `upload` preview versions and production
+deployments must serve the populated build-time `/blog` cache entries rather
+than attempting runtime regeneration.
+
 ## Release checks
 
 Before deployment, the build must fail on invalid frontmatter, broken internal

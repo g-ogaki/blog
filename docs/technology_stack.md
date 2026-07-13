@@ -44,6 +44,8 @@ is used for preview metadata.
 
 Use the Next.js Node.js runtime with OpenNext; do not use the Next.js Edge
 runtime. OpenNext is the approved deployment integration for this project.
+Static pages use OpenNext's Workers Static Assets incremental-cache override and
+cache interception; R2 is unnecessary while pages have no runtime revalidation.
 
 ## Database
 

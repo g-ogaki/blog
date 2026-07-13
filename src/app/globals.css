@@ -57,6 +57,28 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+.site-shell { width: min(100% - 2rem, 68rem); margin-inline: auto; padding-block: 3rem 6rem; }
+.site-mark { color: inherit; font-family: Georgia, serif; font-size: 1.1rem; text-decoration: none; }
+.page-header { padding-block: 4rem 3rem; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+.page-header h1, .post-header h1 { margin: .3rem 0 1rem; font-family: Georgia, "Yu Mincho", serif; font-size: clamp(2.8rem, 9vw, 6rem); font-weight: 400; letter-spacing: -.055em; line-height: .95; }
+.eyebrow, .post-meta { font-family: var(--font-geist-mono); font-size: .75rem; letter-spacing: .13em; text-transform: uppercase; }
+.post-list-item { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding-block: 2rem; border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent); }
+.post-index { color: color-mix(in srgb, currentColor 45%, transparent); font-family: var(--font-geist-mono); }
+.post-list-item h2 { margin: .5rem 0; font-family: Georgia, "Yu Mincho", serif; font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 400; }
+.post-list-item h2 a, .post-nav a { color: inherit; text-decoration-thickness: .06em; text-underline-offset: .15em; }
+.tag-list { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; padding: 0; list-style: none; font-size: .8rem; }
+.post-nav { display: flex; gap: .6rem; margin-bottom: 4rem; font-family: var(--font-geist-mono); font-size: .8rem; }
+.post-article { max-width: 48rem; margin-inline: auto; }
+.post-header { margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+.post-summary { max-width: 38rem; font-size: 1.15rem; line-height: 1.8; }
+.post-byline { display: flex; gap: 1.5rem; margin-top: 2rem; font-family: var(--font-geist-mono); font-size: .8rem; }
+.post-markdown { font-size: 1.05rem; line-height: 1.9; }
+.post-markdown > * + * { margin-top: 1.5rem; }
+.post-markdown h2 { margin-top: 3.5rem; font-family: Georgia, "Yu Mincho", serif; font-size: 2rem; }
+.post-markdown pre { overflow-x: auto; padding: 1.25rem; border-radius: .65rem; }
+
+@media (max-width: 40rem) { .site-shell { padding-top: 1.5rem; } .page-header { padding-top: 3rem; } .post-list-item { grid-template-columns: 2rem 1fr; } .post-nav { margin-bottom: 2.5rem; } }
+
 .shiki,
 .shiki span {
 	background-color: var(--shiki-light-bg);
