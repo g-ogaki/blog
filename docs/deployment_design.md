@@ -81,6 +81,15 @@ These values are secrets configured in Cloudflare, never committed, and
 required only by comment-related routes. Production and preview environments
 use different secrets and Discord webhooks.
 
+The Turnstile widget also requires this non-secret, build-time variable:
+
+```text
+NEXT_PUBLIC_TURNSTILE_SITE_KEY
+```
+
+Next.js exposes it to the browser for the comment UI. `TURNSTILE_SECRET_KEY`
+remains server-only and must never use the `NEXT_PUBLIC_` prefix.
+
 ---
 
 ## Static Assets
