@@ -497,6 +497,90 @@ input:focus-visible + span {
 	line-height: 2;
 }
 
+.search-panel {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 0.75rem 2rem;
+	padding-block: 2rem;
+	border-bottom: 1px solid var(--line);
+}
+
+.search-panel > label {
+	grid-column: 1 / -1;
+	color: var(--accent);
+	font-family: var(--mono);
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+}
+
+.search-input-row {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 1rem;
+}
+
+.search-input-row input {
+	width: min(100%, 44rem);
+	padding: 0.35rem 0 0.55rem;
+	border: 0;
+	border-bottom: 1px solid var(--ink);
+	border-radius: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--ink);
+	font-family: var(--display);
+	font-size: clamp(1.7rem, 4vw, 2.8rem);
+}
+
+.search-input-row input::placeholder {
+	color: color-mix(in srgb, var(--muted) 62%, transparent);
+}
+
+.search-input-row input:focus-visible {
+	border-color: var(--accent);
+	box-shadow: 0 2px 0 var(--accent);
+}
+
+.search-input-row input:disabled {
+	cursor: wait;
+	opacity: 0.55;
+}
+
+.search-input-row button {
+	flex: 0 0 auto;
+	padding: 0.55rem 0.8rem;
+	border: 1px solid var(--line);
+	background: transparent;
+	color: var(--muted);
+	cursor: pointer;
+	font-family: var(--mono);
+	font-size: 0.65rem;
+}
+
+.search-input-row button:hover {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+.search-status {
+	align-self: end;
+	margin: 0 0 0.55rem;
+	color: var(--muted);
+	font-family: var(--mono);
+	font-size: 0.67rem;
+	white-space: nowrap;
+}
+
+.search-empty,
+.search-note {
+	margin: 0;
+	padding: 2rem;
+	border: 1px solid var(--line);
+	color: var(--muted);
+}
+
 .archive-layout {
 	display: grid;
 	grid-template-columns: 13rem minmax(0, 1fr);
@@ -538,6 +622,15 @@ input:focus-visible + span {
 
 .taxonomy-group a:hover {
 	color: var(--accent);
+}
+
+.taxonomy-group a[aria-current="true"] {
+	color: var(--accent);
+	font-weight: 700;
+}
+
+.taxonomy-group a[aria-current="true"]::before {
+	content: "• ";
 }
 
 .post-nav {
@@ -749,6 +842,14 @@ input:focus-visible + span {
 		grid-column: auto;
 	}
 
+	.search-panel {
+		grid-template-columns: 1fr;
+	}
+
+	.search-status {
+		margin-bottom: 0;
+	}
+
 	.site-footer-inner {
 		flex-wrap: wrap;
 		padding-block: 2rem;
@@ -812,6 +913,15 @@ input:focus-visible + span {
 
 	.taxonomy-nav {
 		grid-template-columns: 1fr;
+	}
+
+	.search-input-row {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.search-input-row button {
+		align-self: flex-start;
 	}
 
 	.site-footer-inner {

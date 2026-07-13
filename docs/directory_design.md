@@ -22,6 +22,7 @@
 │   ├── components/
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
+│   │   ├── search-archive.tsx
 │   │   ├── site-footer.tsx
 │   │   ├── site-header.tsx
 │   │   └── theme-switcher.tsx
@@ -32,6 +33,8 @@
 │   │   │   ├── posts.ts
 │   │   │   └── taxonomy.ts
 │   │   ├── format-date.ts
+│   │   ├── pagefind-client.ts
+│   │   ├── search.ts
 │   │   ├── site.ts
 │   │   ├── static-metadata.ts
 │   │   └── syndication.ts
@@ -43,6 +46,7 @@
 │
 ├── public/
 │   ├── pagefind/
+│   ├── pagefind-loader.js
 │   └── post-assets/ (generated, ignored)
 │
 ├── scripts/
@@ -52,6 +56,10 @@
 │
 └── docs/
 ```
+
+`public/pagefind/` and `public/post-assets/` are generated and ignored. The
+Pagefind loader is tracked because it is the stable browser entry point for the
+generated search API.
 
 ## Post URL Structure
 

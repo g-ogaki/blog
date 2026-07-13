@@ -43,6 +43,14 @@ describe("blog routes", () => {
 		expect(screen.getByRole("article")).toBeInTheDocument();
 		expect(screen.getByRole("heading", { level: 1, name: "TypeScriptを学び始めました" })).toBeInTheDocument();
 		expect(document.querySelector("pre")).toHaveTextContent("const answer: Answer");
+		expect(screen.getByRole("article")).toHaveAttribute("data-pagefind-body", "");
+		expect(screen.getByRole("article")).toHaveAttribute(
+			"data-pagefind-filter",
+			"category[data-category], year[data-year], month[data-month]",
+		);
+		expect(screen.getByRole("article")).toHaveAttribute("data-url", "/blog/2026/20260503-learning-typescript");
+		expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("data-pagefind-meta", "title");
+		expect(screen.getByText("typescript")).toHaveAttribute("data-pagefind-filter", "tag");
 	});
 
 	it("generates canonical and post-specific Open Graph metadata", async () => {

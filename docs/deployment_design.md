@@ -47,11 +47,11 @@ npm run build         # Next.js output
 npm run build:worker  # .open-next/worker.js deployment artifact
 ```
 
-`npm run build` validates content, publishes colocated post assets, and writes
-`public/rss.xml`, `public/sitemap.xml`, and `public/robots.txt` before invoking
-Next.js. Keeping these content-derived outputs as public files prevents the
-filesystem Markdown loader and parser dependencies from entering the Worker
-runtime bundle.
+`npm run build` validates content, publishes colocated post assets, writes
+`public/rss.xml`, `public/sitemap.xml`, and `public/robots.txt`, invokes Next.js,
+then generates `public/pagefind/` from the prerendered HTML. Keeping these
+content-derived outputs as public files prevents the filesystem Markdown loader,
+parser, and Pagefind dependencies from entering the Worker runtime bundle.
 
 Cloudflare Workers Builds uses these commands:
 
@@ -92,6 +92,10 @@ public/cat.jpg
 ```
 
 Used when a post does not specify an image in frontmatter.
+
+The generated `public/pagefind/` directory is ignored by Git and rebuilt for
+every deployment. OpenNext copies it into Workers Static Assets together with
+the tracked `public/pagefind-loader.js` browser entry point.
 
 Cloudflare Web Analytics is enabled for the proxied `monipy.org` hostname from
 the Cloudflare dashboard. Cloudflare injects the beacon at the edge, so the

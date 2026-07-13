@@ -24,3 +24,5 @@ export function buildTaxonomy(posts: readonly TaxonomyPost[]) {
 		years: uniqueSorted(posts.map((post) => post.metadata.date.slice(0, 4)), true),
 	};
 }
+
+export type Taxonomy = ReturnType<typeof buildTaxonomy>;

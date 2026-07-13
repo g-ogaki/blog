@@ -17,9 +17,10 @@ content loader. The latest-post section links to the complete blog archive.
 
 The archive lists published posts newest first and derives category, tag, year,
 and month navigation from their frontmatter. Taxonomy values use the query URL
-contract documented in `routing_design.md`. Filtering behavior belongs to the
-Pagefind integration in `search_design.md`; the unfiltered archive remains
-usable without JavaScript.
+contract documented in `routing_design.md`. Pagefind performs keyword search
+and client-side filtering while keeping that URL in sync. The unfiltered archive
+remains usable while search loads, without JavaScript, and if its static assets
+are unavailable.
 
 ## Dates
 
