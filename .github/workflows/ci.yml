@@ -21,3 +21,4 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build:worker
+      - run: npm run verify:deployment

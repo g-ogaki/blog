@@ -6,6 +6,12 @@ the checks, commit and push the completed issue, and open a detailed pull
 request. Human review is required before merge, and agents never merge pull
 requests automatically.
 
+Before merge, review the Cloudflare branch preview and require both GitHub CI
+and Workers Builds to pass. The canonical preview and production checklists are
+in `deployment_design.md`. Branch previews isolate code but currently share the
+production Worker's D1 and secrets, so comment submissions there are not test
+data.
+
 ## Writing a New Post
 
 ```text

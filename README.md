@@ -37,7 +37,9 @@ database. Use `npm run test:unit` or `npm run test:d1` to run either suite alone
 Follow the issue, feature branch, human review, and commit workflow in
 [`AGENTS.md`](AGENTS.md).
 `npm run build:worker` runs the Next.js build through OpenNext and generates the
-Cloudflare Worker artifact.
+Cloudflare Worker artifact, then verifies its static pages, metadata, Pagefind
+index, headers, and Worker entry point. `npm run verify:deployment` additionally
+runs a Wrangler dry-run bundle check.
 
 Apply reviewed forward-only D1 migrations deliberately before deploying code
 that depends on them:
