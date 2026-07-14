@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "npm run publish:assets -- --include-drafts && npm run generate:metadata && next dev",
     "build": "npm run validate:content && npm run publish:assets && npm run generate:metadata && next build && npm run build:search",
-    "build:worker": "opennextjs-cloudflare build",
+    "build:worker": "opennextjs-cloudflare build && npm run verify:release",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
@@ -19,6 +19,8 @@
     "publish:assets": "node --import tsx scripts/publish-post-assets.ts",
     "generate:metadata": "node --import tsx scripts/generate-static-metadata.ts",
     "build:search": "node -e \"require('node:fs').rmSync('public/pagefind', { recursive: true, force: true })\" && pagefind --site .next/server/app --output-path public/pagefind",
+    "verify:release": "node --import tsx scripts/verify-release.ts",
+    "verify:deployment": "npm run verify:release && wrangler deploy --dry-run",
     "check": "npm run lint && npm run typecheck && npm run test && npm run validate:content",
     "deploy": "npm run build:worker && opennextjs-cloudflare deploy",
     "upload": "npm run build:worker && opennextjs-cloudflare upload",

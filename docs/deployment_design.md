@@ -37,7 +37,8 @@ Deploy
 The deployment commands are provided by `@opennextjs/cloudflare`: build with
 `opennextjs-cloudflare build`, preview with `opennextjs-cloudflare preview`,
 and deploy with `opennextjs-cloudflare deploy`. The Worker uses the Next.js
-Node.js runtime.
+Node.js runtime. Local development and GitHub CI require Node.js 22 or later,
+matching Wrangler and the Cloudflare Workers Builds environment.
 
 The repository scripts keep the raw Next.js build and Worker build separate
 because OpenNext invokes `npm run build` internally:
@@ -54,6 +55,14 @@ content-derived outputs as public files prevents the filesystem Markdown loader,
 parser, and Pagefind dependencies from entering the Worker runtime bundle.
 Shiki is composed from fine-grained theme and language imports so unused grammar
 catalogs are likewise excluded from the Worker artifact.
+
+After OpenNext finishes, `npm run build:worker` runs `verify:release`. The
+verification fails unless the output contains a non-empty Worker entry point,
+RSS, sitemap, robots file, default Open Graph image, required static headers,
+Pagefind browser files and index, the home/blog caches, and one cache entry for
+every published post in the build-generated manifest. This is an artifact
+check, not a source-tree check, so it detects files lost between Next.js and the
+deployable `.open-next` output.
 
 Cloudflare Workers Builds uses these commands:
 
@@ -80,8 +89,9 @@ IP_HASH_SECRET
 ```
 
 These values are secrets configured in Cloudflare, never committed, and
-required only by comment-related routes. Production and preview environments
-use different secrets and Discord webhooks.
+required only by comment-related routes. `wrangler.jsonc` declares their names
+under `secrets.required` so local Wrangler validation and generated binding
+types describe the runtime contract without containing secret values.
 
 `DISCORD_WEBHOOK_URL` is consumed only by the internal typed comment notifier;
 there is no generic webhook server action. The notifier treats network,
@@ -104,6 +114,24 @@ client code.
 For local form testing, use Cloudflare's paired Turnstile test sitekey and
 secret in `.env.development`, or explicitly allow `localhost` on a non-production
 widget. Never use Turnstile test credentials in production.
+
+### Preview isolation
+
+Workers Builds branch previews are uploaded versions of the same `blog` Worker.
+They isolate the code version and URL, but inherit that Worker's runtime
+bindings: the production D1 database and runtime secrets. A preview comment is
+therefore a real database write and sends through the configured Discord
+webhook. Turnstile must allow the exact preview hostname before the widget can
+be exercised. Prefer read-only content/UI review on previews; when an end-to-end
+comment test is necessary, use clearly synthetic text and reject it after the
+test.
+
+`NEXT_PUBLIC_TURNSTILE_SITE_KEY` is embedded at build time and must be available
+to branch builds as well as production builds. Cloudflare dashboard variables
+and secrets remain the source of truth; never add their values to
+`wrangler.jsonc` or the repository. Fully isolated preview comments would
+require a separately named Worker, D1 database, secrets, webhook, and Turnstile
+widget, and are intentionally outside the current single-Worker setup.
 
 ---
 
@@ -142,6 +170,44 @@ than attempting runtime regeneration.
 Before deployment, the build must fail on invalid frontmatter, broken internal
 links, missing referenced post images, or duplicate post URLs. Preview deploys
 are used for human review before production.
+
+GitHub CI runs:
+
+```text
+npm run check
+npm run build:worker
+npm run verify:deployment
+```
+
+The final command repeats the release artifact contract and asks Wrangler to
+bundle the exact configuration with `deploy --dry-run`. This validates the
+Worker entry point, declared bindings, and compressed bundle size without
+contacting production. CI never reads production secrets or connects to remote
+D1.
+
+### Preview review
+
+1. Confirm GitHub CI and the Workers Builds preview both pass.
+2. Open the branch preview URL and review `/`, `/blog`, and every changed post.
+3. Verify search returns a known title/body match and its filters still work.
+4. Open `/rss.xml`, `/sitemap.xml`, and `/robots.txt` from the preview URL.
+5. Check responsive layout, theme switching, images, link cards, code, and math
+   when the pull request changes those areas.
+6. Treat comment submission as a production D1 write under the current shared
+   binding model; test it only when the change requires it.
+
+### Production release
+
+1. Merge only after the preview and CI checks pass.
+2. Apply reviewed forward-only D1 migrations deliberately before code that
+   depends on them; builds never run migrations.
+3. Confirm Cloudflare has the three required runtime secrets and the public
+   Turnstile build variable.
+4. Confirm the `DB`, `ASSETS`, `IMAGES`, and `WORKER_SELF_REFERENCE` bindings and
+   the `0 3 * * *` Cron Trigger in the uploaded version.
+5. After deployment, smoke-test the canonical domain, a post, Pagefind, RSS,
+   sitemap, robots, and the comment list. Confirm Web Analytics remains enabled
+   at the Cloudflare edge.
 
 ## Scheduled cleanup
 
