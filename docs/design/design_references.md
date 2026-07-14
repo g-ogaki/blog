@@ -8,6 +8,19 @@ Each reference should include what is admired and what should not be reproduced.
 
 ---
 
+# ngtkana.com
+
+URL
+
+https://ngtkana.com/
+
+Inspired by
+
+* Simple and functional introductory page
+* Page layout aligning with my thoughts
+
+---
+
 # ikemotoshigetaka.com
 
 URL
@@ -16,14 +29,10 @@ https://ikemotoshigetaka.com/
 
 Inspired by
 
-* Overall atmosphere
-* Refined visual language
-* Homepage presentation
+* Eyecatching hero section
+* Motion in scrolling
+* Simple introduction
 * Modern but restrained aesthetics
-
-Do not copy
-
-* (To be filled as observations accumulate.)
 
 ---
 
@@ -35,7 +44,46 @@ Inspired by
 * Visual hierarchy
 * Motion quality
 * Product craftsmanship
-* Timeless design
+
+---
+
+# hatenablog
+
+https://puch0o.hatenablog.com/ (or any user's blog on hatenablog)
+
+Inspired for blog listing page by
+
+* Pagenation
+* Right sidebar containing search and taxonomy filters
+
+---
+
+# Layrid
+
+https://layrid.tomoyaokada.com/
+
+Inspired by
+
+* First animation
+* Simple but attracting hero section
+
+Do not copy
+
+* Many photography
+* Masonry grid
+
+---
+
+# Nicori Light Tours
+
+https://nicorilighttours.com/
+
+* Simple hero section
+* Effective discography (News, Video, SNS)
+
+Do not copy
+
+* Carousel
 
 ---
 
