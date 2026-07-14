@@ -37,7 +37,8 @@ Deploy
 The deployment commands are provided by `@opennextjs/cloudflare`: build with
 `opennextjs-cloudflare build`, preview with `opennextjs-cloudflare preview`,
 and deploy with `opennextjs-cloudflare deploy`. The Worker uses the Next.js
-Node.js runtime.
+Node.js runtime. Local development and GitHub CI require Node.js 22 or later,
+matching Wrangler and the Cloudflare Workers Builds environment.
 
 The repository scripts keep the raw Next.js build and Worker build separate
 because OpenNext invokes `npm run build` internally:

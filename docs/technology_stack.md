@@ -2,6 +2,7 @@
 
 ## Frontend
 
+* Node.js 22 or later
 * Next.js 16
 * React 19
 * TypeScript

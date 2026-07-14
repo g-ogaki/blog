@@ -6,7 +6,7 @@ moderated comments.
 
 ## Requirements
 
-- Node.js 20.19 or later
+- Node.js 22 or later
 - npm
 - A Cloudflare account for D1 and Worker integration
 
