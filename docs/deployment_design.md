@@ -101,6 +101,10 @@ Workers and from Next.js `process.env` during `npm run dev`. The local `.env`
 names therefore match the production binding names; neither value is exposed to
 client code.
 
+For local form testing, use Cloudflare's paired Turnstile test sitekey and
+secret in `.env.development`, or explicitly allow `localhost` on a non-production
+widget. Never use Turnstile test credentials in production.
+
 ---
 
 ## Static Assets
@@ -144,5 +148,11 @@ are used for human review before production.
 A daily Cloudflare Workers Cron Trigger deletes expired comment-system data as
 defined in `comment_moderation_design.md`. It performs no content generation or
 post-data writes.
+
+`custom-worker.ts` reuses OpenNext's generated fetch handler and adds the
+scheduled handler. Wrangler owns the `0 3 * * *` UTC trigger in
+`wrangler.jsonc`; do not configure a second dashboard-only trigger. Deploying
+the production Worker applies trigger changes, which may take several minutes
+to propagate. The handler logs aggregate deletion counts only.
 
 ---

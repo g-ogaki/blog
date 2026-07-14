@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostMarkdown } from "@/components/post-markdown";
+import { CommentSection } from "@/components/comment-section";
 import { loadPosts, type Post } from "@/lib/content/posts";
 import { formatPostDate } from "@/lib/format-date";
 
@@ -77,6 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
 				</header>
 				{content}
 			</article>
+			<CommentSection postSlug={post.slug} siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""} />
 		</main>
 	);
 }

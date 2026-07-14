@@ -96,6 +96,12 @@ and raw moderation tokens are never passed to D1 or returned by repository
 results. `TURNSTILE_SECRET_KEY` is unrelated to these hashes and is reserved for
 server-side Turnstile verification.
 
+## Retention indexes
+
+`migrations/0002_retention_indexes.sql` adds indexes for comment status/creation
+time, token expiry/use time, and rate-limit window time. These match the daily
+cleanup predicates and avoid full table scans as comment history grows.
+
 ## Local verification
 
 `npm run test:d1` uses Cloudflare's Vitest Workers integration and Miniflare to
@@ -107,6 +113,8 @@ and transactional rollback. It never connects to the production database.
 
 Schema changes are forward-only migrations stored in versioned SQL files. Do
 not edit an already-applied migration; add a new migration and document it here.
+Apply reviewed production migrations explicitly with
+`npm run db:migrate:remote`; preview builds never migrate production D1.
 
 The daily cleanup job deletes records according to the retention schedule in
 `comment_moderation_design.md`; cleanup queries must be covered by indexes as

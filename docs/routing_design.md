@@ -47,7 +47,9 @@ advertises `/rss.xml` for feed discovery. Generated files are ignored by Git.
 
 The post route renders an `article` containing title, summary, category, JST
 publication date, author, and the static `PostMarkdown` output. No client-side
-JavaScript is required to read a post.
+JavaScript is required to read a post. After hydration, a separate client-only
+section fetches approved comments and exposes the Turnstile-protected submission
+form; failure of that dynamic section does not affect article rendering.
 
 ## Metadata
 

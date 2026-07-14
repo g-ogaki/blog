@@ -68,6 +68,10 @@ Used only for:
 
 * Cloudflare Turnstile
 
+The comment form explicitly renders the widget, handles error and expiry
+callbacks, and resets it after every submission attempt because tokens are
+single-use. Server-side Siteverify remains authoritative.
+
 ## Analytics
 
 * Cloudflare Web Analytics

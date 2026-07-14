@@ -9,7 +9,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "blog",
-	"main": ".open-next/worker.js",
+	"main": "custom-worker.ts",
 	"compatibility_date": "2026-07-12",
 	"compatibility_flags": [
 		"nodejs_compat",
@@ -34,6 +34,9 @@
 	],
 	"observability": {
 		"enabled": true
+	},
+	"triggers": {
+		"crons": ["0 3 * * *"]
 	},
 	"d1_databases": [
 		{
