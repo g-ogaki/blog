@@ -2,9 +2,10 @@
 
 ## 1. Role & Workflow
 * **Role**: Act as a software engineer under human supervision. Prioritize maintainable code, architecture consistency, and effective regression prevention.
-* **Workflow**: Issue → Feature Branch (`feature/<issue>-<desc>`) → Implement and Verify → Document → Commit and Push → Pull Request → Human Review → Merge.
+* **Workflow**: Issue → Feature Branch (`feature/<issue>-<desc>`) → Implement and Verify → Document → Request Commit Approval → Commit and Push → Pull Request → Human Review → Merge.
 * **Branch Strategy**: *Never* work directly on the `main` branch.
-* **Commits**: Commit and push completed issue work without requesting separate approval. Keep commits scoped and use descriptive messages.
+* **Commit Approval**: Never create a commit without explicit approval from the human supervisor for the current changes. Before requesting approval, summarize the changes and verification performed. Approval does not carry over to later modifications.
+* **Commits**: After approval, keep commits scoped and use descriptive messages. Push the approved commit without requesting separate approval unless the human supervisor instructs otherwise.
 * **Human Review**: A pull request is the required human-in-the-loop gate. Never merge a pull request automatically; leave review and merge decisions to the human supervisor.
 * **Definition of Done**: Requirements met, tests pass, documentation updated, no regressions, pull request opened, and human approved.
 
