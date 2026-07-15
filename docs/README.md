@@ -26,3 +26,9 @@ Read these documents in this order before changing the project:
 | Delivery and secrets | `deployment_design.md` |
 
 Other documents should link to the canonical document instead of duplicating its rules.
+
+## Exploratory design artifacts
+
+- [`wireframes/blog-entry.html`](wireframes/blog-entry.html) — standalone
+  low-fidelity layout study for the blog entry page. `DESIGN.md` remains the
+  canonical visual source of truth.

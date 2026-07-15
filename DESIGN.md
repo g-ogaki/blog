@@ -85,6 +85,10 @@ spacing:
   shell-max: 80rem
   gutter-mobile: 1rem
   gutter-desktop: 1.5rem
+  content-block-gap: 2.25rem
+  heading-content-gap: 1.5rem
+  subsection-gap: 3rem
+  section-gap: 4rem
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -190,7 +194,9 @@ Keep text selectable and allow browser zoom and user font settings. Avoid justif
 The layout is a restrained, mobile-first editorial column. The article is the primary object, not a collection of dashboard cards.
 
 - Limit reading content to approximately 65–70 characters per line, represented by the Tailwind `max-w-3xl` default. Code blocks, tables, archives, and the site shell may use wider containers up to `max-w-7xl` when their content needs it.
-- Use the Tailwind spacing scale and its 4px base unit. Ordinary relationships use `2` through `6`; component padding commonly uses `3` or `4`; major section separation uses `12` or `16`.
+- Use the Tailwind spacing scale and its 4px base unit. Keep component interiors, metadata, tags, forms, and closely related controls compact with `2` through `6`; component padding commonly uses `3` or `4`.
+- Long-form content uses a more generous editorial rhythm. Peer content blocks—including paragraphs, code, mathematics, images, link cards, lists, and quotations—are separated by `9` ({spacing.content-block-gap}). Headings sit `6` ({spacing.heading-content-gap}) from their first content block; subsections begin after `12` ({spacing.subsection-gap}); and major article or page sections begin after `16` ({spacing.section-gap}).
+- Express vertical rhythm as the space between adjacent elements, normally with one-direction block-start spacing. Do not assign large top and bottom margins to every element, because margin collapsing and combined margins make the rhythm unpredictable.
 - Use `px-4` page gutters on small screens and `px-6` from the appropriate responsive breakpoint. Do not shrink the reading column to create decorative empty rails.
 - Separate sections primarily with whitespace. A thin rule may clarify a list or boundary, but every section does not need a box.
 - The homepage begins with a concise introduction, not a full-viewport hero. Its heading follows the same quiet scale as other page titles.
@@ -232,7 +238,7 @@ Tags and active filters may use compact pills. Keep them subordinate to titles a
 
 ### Articles, code, and mathematics
 
-Article prose owns the narrow reading measure. Headings, lists, quotations, tables, images, KaTeX, and code should share a consistent vertical rhythm. Code blocks may scroll horizontally rather than compressing or wrapping code unexpectedly. Syntax color must remain legible in both themes and must not make plain text look disabled.
+Article prose owns the narrow reading measure. Peer content blocks use {spacing.content-block-gap}; heading-to-first-content spacing uses {spacing.heading-content-gap}; subsections use {spacing.subsection-gap}; and major sections use {spacing.section-gap}. Apply these as one-direction gaps between elements rather than paired top and bottom margins. This keeps a heading visibly attached to its first paragraph, code block, mathematical expression, image, or other content while giving separate body blocks more breathing room. Code blocks may scroll horizontally rather than compressing or wrapping code unexpectedly. Syntax color must remain legible in both themes and must not make plain text look disabled.
 
 ### Forms and comments
 
