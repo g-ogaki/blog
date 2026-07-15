@@ -36,6 +36,7 @@ preferences before paint; system mode leaves the attribute unset and uses
 `prefers-color-scheme`. Theme choice is the only site-shell behavior that
 requires client-side JavaScript.
 
-Both palettes share the same warm editorial visual language, accessible focus
-styles, responsive breakpoints, and reduced-motion handling. Post content and
-navigation remain available when scripts fail.
+Both palettes follow the visual language and accessibility constraints in the
+root [`DESIGN.md`](../DESIGN.md), including accessible focus styles, responsive
+behavior, and reduced-motion handling. Post content and navigation remain
+available when scripts fail.
