@@ -251,8 +251,9 @@ Use motion only to clarify direct feedback. Color and border transitions use Tai
 - **Do** preserve semantic HTML, logical heading order, keyboard navigation, visible focus, and useful interfaces without client-side JavaScript where the architecture requires it.
 - **Do** verify contrast in both themes and in hover, focus, selected, disabled, success, and error states.
 - **Do** create hierarchy with spacing and weight before increasing font size.
+- **Do** keep the light-mode page background neutral and near-white: use Zinc 50, with white reserved for genuinely raised or editable surfaces.
 - **Don't** use an oversized hero, display headline, decorative orbit, or full-viewport introductory composition.
-- **Don't** add mascots, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion.
+- **Don't** add mascots, emoji as interface decoration, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion.
 - **Don't** turn ordinary sections, post rows, or comments into floating cards.
 - **Don't** use uppercase, wide tracking, or monospace merely to make metadata look technical.
 - **Don't** use Blue as decoration; its scarcity communicates interactivity and state.
