@@ -29,8 +29,9 @@ fictional host `notebook`, the working directory `~/about`, and the launched
 program `moni`. On ordinary motion preferences, the command in
 `guest@notebook:~/about$ moni` is typed first. The macOS-style title changes from
 `about — zsh` to `about — moni`, then the startup banner appears within space
-already reserved for it. The title bar uses three noninteractive traffic-light
-placeholders and one folder icon; these remain local to this terminal. The banner
+already reserved for it. The title bar uses three noninteractive red, amber, and
+green traffic-light circles in macOS order plus one folder icon; these remain
+decorative and local to this terminal. The banner
 contains a small neutral pixel-art cat, the program version, and the site domain
 without a professional title. Each prepared question is subsequently typed into
 the fixed input row,

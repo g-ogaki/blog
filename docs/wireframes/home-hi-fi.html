@@ -288,7 +288,9 @@
 		}
 		.profile-portrait {
 			width: 9rem;
+			height: 9rem;
 			aspect-ratio: 1;
+			flex: 0 0 9rem;
 			object-fit: cover;
 			border: 1px solid var(--border);
 			border-radius: 9999px;
@@ -351,10 +353,12 @@
 		.window-control {
 			width: 0.75rem;
 			aspect-ratio: 1;
-			border: 1px solid var(--control-border);
+			border: 1px solid rgb(0 0 0 / 0.16);
 			border-radius: 9999px;
-			background: var(--surface-subtle);
 		}
+		.window-control:nth-child(1) { background: #ff5f57; }
+		.window-control:nth-child(2) { background: #febc2e; }
+		.window-control:nth-child(3) { background: #28c840; }
 		.window-title { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 0.5rem; }
 		.window-title svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
 		.window-title-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -447,6 +451,7 @@
 			background: currentColor;
 			animation: none;
 		}
+		.terminal-cursor[hidden] { display: none !important; }
 		.terminal-input.is-typing .terminal-cursor { animation: cursor-blink 800ms steps(1, end) infinite; }
 		@keyframes cursor-blink { 50% { opacity: 0; } }
 		@keyframes terminal-banner-pop {
