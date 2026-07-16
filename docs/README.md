@@ -42,3 +42,6 @@ Other documents should link to the canonical document instead of duplicating its
 - [`wireframes/blog-list-hi-fi.html`](wireframes/blog-list-hi-fi.html) —
   standalone high-fidelity application of the approved blog archive layout and
   visual design system.
+- [`wireframes/home.html`](wireframes/home.html) — standalone low-fidelity
+  layout and motion study for the responsive profile interview and recent-posts
+  sections on the homepage.

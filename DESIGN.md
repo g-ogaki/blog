@@ -189,7 +189,7 @@ All normal text must meet WCAG 2.2 AA contrast of at least 4.5:1, and large text
 
 ## Typography
 
-Use the system sans-serif stack for headings and prose. It uses the reader's native UI fonts, including the operating system's Japanese font, avoids an external font request, and keeps the site contemporary without imposing a decorative voice. Use the system monospace stack only for code and genuinely technical metadata.
+Use the system sans-serif stack for headings and prose. It uses the reader's native UI fonts, including the operating system's Japanese font, avoids an external font request, and keeps the site contemporary without imposing a decorative voice. Use the system monospace stack only for code and genuinely technical metadata. The homepage interview may also use it for terminal chrome, its launch command, prompts, typed input, and cursor because those elements implement a terminal interaction; keep the Japanese response prose in the system sans-serif stack.
 
 The hierarchy is intentionally modest. A heading's purpose is navigation, not promotion.
 
@@ -211,7 +211,7 @@ The layout is a restrained, mobile-first editorial column. The article is the pr
 - Express vertical rhythm as the space between adjacent elements, normally with one-direction block-start spacing. Do not assign large top and bottom margins to every element, because margin collapsing and combined margins make the rhythm unpredictable.
 - Use `px-4` page gutters on small screens and `px-6` from the appropriate responsive breakpoint. Do not shrink the reading column to create decorative empty rails.
 - Separate sections primarily with whitespace. A thin rule may clarify a list or boundary, but every section does not need a box.
-- The homepage begins with a concise introduction, not a full-viewport hero. Its heading follows the same quiet scale as other page titles.
+- The homepage begins with a concise introduction, not a full-viewport hero. Its heading follows the same quiet scale as other page titles. Constrain its main content to Tailwind `max-w-6xl`; keep the shared site shell at `max-w-7xl`. On wide screens, divide the profile and interview at approximately one-third and two-thirds before stacking them at the responsive breakpoint.
 - Archive and search controls may use a wider layout, but their reading order and useful static fallback remain obvious at every breakpoint.
 
 ## Elevation & Depth
@@ -274,7 +274,7 @@ Inputs use a persistent neutral border, a visible label, and a clear Blue focus 
 
 Every keyboard-operable element has a visible focus indicator with at least a 2px ring and separation from the element where needed. Aim for `44px` targets; where inline links cannot meet that size, ensure adequate spacing and avoid tightly packed competing targets.
 
-Use motion only to clarify direct feedback. Color and border transitions use Tailwind `duration-150` with a standard easing. Do not animate page entry, scrolling, layout, or reading content. Under `prefers-reduced-motion: reduce`, remove nonessential transitions and disable smooth scrolling.
+Use motion primarily to clarify direct feedback. Color and border transitions use Tailwind `duration-150` with a standard easing. The homepage conversational self-introduction is the sole automatic narrative-motion exception: it may type the `moni` launch command, reveal the startup banner within space already reserved for it, type each question into the fixed terminal input, submit it as a `>` prompt, and stream the prepared response once. The sequence must not move the outer layout, must not loop, and must not expose incremental text as an assertive live announcement. Its complete transcript remains available semantically throughout. The cursor may blink only while input is actively being typed and becomes static at the final idle prompt. Do not otherwise animate page entry, scrolling, layout, or reading content. Under `prefers-reduced-motion: reduce`, remove nonessential transitions, disable smooth scrolling, and show the completed homepage conversation without playback.
 
 ## Do's and Don'ts
 
@@ -285,7 +285,7 @@ Use motion only to clarify direct feedback. Color and border transitions use Tai
 - **Do** create hierarchy with spacing and weight before increasing font size.
 - **Do** keep the light-mode page background neutral and near-white: use Zinc 50, with white reserved for genuinely raised or editable surfaces.
 - **Don't** use an oversized hero, display headline, decorative orbit, or full-viewport introductory composition.
-- **Don't** add mascots, emoji as interface decoration, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion.
+- **Don't** add mascots, emoji as interface decoration, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion. The homepage terminal alone may contain one small pixel-style representation of moni in its startup banner and restrained macOS window chrome comprising three noninteractive traffic-light circles and one folder icon. Do not reuse these elements as the wordmark, a global mascot, article decoration, navigation icons, or functional window controls.
 - **Don't** turn ordinary sections, post rows, or comments into floating cards.
 - **Don't** use uppercase, wide tracking, or monospace merely to make metadata look technical.
 - **Don't** use Blue as decoration; its scarcity communicates interactivity and state.
