@@ -24,8 +24,9 @@ are unavailable.
 
 ## Dates
 
-Visible post dates use Japanese formatting with the `Asia/Tokyo` timezone. The
-machine-readable `datetime` attribute retains the source `YYYY-MM-DD` value.
+Visible post and comment dates use `YYYY.MM.DD` formatting with the
+`Asia/Tokyo` timezone. The machine-readable `datetime` attribute retains the
+source date or timestamp value.
 
 ## Themes
 

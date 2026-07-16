@@ -9,19 +9,21 @@ colors:
   light-surface: "oklch(98.5% 0 0)"
   light-surface-raised: "#ffffff"
   light-surface-subtle: "oklch(96.7% 0.001 286.375)"
-  light-text: "oklch(21% 0.006 285.885)"
+  light-text: "oklch(37% 0.013 285.805)"
   light-text-muted: "oklch(44.2% 0.017 285.786)"
   light-border: "oklch(87.1% 0.006 286.286)"
+  light-control-border: "oklch(55.2% 0.016 285.938)"
   light-focus: "oklch(54.6% 0.245 262.881)"
   dark-primary: "oklch(70.7% 0.165 254.624)"
   dark-primary-hover: "oklch(80.9% 0.105 251.813)"
   dark-on-primary: "oklch(14.1% 0.005 285.823)"
-  dark-surface: "oklch(14.1% 0.005 285.823)"
-  dark-surface-raised: "oklch(21% 0.006 285.885)"
-  dark-surface-subtle: "oklch(27.4% 0.006 286.033)"
-  dark-text: "oklch(96.7% 0.001 286.375)"
+  dark-surface: "oklch(21% 0.006 285.885)"
+  dark-surface-raised: "oklch(27.4% 0.006 286.033)"
+  dark-surface-subtle: "oklch(37% 0.013 285.805)"
+  dark-text: "oklch(87.1% 0.006 286.286)"
   dark-text-muted: "oklch(70.5% 0.015 286.067)"
   dark-border: "oklch(37% 0.013 285.805)"
+  dark-control-border: "oklch(55.2% 0.016 285.938)"
   dark-focus: "oklch(70.7% 0.165 254.624)"
 typography:
   page-title:
@@ -45,7 +47,7 @@ typography:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: 1.125rem
     fontWeight: 400
-    lineHeight: 1.75
+    lineHeight: 2
   body:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: 1rem
@@ -85,7 +87,8 @@ spacing:
   shell-max: 80rem
   gutter-mobile: 1rem
   gutter-desktop: 1.5rem
-  content-block-gap: 2.25rem
+  flow-content-gap: 2.25rem
+  detached-content-gap: 3rem
   heading-content-gap: 1.5rem
   subsection-gap: 3rem
   section-gap: 4rem
@@ -145,7 +148,7 @@ components:
     rounded: "{rounded.full}"
     padding: 0.5rem
   tag-dark:
-    backgroundColor: "{colors.dark-surface-subtle}"
+    backgroundColor: "{colors.dark-surface-raised}"
     textColor: "{colors.dark-text-muted}"
     typography: "{typography.body-small}"
     rounded: "{rounded.full}"
@@ -167,8 +170,8 @@ Tailwind CSS defaults are the baseline. Use its standard spacing, type-size, bre
 The palette uses Tailwind's Zinc neutrals with Blue as its only interactive accent. Semantic application tokens should map to these values so that components describe roles such as surface, text, border, and action rather than naming raw colors.
 
 - **Light surfaces** use Zinc 50 for the page, white for a genuinely raised or editable surface, and Zinc 100 for subtle grouping. Pure white should not become a field of unnecessary cards.
-- **Dark surfaces** use Zinc 950 for the page, Zinc 900 for raised surfaces, and Zinc 800 for subtle grouping. Do not use absolute black.
-- **Primary text** uses Zinc 900 in light mode and Zinc 100 in dark mode. Long-form text should meet WCAG AAA whenever practical.
+- **Dark surfaces** use Zinc 900 for the page, Zinc 800 for raised surfaces, and Zinc 700 for subtle grouping. This produces a softer dark canvas without approaching absolute black.
+- **Primary text** uses Zinc 700 in light mode and Zinc 300 in dark mode. Both article pairings are intentionally milder than near-black on near-white or near-white on near-black while remaining comfortably within WCAG AAA.
 - **Muted text** uses Zinc 600 in light mode and Zinc 400 in dark mode. Muted text is still readable text, never a decorative gray.
 - **Blue** is reserved for links, focus, selected controls, and meaningful actions. Use Blue 700 in light mode and Blue 400 in dark mode so interactive text remains distinguishable on its surface.
 - **Borders** use Zinc 300 in light mode and Zinc 700 in dark mode. Borders organize information quietly; they are not decoration.
@@ -195,7 +198,7 @@ The layout is a restrained, mobile-first editorial column. The article is the pr
 
 - Limit reading content to approximately 65–70 characters per line, represented by the Tailwind `max-w-3xl` default. Code blocks, tables, archives, and the site shell may use wider containers up to `max-w-7xl` when their content needs it.
 - Use the Tailwind spacing scale and its 4px base unit. Keep component interiors, metadata, tags, forms, and closely related controls compact with `2` through `6`; component padding commonly uses `3` or `4`.
-- Long-form content uses a more generous editorial rhythm. Peer content blocks—including paragraphs, code, mathematics, images, link cards, lists, and quotations—are separated by `9` ({spacing.content-block-gap}). Headings sit `6` ({spacing.heading-content-gap}) from their first content block; subsections begin after `12` ({spacing.subsection-gap}); and major article or page sections begin after `16` ({spacing.section-gap}).
+- Long-form content distinguishes the written flow from detached supporting material. Paragraphs, quotations, lists, and mathematics use `9` ({spacing.flow-content-gap}). Code blocks, images, and link cards sit outside the sentence flow and use `12` ({spacing.detached-content-gap}) on both sides. Headings sit `6` ({spacing.heading-content-gap}) from their first content block; subsections begin after `12` ({spacing.subsection-gap}); and major article or page sections begin after `16` ({spacing.section-gap}).
 - Express vertical rhythm as the space between adjacent elements, normally with one-direction block-start spacing. Do not assign large top and bottom margins to every element, because margin collapsing and combined margins make the rhythm unpredictable.
 - Use `px-4` page gutters on small screens and `px-6` from the appropriate responsive breakpoint. Do not shrink the reading column to create decorative empty rails.
 - Separate sections primarily with whitespace. A thin rule may clarify a list or boundary, but every section does not need a box.
@@ -220,9 +223,19 @@ Use `rounded-full` only for tags, compact segmented controls, avatars if they ar
 
 ### Site shell
 
-Use the text wordmark **moni's page** without a mascot, emblem, or ornamental logo mark. The header is compact and clearly separates branding, primary navigation, and theme choice. A subtle border is preferred to a shadow or translucent blur. On narrow screens, controls may wrap or simplify without hiding the core navigation.
+Use the text wordmark **moni's page** without a mascot, emblem, or ornamental logo mark. The header is compact and clearly separates branding, primary navigation, search, language choice, and theme choice. After the wordmark, its control order is Home, Blog, Search, Language, then Theme. A subtle border is preferred to a shadow or translucent blur. At `36rem` and below, use a two-row grid: wordmark and primary navigation on the first row, then the flexible search field and language/theme controls on the second. Keep every control visible, preserve DOM and keyboard order, and do not introduce a hamburger menu for this small navigation set.
 
-The theme control supports light, dark, and system preferences. Its selected state uses shape, fill, and an accessible text or icon cue—not color alone.
+Use neutral navigation treatments in the site shell. The current primary-navigation item uses a quiet Zinc tonal background, `rounded-md`, neutral text, and semantic `aria-current`; do not mark it with a persistent Blue underline. In breadcrumbs, linked ancestors use neutral medium-weight text without a persistent underline, while the current-page label remains plain muted text. A subtle tonal hover or focus background provides additional affordance without making navigation look promotional.
+
+Footer navigation uses the same neutral link treatment as breadcrumbs: medium-weight neutral text, no persistent underline, and a subtle tonal hover or focus background. Keep the footer compact and center-aligned, with X (Twitter), GitHub, and Feed on the first row and the concise copyright `© YYYY moni` beneath it.
+
+The header search is a compact, persistently visible search field that submits to the static Pagefind archive URL contract. Give it an accessible label in addition to its placeholder, a neutral control border, and a search icon that does not replace text semantics. The language control uses a compact globe-icon trigger and a labeled menu with explicit language names; communicate the current and unavailable states in text and accessibility attributes. Icon-only triggers retain a minimum `44px` target and an accessible name.
+
+The theme control uses one compact sun-or-moon icon button that opens a labeled menu for light, dark, and system preferences. The icon reflects the effective light or dark appearance; the menu exposes all three choices as text. Its selected state uses fill, weight, and an explicit text cue—not color alone. The trigger and menu follow standard keyboard behavior, close on Escape or outside interaction, and return focus predictably.
+
+### Dates and metadata
+
+Visible dates use the quiet numeric `YYYY.MM.DD` format throughout articles and comments. Preserve the source date or timestamp in the semantic `datetime` attribute, and interpret timestamps in `Asia/Tokyo` before formatting. Do not show the author on article pages because the site has one obvious author.
 
 ### Links and buttons
 
@@ -238,11 +251,13 @@ Tags and active filters may use compact pills. Keep them subordinate to titles a
 
 ### Articles, code, and mathematics
 
-Article prose owns the narrow reading measure. Peer content blocks use {spacing.content-block-gap}; heading-to-first-content spacing uses {spacing.heading-content-gap}; subsections use {spacing.subsection-gap}; and major sections use {spacing.section-gap}. Apply these as one-direction gaps between elements rather than paired top and bottom margins. This keeps a heading visibly attached to its first paragraph, code block, mathematical expression, image, or other content while giving separate body blocks more breathing room. Code blocks may scroll horizontally rather than compressing or wrapping code unexpectedly. Syntax color must remain legible in both themes and must not make plain text look disabled.
+Article prose owns the narrow reading measure. Content within the written flow uses {spacing.flow-content-gap}; detached supporting material uses {spacing.detached-content-gap}; heading-to-first-content spacing uses {spacing.heading-content-gap}; subsections use {spacing.subsection-gap}; and major sections use {spacing.section-gap}. Apply these as one-direction gaps between elements rather than paired top and bottom margins. This keeps headings attached to their first content and separates code, images, and link cards without fragmenting prose, quotations, lists, or mathematics.
+
+Treat mathematics as part of the article's language, not as a separate interface component. Display equations may be centered and may scroll horizontally when necessary, but do not add a background, border, radius, shadow, or card-like padding solely because the content is mathematical. Code blocks may scroll horizontally rather than compressing or wrapping code unexpectedly. Syntax color must remain legible in both themes and must not make plain text look disabled.
 
 ### Forms and comments
 
-Inputs use a persistent border, a visible label, and a clear focus ring. Placeholder text is supplementary and never replaces a label. Validation messages explain the problem in text and associate it with the relevant control. Comment content remains visually part of the article flow rather than resembling a social-media feed.
+Inputs use a persistent neutral border, a visible label, and a clear Blue focus ring. Control boundaries use Zinc 500 in both themes ({colors.light-control-border} and {colors.dark-control-border}); this is quieter than using the text color while retaining at least 3:1 contrast against editable surfaces. Placeholder text is supplementary and never replaces a label. Validation messages explain the problem in text and associate it with the relevant control. Comment content remains visually part of the article flow rather than resembling a social-media feed.
 
 ### Focus, targets, and motion
 

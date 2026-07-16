@@ -32,3 +32,6 @@ Other documents should link to the canonical document instead of duplicating its
 - [`wireframes/blog-entry.html`](wireframes/blog-entry.html) — standalone
   low-fidelity layout study for the blog entry page. `DESIGN.md` remains the
   canonical visual source of truth.
+- [`wireframes/blog-entry-hi-fi.html`](wireframes/blog-entry-hi-fi.html) —
+  standalone high-fidelity application of the approved blog entry layout and
+  visual design system.
