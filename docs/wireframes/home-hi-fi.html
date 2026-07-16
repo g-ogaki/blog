@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Quiet Technical Journalデザインシステムに基づくトップページの高精細プロトタイプ。">
+	<title>moni's page</title>
+	<script>
+		(function () {
+			try {
+				var theme = localStorage.getItem("theme");
+				if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+			} catch (error) {}
+		})();
+	</script>
+	<style>
+		:root {
+			--surface: oklch(98.5% 0 0);
+			--surface-raised: #ffffff;
+			--surface-subtle: oklch(96.7% 0.001 286.375);
+			--hover-surface: oklch(92% 0.004 286.32);
+			--selected-surface: oklch(92% 0.004 286.32);
+			--text: oklch(37% 0.013 285.805);
+			--text-muted: oklch(44.2% 0.017 285.786);
+			--text-subtle: oklch(55.2% 0.016 285.938);
+			--border: oklch(87.1% 0.006 286.286);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(0.52 0.21 261.44);
+			--action-hover: oklch(0.46 0.21 261.44);
+			--focus: oklch(0.52 0.21 261.44);
+			--terminal-chrome: oklch(96.7% 0.001 286.375);
+			--terminal-code: oklch(37% 0.013 285.805);
+			--terminal-cat: oklch(44.2% 0.017 285.786);
+			--shell-width: 80rem;
+			--homepage-width: 72rem;
+			color-scheme: light;
+		}
+
+		:root[data-theme="dark"] {
+			--surface: oklch(21% 0.006 285.885);
+			--surface-raised: oklch(27.4% 0.006 286.033);
+			--surface-subtle: oklch(37% 0.013 285.805);
+			--hover-surface: oklch(27.4% 0.006 286.033);
+			--selected-surface: oklch(27.4% 0.006 286.033);
+			--text: oklch(87.1% 0.006 286.286);
+			--text-muted: oklch(70.5% 0.015 286.067);
+			--text-subtle: oklch(70.5% 0.015 286.067);
+			--border: oklch(37% 0.013 285.805);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(70.7% 0.165 254.624);
+			--action-hover: oklch(80.9% 0.105 251.813);
+			--focus: oklch(70.7% 0.165 254.624);
+			--terminal-chrome: oklch(23.5% 0.006 285.885);
+			--terminal-code: oklch(87.1% 0.006 286.286);
+			--terminal-cat: oklch(70.5% 0.015 286.067);
+			color-scheme: dark;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--surface: oklch(21% 0.006 285.885);
+				--surface-raised: oklch(27.4% 0.006 286.033);
+				--surface-subtle: oklch(37% 0.013 285.805);
+				--hover-surface: oklch(27.4% 0.006 286.033);
+				--selected-surface: oklch(27.4% 0.006 286.033);
+				--text: oklch(87.1% 0.006 286.286);
+				--text-muted: oklch(70.5% 0.015 286.067);
+				--text-subtle: oklch(70.5% 0.015 286.067);
+				--border: oklch(37% 0.013 285.805);
+				--control-border: oklch(55.2% 0.016 285.938);
+				--action: oklch(70.7% 0.165 254.624);
+				--action-hover: oklch(80.9% 0.105 251.813);
+				--focus: oklch(70.7% 0.165 254.624);
+				--terminal-chrome: oklch(23.5% 0.006 285.885);
+				--terminal-code: oklch(87.1% 0.006 286.286);
+				--terminal-cat: oklch(70.5% 0.015 286.067);
+				color-scheme: dark;
+			}
+		}
+
+		* { box-sizing: border-box; }
+		html { scroll-behavior: auto; }
+		body {
+			margin: 0;
+			background: var(--surface);
+			color: var(--text);
+			font-family: ui-sans-serif, system-ui, sans-serif;
+			font-size: 1rem;
+			line-height: 1.5;
+			text-rendering: optimizeLegibility;
+		}
+		a { color: inherit; }
+		button, input { font: inherit; }
+		button { color: inherit; }
+		img, svg { display: block; }
+		a:focus-visible, button:focus-visible, input:focus-visible {
+			outline: 2px solid var(--focus);
+			outline-offset: 3px;
+		}
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+		.shell {
+			width: min(calc(100% - 3rem), var(--shell-width));
+			margin-inline: auto;
+		}
+		.skip-link {
+			position: fixed;
+			top: 0.75rem;
+			left: 0.75rem;
+			z-index: 100;
+			padding: 0.75rem 1rem;
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			transform: translateY(-200%);
+		}
+		.skip-link:focus { transform: translateY(0); }
+
+		.site-header {
+			border-bottom: 1px solid var(--border);
+			background: var(--surface);
+		}
+		.site-header__inner {
+			display: flex;
+			min-height: 4rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+		.wordmark {
+			font-weight: 600;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+		.header-actions, .primary-nav ul, .header-utilities {
+			display: flex;
+			align-items: center;
+		}
+		.header-actions { min-width: 0; gap: 1.5rem; }
+		.primary-nav ul, .profile-socials, .recent-list, .terminal-transcript, .site-footer ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.primary-nav ul { gap: 0.5rem; }
+		.primary-nav a {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+		}
+		.primary-nav a:hover { background: var(--hover-surface); }
+		.primary-nav a[aria-current="page"] {
+			background: var(--selected-surface);
+			color: var(--action);
+			font-weight: 600;
+		}
+		.header-search {
+			position: relative;
+			width: 14rem;
+			min-width: 8rem;
+		}
+		.header-search svg {
+			position: absolute;
+			top: 50%;
+			left: 0.75rem;
+			width: 1rem;
+			height: 1rem;
+			color: var(--text-muted);
+			stroke-width: 1.75;
+			transform: translateY(-50%);
+			pointer-events: none;
+		}
+		.header-search input {
+			width: 100%;
+			height: 2.75rem;
+			padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			color: var(--text);
+		}
+		.header-search input::placeholder { color: var(--text-subtle); }
+		.header-utilities { gap: 0.5rem; }
+		.language-control, .theme-control { position: relative; }
+		.language-trigger, .theme-trigger {
+			display: grid;
+			width: 2.75rem;
+			height: 2.75rem;
+			place-items: center;
+			padding: 0;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			cursor: pointer;
+		}
+		.language-trigger:hover, .theme-trigger:hover,
+		.language-trigger[aria-expanded="true"], .theme-trigger[aria-expanded="true"] {
+			background: var(--hover-surface);
+		}
+		.language-trigger svg, .theme-trigger svg {
+			width: 1.2rem;
+			height: 1.2rem;
+			stroke: currentColor;
+			stroke-width: 1.75;
+		}
+		.theme-icon--moon { display: none; }
+		:root[data-theme="dark"] .theme-icon--sun { display: none; }
+		:root[data-theme="dark"] .theme-icon--moon { display: block; }
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) .theme-icon--sun { display: none; }
+			:root:not([data-theme="light"]) .theme-icon--moon { display: block; }
+		}
+		.language-menu, .theme-menu {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			z-index: 30;
+			width: max-content;
+			min-width: 12rem;
+			padding: 0.375rem;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+		}
+		.language-menu[hidden], .theme-menu[hidden] { display: none; }
+		.language-menu button, .theme-menu button {
+			display: flex;
+			width: 100%;
+			min-height: 2.75rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding: 0.625rem 0.75rem;
+			border: 0;
+			border-radius: 0.25rem;
+			background: transparent;
+			font-size: 0.875rem;
+			text-align: left;
+			cursor: pointer;
+		}
+		.language-menu button:hover:not([aria-disabled="true"]), .theme-menu button:hover,
+		.language-menu button:focus-visible, .theme-menu button:focus-visible { background: var(--hover-surface); }
+		.language-menu button[aria-checked="true"], .theme-menu button[aria-checked="true"] {
+			background: var(--selected-surface);
+			color: var(--action);
+			font-weight: 600;
+		}
+		.language-menu button[aria-disabled="true"] { color: var(--text-subtle); cursor: not-allowed; }
+		.language-state, .language-availability, .theme-state { color: var(--text-muted); font-size: 0.75rem; font-weight: 400; }
+		.language-menu button[aria-checked="false"] .language-state,
+		.theme-menu button[aria-checked="false"] .theme-state { display: none; }
+
+		.home-main {
+			max-width: var(--homepage-width);
+			padding-block: 4rem 6rem;
+		}
+		.about-layout {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+			align-items: stretch;
+			gap: 3rem;
+		}
+		.profile-panel, .chat-window {
+			border: 1px solid var(--border);
+			border-radius: 0.5rem;
+			background: var(--surface-raised);
+		}
+		.profile-panel {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			padding: 2rem;
+			text-align: center;
+		}
+		.profile-portrait {
+			width: 9rem;
+			aspect-ratio: 1;
+			object-fit: cover;
+			border: 1px solid var(--border);
+			border-radius: 9999px;
+		}
+		.profile-panel h1 {
+			margin: 2rem 0 0;
+			font-size: clamp(2rem, 4vw, 2.25rem);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+		}
+		.profile-purpose {
+			width: 100%;
+			margin: 2rem 0 0;
+			padding-top: 2rem;
+			border-top: 1px solid var(--border);
+			color: var(--text-muted);
+			text-align: left;
+		}
+		.profile-socials {
+			display: flex;
+			gap: 0.75rem;
+			margin-top: auto;
+			padding-top: 2rem;
+		}
+		.profile-socials a {
+			display: grid;
+			width: 2.75rem;
+			height: 2.75rem;
+			place-items: center;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-subtle);
+			text-decoration: none;
+		}
+		.profile-socials a:hover { background: var(--hover-surface); }
+		.profile-socials svg { width: 1.2rem; height: 1.2rem; }
+
+		.chat-window {
+			display: flex;
+			height: 32rem;
+			min-width: 0;
+			flex-direction: column;
+			overflow: hidden;
+		}
+		.window-titlebar {
+			display: grid;
+			grid-template-columns: 3rem minmax(0, 1fr) 3rem;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.875rem 1.25rem;
+			border-bottom: 1px solid var(--border);
+			background: var(--terminal-chrome);
+			color: var(--text-muted);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.75rem;
+			font-weight: 500;
+		}
+		.window-controls { display: flex; gap: 0.375rem; }
+		.window-control {
+			width: 0.75rem;
+			aspect-ratio: 1;
+			border: 1px solid var(--control-border);
+			border-radius: 9999px;
+			background: var(--surface-subtle);
+		}
+		.window-title { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 0.5rem; }
+		.window-title svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+		.window-title-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.chat-stage {
+			min-height: 0;
+			flex: 1;
+			overflow-y: auto;
+			padding: 1.5rem;
+			scrollbar-gutter: stable;
+		}
+		.terminal-launch {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			margin-bottom: 1.5rem;
+			color: var(--terminal-code);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		}
+		.terminal-launch code { font: inherit; font-weight: 600; }
+		.terminal-launch.is-typing .terminal-cursor { animation: cursor-blink 800ms steps(1, end) infinite; }
+		.terminal-banner {
+			display: grid;
+			grid-template-columns: 5rem minmax(0, 1fr);
+			align-items: center;
+			gap: 1.5rem;
+			padding-bottom: 1.5rem;
+			border-bottom: 1px solid var(--border);
+		}
+		.terminal-banner.is-pending { visibility: hidden; opacity: 0; }
+		.terminal-banner.is-popping { animation: terminal-banner-pop 180ms ease-out both; }
+		.pixel-cat {
+			display: grid;
+			width: 5rem;
+			aspect-ratio: 1;
+			place-items: center;
+			color: var(--terminal-cat);
+		}
+		.pixel-cat svg { width: 4.5rem; height: 4.5rem; }
+		.pixel-cat .cat-mid { fill: var(--text-muted); }
+		.pixel-cat .cat-dark { fill: var(--text); }
+		.terminal-banner-copy {
+			display: grid;
+			gap: 0.25rem;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		}
+		.terminal-banner-copy strong { color: var(--terminal-code); font-size: 1rem; font-weight: 600; }
+		.terminal-banner-copy span { color: var(--text-muted); font-size: 0.875rem; }
+		.terminal-transcript { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
+		.terminal-turn { display: grid; gap: 0.75rem; }
+		.terminal-submission, .terminal-input {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.75rem;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		}
+		.terminal-prompt, .terminal-output-marker {
+			flex: 0 0 auto;
+			color: var(--action);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-weight: 600;
+		}
+		.terminal-question { margin: 0; font: inherit; overflow-wrap: anywhere; }
+		.terminal-output {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr);
+			gap: 0.75rem;
+			padding-left: 1.5rem;
+		}
+		.terminal-output p { margin: 0; }
+		.terminal-output-copy { display: grid; min-width: 0; font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.75; }
+		.terminal-output-copy .terminal-measure, .terminal-output-copy .terminal-stream { grid-area: 1 / 1; }
+		.terminal-measure { visibility: hidden; }
+		.animated-transcript .terminal-turn, .animated-transcript .terminal-output { display: none; }
+		.animated-transcript .terminal-turn.is-revealed { display: grid; }
+		.animated-transcript .terminal-output.is-revealed { display: grid; }
+		.terminal-input {
+			min-height: 3.25rem;
+			align-items: center;
+			padding: 0.875rem 1.5rem;
+			border-top: 1px solid var(--border);
+			color: var(--action);
+		}
+		.terminal-input-text { min-width: 0; color: var(--terminal-code); overflow-wrap: anywhere; }
+		.terminal-cursor {
+			display: inline-block;
+			width: 1px;
+			height: 1.1em;
+			margin-left: 0.2rem;
+			vertical-align: -0.15em;
+			background: currentColor;
+			animation: none;
+		}
+		.terminal-input.is-typing .terminal-cursor { animation: cursor-blink 800ms steps(1, end) infinite; }
+		@keyframes cursor-blink { 50% { opacity: 0; } }
+		@keyframes terminal-banner-pop {
+			from { opacity: 0; transform: scale(0.98); }
+			to { opacity: 1; transform: scale(1); }
+		}
+
+		.recent-section { margin-top: 4rem; }
+		.section-heading {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 2rem;
+			margin-bottom: 2rem;
+		}
+		.section-heading h2 { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.333; }
+		.section-heading a {
+			padding: 0.5rem;
+			border-radius: 0.25rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+		}
+		.section-heading a:hover { background: var(--hover-surface); }
+		.recent-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: start;
+			gap: 3rem;
+		}
+		.featured-post, .recent-post { margin: 0; }
+		.featured-post > a, .recent-post > a { border-radius: 0.375rem; color: inherit; text-decoration: none; }
+		.featured-post > a { display: block; padding: 1rem; margin: -1rem; }
+		.featured-post > a:hover, .recent-post > a:hover { background: var(--hover-surface); }
+		.post-media {
+			display: grid;
+			aspect-ratio: 16 / 9;
+			place-items: center;
+			overflow: hidden;
+			border: 1px solid var(--border);
+			border-radius: 0.5rem;
+			background: var(--surface-subtle);
+			color: var(--text-muted);
+		}
+		.post-media img { width: 100%; height: 100%; object-fit: cover; }
+		.post-media svg { width: 1.5rem; height: 1.5rem; stroke: currentColor; stroke-width: 1.5; }
+		.post-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			margin: 1rem 0 0;
+			color: var(--text-muted);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.75rem;
+		}
+		.featured-post h3, .recent-post h3 { margin: 0.75rem 0 0; font-weight: 600; line-height: 1.45; }
+		.featured-post h3 { font-size: 1.5rem; }
+		.featured-post > a:hover h3, .recent-post > a:hover h3 { color: var(--action-hover); }
+		.recent-list { display: grid; gap: 1.5rem; }
+		.recent-post > a {
+			display: grid;
+			grid-template-columns: 10rem minmax(0, 1fr);
+			align-items: center;
+			gap: 1rem;
+			padding: 0.75rem;
+			margin: -0.75rem;
+		}
+		.recent-post .post-meta { margin-top: 0.5rem; }
+
+		.site-footer { border-top: 1px solid var(--border); }
+		.site-footer__inner {
+			display: flex;
+			min-height: 7rem;
+			align-items: center;
+			flex-direction: column;
+			justify-content: center;
+			gap: 1rem;
+			text-align: center;
+		}
+		.site-footer ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1rem; }
+		.site-footer a { display: inline-flex; padding: 0.25rem; border-radius: 0.25rem; font-weight: 500; text-decoration: none; }
+		.site-footer a:hover { background: var(--hover-surface); }
+		.site-footer span { color: var(--text-muted); font-size: 0.875rem; }
+
+		@media (max-width: 48rem) {
+			.about-layout, .recent-grid { grid-template-columns: 1fr; }
+			.profile-panel { align-items: flex-start; text-align: left; }
+			.profile-socials { margin-top: 0; }
+		}
+		@media (max-width: 36rem) {
+			.shell { width: min(calc(100% - 2rem), var(--shell-width)); }
+			.site-header__inner {
+				display: grid;
+				grid-template-areas: "brand navigation" "search utilities";
+				grid-template-columns: minmax(0, 1fr) auto;
+				align-items: center;
+				gap: 0.75rem;
+				padding-block: 1rem;
+			}
+			.wordmark { grid-area: brand; }
+			.header-actions { display: contents; }
+			.primary-nav { grid-area: navigation; justify-self: end; }
+			.primary-nav ul { gap: 0.25rem; }
+			.header-search { grid-area: search; width: 100%; min-width: 0; }
+			.header-utilities { grid-area: utilities; justify-self: end; }
+			.language-menu, .theme-menu { position: fixed; top: auto; right: 1rem; left: 1rem; }
+			.home-main { padding-block: 2rem 4rem; }
+			.about-layout { gap: 2rem; }
+			.profile-panel, .chat-stage { padding: 1rem; }
+			.profile-panel { align-items: center; text-align: center; }
+			.profile-purpose { text-align: left; }
+			.window-titlebar { padding-inline: 1rem; }
+			.terminal-output { padding-left: 0.75rem; }
+			.terminal-banner { grid-template-columns: 4rem minmax(0, 1fr); gap: 1rem; }
+			.pixel-cat { width: 4rem; }
+			.pixel-cat svg { width: 3.75rem; height: 3.75rem; }
+			.terminal-input { padding-inline: 1rem; }
+			.section-heading { align-items: flex-start; flex-direction: column; gap: 0.75rem; }
+			.recent-post > a { grid-template-columns: 7rem minmax(0, 1fr); }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: 0.01ms !important;
+			}
+		}
+	</style>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">本文へ移動</a>
+
+	<header class="site-header">
+		<div class="shell site-header__inner">
+			<a class="wordmark" href="#">moni's page</a>
+			<div class="header-actions">
+				<nav class="primary-nav" aria-label="メインナビゲーション">
+					<ul><li><a aria-current="page" href="#">ホーム</a></li><li><a href="#">ブログ</a></li></ul>
+				</nav>
+				<form action="/blog" class="header-search" role="search">
+					<label class="sr-only" for="header-search-input">ブログを検索</label>
+					<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+					<input id="header-search-input" name="q" placeholder="検索" type="search">
+				</form>
+				<div class="header-utilities">
+					<div class="language-control">
+						<button aria-controls="language-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示言語を変更" class="language-trigger" id="language-trigger" type="button">
+							<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 3.75 5.5 3.75 9S14.5 18.5 12 21M12 3C9.5 5.5 8.25 8.5 8.25 12S9.5 18.5 12 21"></path></svg>
+						</button>
+						<div aria-labelledby="language-trigger" class="language-menu" hidden id="language-menu" role="menu">
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button"><span>日本語</span><span class="language-state">選択中</span></button>
+							<button aria-checked="false" aria-disabled="true" lang="en" role="menuitemradio" tabindex="-1" type="button"><span>English</span><span class="language-availability">準備中</span></button>
+						</div>
+					</div>
+					<div class="theme-control">
+						<button aria-controls="theme-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示テーマを変更" class="theme-trigger" id="theme-trigger" type="button">
+							<svg aria-hidden="true" class="theme-icon--sun" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+							<svg aria-hidden="true" class="theme-icon--moon" fill="none" viewBox="0 0 24 24"><path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"></path></svg>
+						</button>
+						<div aria-labelledby="theme-trigger" class="theme-menu" hidden id="theme-menu" role="menu">
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="light"><span>ライト</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="dark"><span>ダーク</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button" value="system"><span>システム</span><span class="theme-state">選択中</span></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="shell home-main" id="main-content">
+		<section aria-labelledby="profile-heading">
+			<div class="about-layout">
+				<div class="profile-panel">
+					<img alt="moni" class="profile-portrait" height="276" src="../../public/selfie.jpg" width="277">
+					<h1 id="profile-heading">moni</h1>
+					<p class="profile-purpose">勉強したことの備忘録や日常の出来事を記録しています。</p>
+					<ul class="profile-socials" aria-label="ソーシャルリンク">
+						<li><a href="#" aria-label="X (Twitter)"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l16 16M20 4L4 20"></path></svg></a></li>
+						<li><a href="#" aria-label="GitHub"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.7a9.3 9.3 0 00-2.94 18.12c.47.08.64-.2.64-.45v-1.8c-2.62.57-3.17-1.11-3.17-1.11-.43-1.09-1.04-1.38-1.04-1.38-.85-.58.06-.57.06-.57.94.07 1.44.97 1.44.97.84 1.43 2.19 1.02 2.73.78.08-.61.33-1.02.6-1.25-2.09-.24-4.29-1.05-4.29-4.65 0-1.03.37-1.87.97-2.53-.1-.24-.42-1.2.09-2.5 0 0 .79-.25 2.56.97A8.9 8.9 0 0112 6.98c.79 0 1.57.11 2.33.31 1.77-1.22 2.55-.97 2.55-.97.51 1.3.19 2.26.09 2.5.6.66.97 1.5.97 2.53 0 3.61-2.2 4.4-4.3 4.64.34.29.64.87.64 1.76v2.62c0 .25.17.54.65.45A9.3 9.3 0 0012 2.7z"></path></svg></a></li>
+					</ul>
+				</div>
+
+				<div class="chat-window" aria-label="moniの自己紹介インタビュー">
+					<div class="window-titlebar">
+						<span class="window-controls" aria-hidden="true"><span class="window-control"></span><span class="window-control"></span><span class="window-control"></span></span>
+						<span class="window-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 6.5h7l2 2h9v9.5H3z"></path></svg><span class="window-title-text" data-window-title>about — moni</span></span>
+						<span aria-hidden="true"></span>
+					</div>
+					<div class="chat-stage">
+						<div class="terminal-launch" data-terminal-launch><span>guest@notebook:~/about$</span><code data-launch-command>moni</code><span class="terminal-cursor" data-launch-cursor hidden></span></div>
+						<div class="terminal-banner" data-terminal-banner>
+							<div class="pixel-cat" aria-hidden="true">
+								<svg viewBox="0 0 16 16" shape-rendering="crispEdges"><g fill="currentColor"><rect x="2" y="2" width="3" height="3"></rect><rect x="11" y="2" width="3" height="3"></rect><rect x="3" y="4" width="10" height="8"></rect><rect x="5" y="12" width="6" height="2"></rect></g><g class="cat-mid"><rect x="4" y="6" width="2" height="2"></rect><rect x="10" y="6" width="2" height="2"></rect><rect x="7" y="9" width="2" height="1"></rect></g><g class="cat-dark"><rect x="5" y="6" width="1" height="1"></rect><rect x="10" y="6" width="1" height="1"></rect><rect x="6" y="10" width="1" height="1"></rect><rect x="9" y="10" width="1" height="1"></rect><rect x="1" y="9" width="3" height="1"></rect><rect x="12" y="9" width="3" height="1"></rect></g></svg>
+							</div>
+							<div class="terminal-banner-copy"><strong>moni v1.0.0</strong><span>monipy.org</span></div>
+						</div>
+
+						<div class="static-transcript" data-static-transcript>
+							<ol class="terminal-transcript">
+								<li class="terminal-turn"><div class="terminal-submission"><span class="terminal-prompt" aria-hidden="true">&gt;</span><p class="terminal-question">自己紹介してください。</p></div><div class="terminal-output"><span class="terminal-output-marker" aria-hidden="true">●</span><p>moniです。ソフトウェアエンジニアとして働きながら、興味を持ったことを学んでいます。</p></div></li>
+								<li class="terminal-turn"><div class="terminal-submission"><span class="terminal-prompt" aria-hidden="true">&gt;</span><p class="terminal-question">どんなことに興味がありますか？</p></div><div class="terminal-output"><span class="terminal-output-marker" aria-hidden="true">●</span><p>プログラミング、数学、投資、そして日々の暮らしに関心があります。</p></div></li>
+								<li class="terminal-turn"><div class="terminal-submission"><span class="terminal-prompt" aria-hidden="true">&gt;</span><p class="terminal-question">普段はどのように学んでいますか？</p></div><div class="terminal-output"><span class="terminal-output-marker" aria-hidden="true">●</span><p>気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。</p></div></li>
+							</ol>
+						</div>
+						<div class="animated-transcript" data-animated-transcript aria-hidden="true" hidden>
+							<ol class="terminal-transcript">
+								<li class="terminal-turn" data-turn="turn-1"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-1"></p></div><div class="terminal-output" data-output-row="turn-1"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">moniです。ソフトウェアエンジニアとして働きながら、興味を持ったことを学んでいます。</span><span class="terminal-stream" data-answer="turn-1"></span></span></div></li>
+								<li class="terminal-turn" data-turn="turn-2"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-2"></p></div><div class="terminal-output" data-output-row="turn-2"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">プログラミング、数学、投資、そして日々の暮らしに関心があります。</span><span class="terminal-stream" data-answer="turn-2"></span></span></div></li>
+								<li class="terminal-turn" data-turn="turn-3"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-3"></p></div><div class="terminal-output" data-output-row="turn-3"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。</span><span class="terminal-stream" data-answer="turn-3"></span></span></div></li>
+							</ol>
+						</div>
+					</div>
+					<div class="terminal-input" data-terminal-input><span class="terminal-prompt" aria-hidden="true">&gt;</span><span class="terminal-input-text" data-input-text></span><span class="terminal-cursor" aria-hidden="true"></span></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="recent-section" aria-labelledby="recent-heading">
+			<header class="section-heading"><h2 id="recent-heading">最近の記事</h2><a href="#">すべての記事を見る</a></header>
+			<div class="recent-grid">
+				<article class="featured-post">
+					<a href="#" aria-labelledby="featured-title"><div class="post-media"><img alt="" height="1440" src="../../public/cat.jpg" width="1920"></div><p class="post-meta"><time datetime="2026-07-16">2026.07.16</time><span>Programming</span></p><h3 id="featured-title">読みやすい技術記事の余白を考える</h3></a>
+				</article>
+				<ol class="recent-list" start="2">
+					<li><article class="recent-post"><a href="#" aria-labelledby="recent-title-2"><div class="post-media"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div><div><h3 id="recent-title-2">数式を文章の一部として配置する</h3><p class="post-meta"><time datetime="2026-07-02">2026.07.02</time><span>Mathematics</span></p></div></a></article></li>
+					<li><article class="recent-post"><a href="#" aria-labelledby="recent-title-3"><div class="post-media"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div><div><h3 id="recent-title-3">静かな個人ブログを作り直した記録</h3><p class="post-meta"><time datetime="2026-06-18">2026.06.18</time><span>日記</span></p></div></a></article></li>
+					<li><article class="recent-post"><a href="#" aria-labelledby="recent-title-4"><div class="post-media"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div><div><h3 id="recent-title-4">Rustの所有権を小さなコードで確かめる</h3><p class="post-meta"><time datetime="2026-06-05">2026.06.05</time><span>Programming</span></p></div></a></article></li>
+					<li><article class="recent-post"><a href="#" aria-labelledby="recent-title-5"><div class="post-media"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div><div><h3 id="recent-title-5">TypeScriptを学び始めました</h3><p class="post-meta"><time datetime="2026-05-03">2026.05.03</time><span>Programming</span></p></div></a></article></li>
+				</ol>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer"><div class="shell site-footer__inner"><nav aria-label="フッターナビゲーション"><ul><li><a href="#">X (Twitter)</a></li><li><a href="#">GitHub</a></li><li><a href="#">Feed</a></li></ul></nav><span>© 2026 moni</span></div></footer>
+
+	<script>
+		(function () {
+			function initializeMenu(containerSelector, onSelect) {
+				var container = document.querySelector(containerSelector);
+				if (!container) return;
+				var trigger = container.querySelector("button[aria-haspopup='menu']");
+				var menu = container.querySelector("[role='menu']");
+				var items = Array.from(menu.querySelectorAll("[role='menuitemradio']:not([aria-disabled='true'])"));
+				function close(returnFocus) { menu.hidden = true; trigger.setAttribute("aria-expanded", "false"); if (returnFocus) trigger.focus(); }
+				function open() { menu.hidden = false; trigger.setAttribute("aria-expanded", "true"); (items.find(function (item) { return item.getAttribute("aria-checked") === "true"; }) || items[0]).focus(); }
+				trigger.addEventListener("click", function () { menu.hidden ? open() : close(false); });
+				menu.addEventListener("keydown", function (event) {
+					var index = items.indexOf(document.activeElement);
+					if (event.key === "Escape") { event.preventDefault(); close(true); }
+					else if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); var offset = event.key === "ArrowDown" ? 1 : -1; items[(index + offset + items.length) % items.length].focus(); }
+					else if (event.key === "Home" || event.key === "End") { event.preventDefault(); items[event.key === "Home" ? 0 : items.length - 1].focus(); }
+				});
+				items.forEach(function (item) { item.addEventListener("click", function () { if (onSelect) onSelect(item, items); close(true); }); });
+				document.addEventListener("pointerdown", function (event) { if (!menu.hidden && !container.contains(event.target)) close(false); });
+			}
+
+			initializeMenu(".language-control");
+			var storedTheme = "system";
+			try { storedTheme = localStorage.getItem("theme") || "system"; } catch (error) {}
+			var themeItems = Array.from(document.querySelectorAll(".theme-menu [role='menuitemradio']"));
+			themeItems.forEach(function (item) { item.setAttribute("aria-checked", String(item.value === storedTheme)); });
+			initializeMenu(".theme-control", function (item, items) {
+				items.forEach(function (option) { option.setAttribute("aria-checked", String(option === item)); });
+				if (item.value === "system") { delete document.documentElement.dataset.theme; try { localStorage.removeItem("theme"); } catch (error) {} }
+				else { document.documentElement.dataset.theme = item.value; try { localStorage.setItem("theme", item.value); } catch (error) {} }
+			});
+		})();
+
+		(function () {
+			var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+			if (reduceMotion.matches) return;
+			var staticTranscript = document.querySelector("[data-static-transcript]");
+			var animatedTranscript = document.querySelector("[data-animated-transcript]");
+			var chatStage = animatedTranscript && animatedTranscript.closest(".chat-stage");
+			var terminalLaunch = document.querySelector("[data-terminal-launch]");
+			var launchCommand = terminalLaunch && terminalLaunch.querySelector("[data-launch-command]");
+			var launchCursor = terminalLaunch && terminalLaunch.querySelector("[data-launch-cursor]");
+			var windowTitle = document.querySelector("[data-window-title]");
+			var terminalBanner = document.querySelector("[data-terminal-banner]");
+			var terminalInput = document.querySelector("[data-terminal-input]");
+			var inputText = terminalInput && terminalInput.querySelector("[data-input-text]");
+			if (!staticTranscript || !animatedTranscript || !chatStage || !terminalLaunch || !launchCommand || !launchCursor || !windowTitle || !terminalBanner || !terminalInput || !inputText) return;
+
+			var turns = [
+				{ id: "turn-1", question: "自己紹介してください。", answer: "moniです。ソフトウェアエンジニアとして働きながら、興味を持ったことを学んでいます。" },
+				{ id: "turn-2", question: "どんなことに興味がありますか？", answer: "プログラミング、数学、投資、そして日々の暮らしに関心があります。" },
+				{ id: "turn-3", question: "普段はどのように学んでいますか？", answer: "気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。" }
+			];
+			function sleep(duration) { return new Promise(function (resolve) { window.setTimeout(resolve, duration); }); }
+			function scrollToLatest() { chatStage.scrollTop = chatStage.scrollHeight; }
+			async function typeText(target, value, speed) { target.textContent = ""; for (var character of value) { target.textContent += character; scrollToLatest(); await sleep(speed); } }
+			function revealTurn(id) {
+				var turn = animatedTranscript.querySelector('[data-turn="' + id + '"]');
+				var outputRow = animatedTranscript.querySelector('[data-output-row="' + id + '"]');
+				var answer = animatedTranscript.querySelector('[data-answer="' + id + '"]');
+				if (!turn || !outputRow || !answer) throw new Error("Missing terminal turn: " + id);
+				turn.classList.add("is-revealed"); scrollToLatest(); return { outputRow: outputRow, answer: answer };
+			}
+			async function play() {
+				windowTitle.textContent = "about — zsh";
+				launchCommand.textContent = "";
+				launchCursor.hidden = false;
+				terminalLaunch.classList.add("is-typing");
+				terminalBanner.classList.add("is-pending");
+				staticTranscript.classList.add("sr-only");
+				animatedTranscript.hidden = false;
+				await sleep(350);
+				await typeText(launchCommand, "moni", 90);
+				terminalLaunch.classList.remove("is-typing");
+				launchCursor.hidden = true;
+				await sleep(220);
+				windowTitle.textContent = "about — moni";
+				terminalBanner.classList.remove("is-pending");
+				terminalBanner.classList.add("is-popping");
+				await sleep(280);
+				terminalBanner.classList.remove("is-popping");
+				for (var turn of turns) {
+					terminalInput.classList.add("is-typing");
+					await typeText(inputText, turn.question, 42);
+					terminalInput.classList.remove("is-typing");
+					await sleep(220);
+					var question = animatedTranscript.querySelector('[data-question="' + turn.id + '"]');
+					question.textContent = turn.question;
+					inputText.textContent = "";
+					var revealed = revealTurn(turn.id);
+					await sleep(300);
+					revealed.outputRow.classList.add("is-revealed");
+					await typeText(revealed.answer, turn.answer, 18);
+					await sleep(420);
+				}
+				scrollToLatest();
+			}
+			play().catch(function () {
+				windowTitle.textContent = "about — moni";
+				launchCommand.textContent = "moni";
+				launchCursor.hidden = true;
+				terminalLaunch.classList.remove("is-typing");
+				terminalBanner.classList.remove("is-pending", "is-popping");
+				animatedTranscript.hidden = true;
+				staticTranscript.classList.remove("sr-only");
+				inputText.textContent = "";
+				terminalInput.classList.remove("is-typing");
+			});
+		})();
+	</script>
+</body>
+</html>

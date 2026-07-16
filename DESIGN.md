@@ -285,7 +285,7 @@ Use motion primarily to clarify direct feedback. Color and border transitions us
 - **Do** create hierarchy with spacing and weight before increasing font size.
 - **Do** keep the light-mode page background neutral and near-white: use Zinc 50, with white reserved for genuinely raised or editable surfaces.
 - **Don't** use an oversized hero, display headline, decorative orbit, or full-viewport introductory composition.
-- **Don't** add mascots, emoji as interface decoration, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion. The homepage terminal alone may contain one small pixel-style representation of moni in its startup banner and restrained macOS window chrome comprising three noninteractive traffic-light circles and one folder icon. Do not reuse these elements as the wordmark, a global mascot, article decoration, navigation icons, or functional window controls.
+- **Don't** add mascots, emoji as interface decoration, ornamental marks, gradients, glassmorphism, glows, background grids, or decorative motion. The homepage terminal alone may contain one small neutral pixel-art cat in its startup banner and restrained macOS window chrome comprising three noninteractive traffic-light circles and one folder icon. Keep the cat decorative and local to this terminal; do not reuse these elements as the wordmark, a global mascot, article decoration, navigation icons, or functional window controls.
 - **Don't** turn ordinary sections, post rows, or comments into floating cards.
 - **Don't** use uppercase, wide tracking, or monospace merely to make metadata look technical.
 - **Don't** use Blue as decoration; its scarcity communicates interactivity and state.

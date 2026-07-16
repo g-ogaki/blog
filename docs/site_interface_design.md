@@ -31,9 +31,9 @@ program `moni`. On ordinary motion preferences, the command in
 `about — zsh` to `about — moni`, then the startup banner appears within space
 already reserved for it. The title bar uses three noninteractive traffic-light
 placeholders and one folder icon; these remain local to this terminal. The banner
-contains a small pixel-style moni character, the program version, and the site
-domain without a professional title. Each prepared question is subsequently typed
-into the fixed input row,
+contains a small neutral pixel-art cat, the program version, and the site domain
+without a professional title. Each prepared question is subsequently typed into
+the fixed input row,
 submitted as a `>` prompt, and followed by a streamed `●` response. Terminal
 chrome, banner metadata, prompts,
 typed questions, and cursor use the system monospace stack; Japanese responses
@@ -41,7 +41,7 @@ retain the system sans-serif stack. The transcript scrolls internally and follow
 the newest output with an immediate, non-smooth scroll, while the input remains
 fixed. The terminal has no status footer. Its later high-fidelity treatment uses
 a light neutral terminal in light mode and a dark neutral terminal in dark mode.
-The pixel character remains local to this banner and is not a site mascot.
+The pixel cat remains decorative and local to this banner; it is not a site mascot.
 Reduced-motion and no-JavaScript visitors see the completed transcript
 immediately, and assistive technology receives the complete conversation without
 incremental live announcements.

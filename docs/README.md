@@ -45,3 +45,6 @@ Other documents should link to the canonical document instead of duplicating its
 - [`wireframes/home.html`](wireframes/home.html) — standalone low-fidelity
   layout and motion study for the responsive profile interview and recent-posts
   sections on the homepage.
+- [`wireframes/home-hi-fi.html`](wireframes/home-hi-fi.html) — standalone
+  high-fidelity application of the approved homepage layout, responsive profile,
+  terminal introduction, and recent-post presentation.
