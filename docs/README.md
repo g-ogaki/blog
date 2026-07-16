@@ -35,3 +35,7 @@ Other documents should link to the canonical document instead of duplicating its
 - [`wireframes/blog-entry-hi-fi.html`](wireframes/blog-entry-hi-fi.html) —
   standalone high-fidelity application of the approved blog entry layout and
   visual design system.
+- [`wireframes/blog-list.html`](wireframes/blog-list.html) — standalone
+  low-fidelity layout study for the responsive blog archive, context-aware
+  search and taxonomy filters, thumbnail-supported post rows, and planned
+  incremental loading control.

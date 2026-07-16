@@ -229,7 +229,7 @@ Use neutral navigation treatments in the site shell. The current primary-navigat
 
 Footer navigation uses the same neutral link treatment as breadcrumbs: medium-weight neutral text, no persistent underline, and a subtle tonal hover or focus background. Keep the footer compact and center-aligned, with X (Twitter), GitHub, and Feed on the first row and the concise copyright `© YYYY moni` beneath it.
 
-The header search is a compact, persistently visible search field that submits to the static Pagefind archive URL contract. Give it an accessible label in addition to its placeholder, a neutral control border, and a search icon that does not replace text semantics. The language control uses a compact globe-icon trigger and a labeled menu with explicit language names; communicate the current and unavailable states in text and accessibility attributes. Icon-only triggers retain a minimum `44px` target and an accessible name.
+The header search is a compact, persistently visible search field that submits to the static Pagefind archive URL contract. The blog archive is the one context-aware exception: omit the header field there and place the single search field at the top of the archive discovery column, immediately above its taxonomy filters. On narrow screens, keep the archive search visible above the collapsible filter disclosure rather than hiding it inside. This avoids presenting two controls for the same query state while keeping search and filtering together. Give every search field an accessible label in addition to its placeholder, a neutral control border, and a search icon that does not replace text semantics. The language control uses a compact globe-icon trigger and a labeled menu with explicit language names; communicate the current and unavailable states in text and accessibility attributes. Icon-only triggers retain a minimum `44px` target and an accessible name.
 
 The theme control uses one compact sun-or-moon icon button that opens a labeled menu for light, dark, and system preferences. The icon reflects the effective light or dark appearance; the menu exposes all three choices as text. Its selected state uses fill, weight, and an explicit text cue—not color alone. The trigger and menu follow standard keyboard behavior, close on Escape or outside interaction, and return focus predictably.
 
@@ -245,7 +245,7 @@ Buttons use a minimum practical height of `2.75rem` (`44px`) and `rounded-md`. P
 
 ### Post lists, tags, and cards
 
-Post lists are typographic lists with clear titles, summaries, dates, and taxonomy. Use whitespace or a thin divider between items rather than placing every post in a raised card. Titles should be only one step larger than their summaries.
+Post lists are typographic lists with clear titles, dates, taxonomy, and quiet supporting thumbnails. Do not require a summary or generated excerpt: the title and metadata should be sufficient to identify an article without recreating a manual-summary burden elsewhere. Use a landscape `16 / 9` thumbnail as supporting media on the right of wide rows and above the copy on narrow screens. When an article has no explicit image, use a neutral tonal placeholder rather than repeating the site-wide Open Graph fallback. Use whitespace or a thin divider between items rather than placing every post in a raised card.
 
 Tags and active filters may use compact pills. Keep them subordinate to titles and content. Link cards use a border and a subtle surface difference, preserve a clear reading order on mobile, and avoid promotional styling.
 
