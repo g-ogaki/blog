@@ -3,25 +3,31 @@ version: alpha
 name: Quiet Technical Journal
 description: A modern, simple, warm, and quiet design system for moni's Japanese personal blog.
 colors:
-  primary: "oklch(48.8% 0.243 264.376)"
-  primary-hover: "oklch(42.4% 0.199 265.638)"
+  primary: "oklch(0.52 0.21 261.44)"
+  primary-hover: "oklch(0.46 0.21 261.44)"
   on-primary: "#ffffff"
   light-surface: "oklch(98.5% 0 0)"
   light-surface-raised: "#ffffff"
   light-surface-subtle: "oklch(96.7% 0.001 286.375)"
+  light-hover-surface: "oklch(92% 0.004 286.32)"
+  light-selected-surface: "oklch(92% 0.004 286.32)"
   light-text: "oklch(37% 0.013 285.805)"
   light-text-muted: "oklch(44.2% 0.017 285.786)"
+  light-text-subtle: "oklch(55.2% 0.016 285.938)"
   light-border: "oklch(87.1% 0.006 286.286)"
   light-control-border: "oklch(55.2% 0.016 285.938)"
-  light-focus: "oklch(54.6% 0.245 262.881)"
+  light-focus: "oklch(0.52 0.21 261.44)"
   dark-primary: "oklch(70.7% 0.165 254.624)"
   dark-primary-hover: "oklch(80.9% 0.105 251.813)"
   dark-on-primary: "oklch(14.1% 0.005 285.823)"
   dark-surface: "oklch(21% 0.006 285.885)"
   dark-surface-raised: "oklch(27.4% 0.006 286.033)"
   dark-surface-subtle: "oklch(37% 0.013 285.805)"
+  dark-hover-surface: "oklch(27.4% 0.006 286.033)"
+  dark-selected-surface: "oklch(27.4% 0.006 286.033)"
   dark-text: "oklch(87.1% 0.006 286.286)"
   dark-text-muted: "oklch(70.5% 0.015 286.067)"
+  dark-text-subtle: "oklch(70.5% 0.015 286.067)"
   dark-border: "oklch(37% 0.013 285.805)"
   dark-control-border: "oklch(55.2% 0.016 285.938)"
   dark-focus: "oklch(70.7% 0.165 254.624)"
@@ -171,9 +177,12 @@ The palette uses Tailwind's Zinc neutrals with Blue as its only interactive acce
 
 - **Light surfaces** use Zinc 50 for the page, white for a genuinely raised or editable surface, and Zinc 100 for subtle grouping. Pure white should not become a field of unnecessary cards.
 - **Dark surfaces** use Zinc 900 for the page, Zinc 800 for raised surfaces, and Zinc 700 for subtle grouping. This produces a softer dark canvas without approaching absolute black.
+- **Selected controls** use a dedicated semantic surface: Zinc 200 in light mode and Zinc 800 in dark mode. Use it for current, checked, and selected controls instead of changing the general subtle surface. Paired with the Blue action text, both combinations exceed WCAG AA for normal text; weight and semantic state markup provide cues beyond color.
+- **Interactive hover surfaces** use Zinc 200 in light mode and Zinc 800 in dark mode. Keep this role semantically separate from the selected-control surface even while both map to the same Zinc values: hover is temporary feedback, while selection persists and carries Blue text, weight, and semantic state markup.
 - **Primary text** uses Zinc 700 in light mode and Zinc 300 in dark mode. Both article pairings are intentionally milder than near-black on near-white or near-white on near-black while remaining comfortably within WCAG AAA.
 - **Muted text** uses Zinc 600 in light mode and Zinc 400 in dark mode. Muted text is still readable text, never a decorative gray.
-- **Blue** is reserved for links, focus, selected controls, and meaningful actions. Use Blue 700 in light mode and Blue 400 in dark mode so interactive text remains distinguishable on its surface.
+- **Tertiary interface text** uses Zinc 500 in light mode and Zinc 400 in dark mode. Reserve it for low-emphasis interface context such as the current breadcrumb label and its separator; do not use it for article prose or essential instructions.
+- **Blue** is a sparse semantic accent reserved for selected controls, inline prose links, focus indicators, and meaningful primary actions. Sparse means that one interactive family uses the accent consistently, not that only one isolated element may be Blue. Light mode uses a vivid Blue (`oklch(0.52 0.21 261.44)`) with a darker same-hue hover state (`oklch(0.46 0.21 261.44)`). Its limited application keeps the interface quiet while preserving WCAG AA contrast on the selected surface. Dark mode uses Blue 400. Keep structural links such as post titles, breadcrumbs, and footer navigation neutral when typography, placement, and interaction already establish their role.
 - **Borders** use Zinc 300 in light mode and Zinc 700 in dark mode. Borders organize information quietly; they are not decoration.
 
 All normal text must meet WCAG 2.2 AA contrast of at least 4.5:1, and large text at least 3:1. Aim for 7:1 for article text. Controls, focus indicators, and meaningful graphical boundaries must reach 3:1 against adjacent colors. Never use color as the only indication of state.
@@ -225,9 +234,9 @@ Use `rounded-full` only for tags, compact segmented controls, avatars if they ar
 
 Use the text wordmark **moni's page** without a mascot, emblem, or ornamental logo mark. The header is compact and clearly separates branding, primary navigation, search, language choice, and theme choice. After the wordmark, its control order is Home, Blog, Search, Language, then Theme. A subtle border is preferred to a shadow or translucent blur. At `36rem` and below, use a two-row grid: wordmark and primary navigation on the first row, then the flexible search field and language/theme controls on the second. Keep every control visible, preserve DOM and keyboard order, and do not introduce a hamburger menu for this small navigation set.
 
-Use neutral navigation treatments in the site shell. The current primary-navigation item uses a quiet Zinc tonal background, `rounded-md`, neutral text, and semantic `aria-current`; do not mark it with a persistent Blue underline. In breadcrumbs, linked ancestors use neutral medium-weight text without a persistent underline, while the current-page label remains plain muted text. A subtle tonal hover or focus background provides additional affordance without making navigation look promotional.
+Use quiet navigation treatments in the site shell. The current primary-navigation item uses the selected-control surface, `rounded-md`, Blue text, weight 600, and semantic `aria-current`; do not mark it with a persistent underline. This matches selected taxonomy controls without turning inactive navigation into accent-colored links. In breadcrumbs, linked ancestors use primary neutral text and current-page labels and separators use tertiary interface text; both remain weight 400 without a persistent underline. The shared hover surface provides additional affordance without making navigation look promotional.
 
-Footer navigation uses the same neutral link treatment as breadcrumbs: medium-weight neutral text, no persistent underline, and a subtle tonal hover or focus background. Keep the footer compact and center-aligned, with X (Twitter), GitHub, and Feed on the first row and the concise copyright `© YYYY moni` beneath it.
+Footer navigation uses a neutral medium-weight treatment without a persistent underline and uses the shared hover surface. Keep the footer compact and center-aligned, with X (Twitter), GitHub, and Feed on the first row and the concise copyright `© YYYY moni` beneath it.
 
 The header search is a compact, persistently visible search field that submits to the static Pagefind archive URL contract. The blog archive is the one context-aware exception: omit the header field there and place the single search field at the top of the archive discovery column, immediately above its taxonomy filters. On narrow screens, keep the archive search visible above the collapsible filter disclosure rather than hiding it inside. This avoids presenting two controls for the same query state while keeping search and filtering together. Give every search field an accessible label in addition to its placeholder, a neutral control border, and a search icon that does not replace text semantics. The language control uses a compact globe-icon trigger and a labeled menu with explicit language names; communicate the current and unavailable states in text and accessibility attributes. Icon-only triggers retain a minimum `44px` target and an accessible name.
 
@@ -241,11 +250,13 @@ Visible dates use the quiet numeric `YYYY.MM.DD` format throughout articles and 
 
 Text links are visibly recognizable without relying only on a hover state. Within prose, use an underline with a readable offset. Navigation links may use weight and current-state treatment instead, provided their affordance remains clear.
 
+Selected taxonomy values follow the current primary-navigation treatment: Blue text, the selected-control surface, weight 600, and semantic current-state markup. Checked menu options use the same Blue text and selected surface while retaining an explicit text cue. The combination communicates selection without relying on color alone. Post-title links, breadcrumbs, and footer links remain neutral structural navigation; they may use a restrained Blue hover color when useful, but do not carry persistent accent color.
+
 Buttons use a minimum practical height of `2.75rem` (`44px`) and `rounded-md`. Primary buttons use the blue action color; secondary buttons use a neutral tonal surface. Most blog navigation should remain a link rather than being styled as a call-to-action button. Hover and active states change color over Tailwind's `duration-150`; they do not move.
 
 ### Post lists, tags, and cards
 
-Post lists are typographic lists with clear titles, dates, taxonomy, and quiet supporting thumbnails. Do not require a summary or generated excerpt: the title and metadata should be sufficient to identify an article without recreating a manual-summary burden elsewhere. Use a landscape `16 / 9` thumbnail as supporting media on the right of wide rows and above the copy on narrow screens. When an article has no explicit image, use a neutral tonal placeholder rather than repeating the site-wide Open Graph fallback. Use whitespace or a thin divider between items rather than placing every post in a raised card.
+Post lists are typographic lists with clear titles, dates, taxonomy, and quiet supporting thumbnails. Do not require a summary or generated excerpt: the title and metadata should be sufficient to identify an article without recreating a manual-summary burden elsewhere. Make each row one semantic link whose accessible name is the article title, and let that link fill the row; do not add a click handler to a non-interactive `article`. Keep thumbnails within the link decorative when the adjacent title already identifies the destination, and do not place other interactive controls inside the row. Use a landscape `16 / 9` thumbnail as supporting media on the right of wide rows and above the copy on narrow screens. When an article has no explicit image, use a neutral tonal placeholder rather than repeating the site-wide Open Graph fallback. Use whitespace or a thin divider between items rather than placing every post in a raised card.
 
 Tags and active filters may use compact pills. Keep them subordinate to titles and content. Link cards use a border and a subtle surface difference, preserve a clear reading order on mobile, and avoid promotional styling.
 

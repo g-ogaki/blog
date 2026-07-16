@@ -39,3 +39,6 @@ Other documents should link to the canonical document instead of duplicating its
   low-fidelity layout study for the responsive blog archive, context-aware
   search and taxonomy filters, thumbnail-supported post rows, and planned
   incremental loading control.
+- [`wireframes/blog-list-hi-fi.html`](wireframes/blog-list-hi-fi.html) —
+  standalone high-fidelity application of the approved blog archive layout and
+  visual design system.

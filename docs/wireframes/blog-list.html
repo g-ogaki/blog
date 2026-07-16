@@ -300,12 +300,17 @@
 		}
 
 		.post-row {
+			border-bottom: 1px solid var(--line);
+		}
+
+		.post-row__link {
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem);
 			gap: 2rem;
 			align-items: start;
 			padding-block: 2rem;
-			border-bottom: 1px solid var(--line);
+			color: inherit;
+			text-decoration: none;
 		}
 
 		.post-meta {
@@ -322,10 +327,6 @@
 			font-size: 1.25rem;
 			font-weight: 600;
 			line-height: 1.4;
-		}
-
-		.post-row h3 a {
-			text-decoration: none;
 		}
 
 		.post-tags {
@@ -472,7 +473,7 @@
 		}
 
 		@media (max-width: 48rem) {
-			.post-row {
+			.post-row__link {
 				grid-template-columns: minmax(0, 1fr) minmax(9rem, 11rem);
 				gap: 1.5rem;
 			}
@@ -535,7 +536,7 @@
 				flex-direction: column;
 			}
 
-			.post-row {
+			.post-row__link {
 				display: flex;
 				flex-direction: column;
 				gap: 1.5rem;
@@ -631,28 +632,34 @@
 				</header>
 				<div class="post-list">
 					<article class="post-row">
-						<div>
-							<p class="post-meta"><time datetime="2026-07-16">2026.07.16</time><span>Programming</span></p>
-							<h3><a href="#">読みやすい技術記事の余白を考える</a></h3>
-							<ul class="post-tags" aria-label="タグ"><li>CSS</li><li>Design</li></ul>
-						</div>
-						<div class="thumbnail">記事画像<br>16:9</div>
+						<a aria-labelledby="post-title-1" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-16">2026.07.16</time><span>Programming</span></p>
+								<h3 id="post-title-1">読みやすい技術記事の余白を考える</h3>
+								<ul class="post-tags" aria-label="タグ"><li>CSS</li><li>Design</li></ul>
+							</div>
+							<div class="thumbnail">記事画像<br>16:9</div>
+						</a>
 					</article>
 					<article class="post-row">
-						<div>
-							<p class="post-meta"><time datetime="2026-07-02">2026.07.02</time><span>Mathematics</span></p>
-							<h3><a href="#">数式を文章の一部として配置する</a></h3>
-							<ul class="post-tags" aria-label="タグ"><li>LaTeX</li><li>Typography</li></ul>
-						</div>
-						<div class="thumbnail thumbnail--neutral">画像なし<br>ニュートラル表示</div>
+						<a aria-labelledby="post-title-2" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-02">2026.07.02</time><span>Mathematics</span></p>
+								<h3 id="post-title-2">数式を文章の一部として配置する</h3>
+								<ul class="post-tags" aria-label="タグ"><li>LaTeX</li><li>Typography</li></ul>
+							</div>
+							<div class="thumbnail thumbnail--neutral">画像なし<br>ニュートラル表示</div>
+						</a>
 					</article>
 					<article class="post-row">
-						<div>
-							<p class="post-meta"><time datetime="2026-06-18">2026.06.18</time><span>日記</span></p>
-							<h3><a href="#">静かな個人ブログを作り直した記録</a></h3>
-							<ul class="post-tags" aria-label="タグ"><li>Blog</li><li>振り返り</li></ul>
-						</div>
-						<div class="thumbnail">記事画像<br>16:9</div>
+						<a aria-labelledby="post-title-3" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-06-18">2026.06.18</time><span>日記</span></p>
+								<h3 id="post-title-3">静かな個人ブログを作り直した記録</h3>
+								<ul class="post-tags" aria-label="タグ"><li>Blog</li><li>振り返り</li></ul>
+							</div>
+							<div class="thumbnail">記事画像<br>16:9</div>
+						</a>
 					</article>
 				</div>
 				<div class="load-more-region">

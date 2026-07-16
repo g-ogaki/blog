@@ -18,15 +18,18 @@
 			--surface: oklch(98.5% 0 0);
 			--surface-raised: #ffffff;
 			--surface-subtle: oklch(96.7% 0.001 286.375);
+			--hover-surface: oklch(92% 0.004 286.32);
+			--selected-surface: oklch(92% 0.004 286.32);
 			--muted-container: oklch(96.7% 0.001 286.375);
 			--text: oklch(37% 0.013 285.805);
 			--text-muted: oklch(44.2% 0.017 285.786);
+			--text-subtle: oklch(55.2% 0.016 285.938);
 			--border: oklch(87.1% 0.006 286.286);
 			--control-border: oklch(55.2% 0.016 285.938);
-			--action: oklch(48.8% 0.243 264.376);
-			--action-hover: oklch(42.4% 0.199 265.638);
+			--action: oklch(0.52 0.21 261.44);
+			--action-hover: oklch(0.46 0.21 261.44);
 			--on-action: #ffffff;
-			--focus: oklch(54.6% 0.245 262.881);
+			--focus: oklch(0.52 0.21 261.44);
 			--code-keyword: #cf222e;
 			--code-type: #8250df;
 			--code-string: #0a3069;
@@ -40,9 +43,12 @@
 			--surface: oklch(21% 0.006 285.885);
 			--surface-raised: oklch(27.4% 0.006 286.033);
 			--surface-subtle: oklch(37% 0.013 285.805);
+			--hover-surface: oklch(27.4% 0.006 286.033);
+			--selected-surface: oklch(27.4% 0.006 286.033);
 			--muted-container: oklch(27.4% 0.006 286.033);
 			--text: oklch(87.1% 0.006 286.286);
 			--text-muted: oklch(70.5% 0.015 286.067);
+			--text-subtle: oklch(70.5% 0.015 286.067);
 			--border: oklch(37% 0.013 285.805);
 			--control-border: oklch(55.2% 0.016 285.938);
 			--action: oklch(70.7% 0.165 254.624);
@@ -61,9 +67,12 @@
 				--surface: oklch(21% 0.006 285.885);
 				--surface-raised: oklch(27.4% 0.006 286.033);
 				--surface-subtle: oklch(37% 0.013 285.805);
+				--hover-surface: oklch(27.4% 0.006 286.033);
+				--selected-surface: oklch(27.4% 0.006 286.033);
 				--muted-container: oklch(27.4% 0.006 286.033);
 				--text: oklch(87.1% 0.006 286.286);
 				--text-muted: oklch(70.5% 0.015 286.067);
+				--text-subtle: oklch(70.5% 0.015 286.067);
 				--border: oklch(37% 0.013 285.805);
 				--control-border: oklch(55.2% 0.016 285.938);
 				--action: oklch(70.7% 0.165 254.624);
@@ -210,12 +219,12 @@
 		}
 
 		.primary-nav a:hover {
-			background: var(--surface-raised);
+			background: var(--hover-surface);
 		}
 
 		.primary-nav a[aria-current="page"] {
-			background: var(--surface-subtle);
-			color: var(--text);
+			background: var(--selected-surface);
+			color: var(--action);
 			font-weight: 600;
 		}
 
@@ -273,7 +282,7 @@
 		.language-trigger[aria-expanded="true"],
 		.theme-trigger:hover,
 		.theme-trigger[aria-expanded="true"] {
-			background: var(--surface-subtle);
+			background: var(--hover-surface);
 		}
 
 		.language-trigger svg,
@@ -347,12 +356,16 @@
 
 		.language-menu button:hover:not([aria-disabled="true"]),
 		.language-menu button:focus-visible,
-		.language-menu button[aria-checked="true"],
 		.theme-menu button:hover,
-		.theme-menu button:focus-visible,
-		.theme-menu button[aria-checked="true"] {
-			background: var(--surface-subtle);
+		.theme-menu button:focus-visible {
+			background: var(--hover-surface);
 			color: var(--text);
+		}
+
+		.language-menu button[aria-checked="true"],
+		.theme-menu button[aria-checked="true"] {
+			background: var(--selected-surface);
+			color: var(--action);
 		}
 
 		.theme-menu button[aria-checked="true"] {
@@ -395,7 +408,7 @@
 			gap: 0.5rem;
 			margin: 0;
 			padding: 0;
-			color: var(--text-muted);
+			color: var(--text-subtle);
 			list-style: none;
 		}
 
@@ -405,12 +418,12 @@
 			padding: 0.25rem;
 			border-radius: 0.25rem;
 			color: var(--text);
-			font-weight: 500;
+			font-weight: 400;
 			text-decoration: none;
 		}
 
 		.breadcrumb a:hover {
-			background: var(--surface-raised);
+			background: var(--hover-surface);
 		}
 
 		.article,
@@ -817,7 +830,7 @@
 		}
 
 		.site-footer a:hover {
-			background: var(--surface-subtle);
+			background: var(--hover-surface);
 		}
 
 		@media (max-width: 48rem) {
@@ -1024,7 +1037,7 @@
 
 			<div class="article-body">
 				<p>技術記事では、情報の正確さだけでなく、読者が迷わず読み進められる余白も大切です。要素を大きく見せる代わりに、文章と文章の間に十分な空間を置くと、画面全体が静かになります。</p>
-				<p>このページでは、本文の幅を抑え、見出しと最初の内容を近づけています。段落、引用、リスト、数式は文章の流れとして扱い、コード、画像、リンクカードには広めの間隔を設けます。</p>
+				<p>このページでは、<a href="#">デザインシステムの方針</a>に沿って本文の幅を抑え、見出しと最初の内容を近づけています。段落、引用、リスト、数式は文章の流れとして扱い、コード、画像、リンクカードには広めの間隔を設けます。</p>
 
 				<h2>余白を役割で分ける</h2>
 				<p>すべての間隔を同じ値にすると、関連の強さが見えにくくなります。そこで、見出しから最初の内容までは24px、文章の流れは36px、コードや画像などの独立したブロックとの間は48pxとして、近さそのものに意味を持たせます。</p>
