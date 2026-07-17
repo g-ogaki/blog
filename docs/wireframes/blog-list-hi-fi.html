@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Quiet Technical Journalデザインシステムに基づくブログ一覧ページの高精細プロトタイプ。">
+	<title>ブログ | moni's page</title>
+	<script>
+		(function () {
+			try {
+				var theme = localStorage.getItem("theme");
+				if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+			} catch (error) {}
+		})();
+	</script>
+	<style>
+		:root {
+			--surface: oklch(98.5% 0 0);
+			--surface-raised: #ffffff;
+			--surface-subtle: oklch(96.7% 0.001 286.375);
+			--hover-surface: oklch(92% 0.004 286.32);
+			--selected-surface: oklch(92% 0.004 286.32);
+			--text: oklch(37% 0.013 285.805);
+			--text-muted: oklch(44.2% 0.017 285.786);
+			--text-subtle: oklch(55.2% 0.016 285.938);
+			--border: oklch(87.1% 0.006 286.286);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(0.52 0.21 261.44);
+			--action-hover: oklch(0.46 0.21 261.44);
+			--on-action: #ffffff;
+			--focus: oklch(0.52 0.21 261.44);
+			--shell-width: 80rem;
+			color-scheme: light;
+		}
+
+		:root[data-theme="dark"] {
+			--surface: oklch(21% 0.006 285.885);
+			--surface-raised: oklch(27.4% 0.006 286.033);
+			--surface-subtle: oklch(37% 0.013 285.805);
+			--hover-surface: oklch(27.4% 0.006 286.033);
+			--selected-surface: oklch(27.4% 0.006 286.033);
+			--text: oklch(87.1% 0.006 286.286);
+			--text-muted: oklch(70.5% 0.015 286.067);
+			--text-subtle: oklch(70.5% 0.015 286.067);
+			--border: oklch(37% 0.013 285.805);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(70.7% 0.165 254.624);
+			--action-hover: oklch(80.9% 0.105 251.813);
+			--on-action: oklch(14.1% 0.005 285.823);
+			--focus: oklch(70.7% 0.165 254.624);
+			color-scheme: dark;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--surface: oklch(21% 0.006 285.885);
+				--surface-raised: oklch(27.4% 0.006 286.033);
+				--surface-subtle: oklch(37% 0.013 285.805);
+				--hover-surface: oklch(27.4% 0.006 286.033);
+				--selected-surface: oklch(27.4% 0.006 286.033);
+				--text: oklch(87.1% 0.006 286.286);
+				--text-muted: oklch(70.5% 0.015 286.067);
+				--text-subtle: oklch(70.5% 0.015 286.067);
+				--border: oklch(37% 0.013 285.805);
+				--control-border: oklch(55.2% 0.016 285.938);
+				--action: oklch(70.7% 0.165 254.624);
+				--action-hover: oklch(80.9% 0.105 251.813);
+				--on-action: oklch(14.1% 0.005 285.823);
+				--focus: oklch(70.7% 0.165 254.624);
+				color-scheme: dark;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			scroll-behavior: auto;
+		}
+
+		body {
+			margin: 0;
+			background: var(--surface);
+			color: var(--text);
+			font-family: ui-sans-serif, system-ui, sans-serif;
+			font-size: 1rem;
+			line-height: 1.5;
+			text-rendering: optimizeLegibility;
+		}
+
+		a {
+			color: inherit;
+		}
+
+		a:focus-visible,
+		button:focus-visible,
+		input:focus-visible,
+		summary:focus-visible {
+			outline: 2px solid var(--focus);
+			outline-offset: 3px;
+		}
+
+		button,
+		input {
+			font: inherit;
+		}
+
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		.skip-link {
+			position: fixed;
+			top: 0.75rem;
+			left: 0.75rem;
+			z-index: 20;
+			padding: 0.75rem 1rem;
+			border-radius: 0.375rem;
+			background: var(--action);
+			color: var(--on-action);
+			font-size: 0.875rem;
+			font-weight: 600;
+			transform: translateY(-180%);
+		}
+
+		.skip-link:focus {
+			transform: translateY(0);
+		}
+
+		.shell {
+			width: min(calc(100% - 3rem), var(--shell-width));
+			margin-inline: auto;
+		}
+
+		.site-header {
+			border-bottom: 1px solid var(--border);
+			background: var(--surface);
+		}
+
+		.site-header__inner {
+			display: flex;
+			min-height: 4rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.wordmark {
+			font-weight: 600;
+			letter-spacing: -0.01em;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.header-actions,
+		.header-utilities,
+		.primary-nav ul {
+			display: flex;
+			align-items: center;
+		}
+
+		.header-actions {
+			gap: 1.5rem;
+		}
+
+		.header-utilities {
+			gap: 0.75rem;
+		}
+
+		.primary-nav ul,
+		.site-footer ul,
+		.filter-group ul,
+		.post-tags {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.primary-nav ul {
+			gap: 1.25rem;
+		}
+
+		.primary-nav a {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.primary-nav a:hover {
+			background: var(--hover-surface);
+		}
+
+		.primary-nav a[aria-current="page"] {
+			background: var(--selected-surface);
+			color: var(--action);
+			font-weight: 600;
+		}
+
+		.language-control,
+		.theme-control {
+			position: relative;
+		}
+
+		.language-trigger,
+		.theme-trigger {
+			display: grid;
+			width: 2.75rem;
+			height: 2.75rem;
+			place-items: center;
+			padding: 0;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: transparent;
+			color: var(--text);
+			cursor: pointer;
+		}
+
+		.language-trigger:hover,
+		.language-trigger[aria-expanded="true"],
+		.theme-trigger:hover,
+		.theme-trigger[aria-expanded="true"] {
+			background: var(--hover-surface);
+		}
+
+		.language-trigger svg,
+		.theme-trigger svg {
+			width: 1.25rem;
+			height: 1.25rem;
+			stroke: currentColor;
+		}
+
+		.theme-icon--moon {
+			display: none;
+		}
+
+		:root[data-theme="dark"] .theme-icon--sun {
+			display: none;
+		}
+
+		:root[data-theme="dark"] .theme-icon--moon {
+			display: block;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) .theme-icon--sun {
+				display: none;
+			}
+
+			:root:not([data-theme="light"]) .theme-icon--moon {
+				display: block;
+			}
+		}
+
+		.language-menu,
+		.theme-menu {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			z-index: 10;
+			display: grid;
+			min-width: 10rem;
+			gap: 0.25rem;
+			padding: 0.375rem;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 12%, transparent);
+		}
+
+		.language-menu[hidden],
+		.theme-menu[hidden] {
+			display: none;
+		}
+
+		.language-menu button,
+		.theme-menu button {
+			display: flex;
+			min-height: 2.75rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding-inline: 0.75rem;
+			border: 0;
+			border-radius: 0.375rem;
+			background: transparent;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-align: left;
+			cursor: pointer;
+		}
+
+		.language-menu button:hover:not([aria-disabled="true"]),
+		.language-menu button:focus-visible,
+		.theme-menu button:hover,
+		.theme-menu button:focus-visible {
+			background: var(--hover-surface);
+			color: var(--text);
+		}
+
+		.language-menu button[aria-checked="true"],
+		.theme-menu button[aria-checked="true"] {
+			background: var(--selected-surface);
+			color: var(--action);
+		}
+
+		.language-menu button[aria-checked="true"],
+		.theme-menu button[aria-checked="true"] {
+			font-weight: 600;
+		}
+
+		.language-menu button[aria-disabled="true"] {
+			cursor: not-allowed;
+			opacity: 0.65;
+		}
+
+		.language-availability,
+		.language-state,
+		.theme-state {
+			font-size: 0.75rem;
+		}
+
+		.language-menu button[aria-checked="false"] .language-state,
+		.theme-menu button[aria-checked="false"] .theme-state {
+			visibility: hidden;
+		}
+
+		main {
+			padding-block: 4rem 6rem;
+		}
+
+		.page-header {
+			max-width: 48rem;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: clamp(2rem, 5vw, 2.25rem);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+		}
+
+		.page-description {
+			margin: 1.5rem 0 0;
+			color: var(--text-muted);
+			font-size: 1.125rem;
+			line-height: 1.75;
+		}
+
+		.archive-layout {
+			display: grid;
+			grid-template-columns: 15rem minmax(0, 1fr);
+			gap: clamp(3rem, 6vw, 5rem);
+			margin-top: 4rem;
+		}
+
+		.discovery-sidebar {
+			position: sticky;
+			top: 1.5rem;
+			align-self: start;
+		}
+
+		.archive-search {
+			margin-bottom: 2rem;
+		}
+
+		.discovery-heading,
+		.filter-panel__heading {
+			display: block;
+			margin: 0 0 0.75rem;
+			font-size: 1rem;
+			font-weight: 600;
+			line-height: 1.5;
+		}
+
+		.archive-search__field {
+			position: relative;
+		}
+
+		.archive-search__field svg {
+			position: absolute;
+			top: 50%;
+			left: 0.75rem;
+			width: 1rem;
+			height: 1rem;
+			stroke: var(--text-muted);
+			transform: translateY(-50%);
+			pointer-events: none;
+		}
+
+		.archive-search input {
+			width: 100%;
+			height: 2.75rem;
+			padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			color: var(--text);
+			font-size: 0.875rem;
+		}
+
+		.archive-search input::placeholder {
+			color: var(--text-muted);
+		}
+
+		.filter-disclosure > summary {
+			display: none;
+		}
+
+		.filter-panel {
+			display: block;
+		}
+
+		.filter-group + .filter-group {
+			margin-top: 2rem;
+		}
+
+		.filter-group h2 {
+			margin: 0 0 0.625rem;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+
+		.filter-group ul {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+
+		.filter-group a {
+			display: inline-flex;
+			min-height: 2rem;
+			align-items: center;
+			padding: 0.25rem 0.5rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			text-decoration: none;
+		}
+
+		.filter-group a:hover {
+			background: var(--hover-surface);
+		}
+
+		.filter-group a[aria-current="true"] {
+			background: var(--selected-surface);
+			color: var(--action);
+			font-weight: 600;
+		}
+
+		.results-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.results-heading h2,
+		.results-heading p {
+			margin: 0;
+		}
+
+		.results-heading h2 {
+			font-size: 1.5rem;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+		}
+
+		.results-heading p {
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.post-list {
+			border-top: 1px solid var(--border);
+		}
+
+		.post-row {
+			border-bottom: 1px solid var(--border);
+		}
+
+		.post-row__link {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+			gap: 2rem;
+			align-items: start;
+			padding-block: 2rem;
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.post-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			margin: 0;
+			color: var(--text-muted);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.75rem;
+		}
+
+		.post-row h3 {
+			margin: 0.75rem 0 0;
+			font-size: 1.25rem;
+			font-weight: 600;
+			line-height: 1.4;
+		}
+
+		.post-row__link:hover h3 {
+			color: var(--action-hover);
+		}
+
+		.post-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-top: 1rem;
+		}
+
+		.post-tags li {
+			padding: 0.25rem 0.625rem;
+			border-radius: 9999px;
+			background: var(--surface-subtle);
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.thumbnail {
+			display: grid;
+			width: 100%;
+			aspect-ratio: 16 / 9;
+			place-items: center;
+			overflow: hidden;
+			border: 1px solid var(--border);
+			border-radius: 0.5rem;
+			background: var(--surface-subtle);
+			color: var(--text-muted);
+		}
+
+		.thumbnail img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.thumbnail--empty svg {
+			width: 1.5rem;
+			height: 1.5rem;
+			stroke: currentColor;
+		}
+
+		.load-more-region {
+			padding-top: 2rem;
+			text-align: center;
+		}
+
+		.load-more-region p {
+			margin: 0 0 0.75rem;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.load-more {
+			min-height: 2.75rem;
+			padding: 0.75rem 1rem;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			color: var(--text);
+			font-weight: 500;
+			cursor: pointer;
+		}
+
+		.load-more:hover {
+			background: var(--hover-surface);
+		}
+
+		.site-footer {
+			border-top: 1px solid var(--border);
+		}
+
+		.site-footer__inner {
+			display: flex;
+			min-height: 7rem;
+			align-items: center;
+			flex-direction: column;
+			justify-content: center;
+			gap: 1rem;
+			text-align: center;
+		}
+
+		.site-footer ul {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.5rem 1rem;
+		}
+
+		.site-footer a {
+			display: inline-flex;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			text-decoration: none;
+		}
+
+		.site-footer a:hover {
+			background: var(--hover-surface);
+		}
+
+		.footer-legal {
+			margin: 0;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			margin: -0.25rem;
+			color: inherit;
+		}
+
+		@media (max-width: 64rem) {
+			.archive-layout {
+				grid-template-columns: 1fr;
+				gap: 3rem;
+			}
+
+			.discovery-sidebar {
+				position: static;
+			}
+
+			.archive-search {
+				max-width: 30rem;
+			}
+
+			.filter-disclosure > summary {
+				display: inline-flex;
+				min-height: 2.75rem;
+				align-items: center;
+				gap: 0.5rem;
+				font-size: 1rem;
+				font-weight: 600;
+				list-style: none;
+				cursor: pointer;
+			}
+
+			.filter-disclosure > summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.disclosure-indicator {
+				display: inline-block;
+				width: 0.625rem;
+				height: 0.375rem;
+				background: currentColor;
+				color: var(--text-muted);
+				clip-path: polygon(0 0, 100% 0, 50% 100%);
+			}
+
+			.filter-disclosure[open] .disclosure-indicator {
+				transform: rotate(180deg);
+			}
+
+			.filter-panel {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 2rem;
+				padding-top: 1.5rem;
+			}
+
+			.filter-disclosure:not([open]) > .filter-panel {
+				display: none;
+			}
+
+			.filter-panel__heading {
+				display: none;
+			}
+
+			.filter-group + .filter-group {
+				margin-top: 0;
+			}
+		}
+
+		@media (max-width: 48rem) {
+			.post-row__link {
+				grid-template-columns: minmax(0, 1fr) minmax(10rem, 12rem);
+				gap: 1.5rem;
+			}
+		}
+
+		@media (max-width: 36rem) {
+			.shell {
+				width: min(calc(100% - 2rem), var(--shell-width));
+			}
+
+			.site-header__inner {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+				grid-template-areas:
+					"wordmark nav"
+					"utilities utilities";
+				gap: 0.75rem 1rem;
+				padding-block: 0.75rem;
+			}
+
+			.wordmark {
+				grid-area: wordmark;
+			}
+
+			.header-actions {
+				display: contents;
+			}
+
+			.primary-nav {
+				grid-area: nav;
+			}
+
+			.primary-nav ul {
+				gap: 0.25rem;
+			}
+
+			.primary-nav a {
+				padding-inline: 0.5rem;
+			}
+
+			.header-utilities {
+				grid-area: utilities;
+				justify-self: end;
+			}
+
+			main {
+				padding-block: 3rem 5rem;
+			}
+
+			.archive-layout {
+				margin-top: 3rem;
+			}
+
+			.filter-panel {
+				grid-template-columns: 1fr;
+			}
+
+			.results-heading {
+				align-items: flex-start;
+				flex-direction: column;
+			}
+
+			.post-row__link {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+
+			.thumbnail {
+				order: -1;
+			}
+
+			.language-menu,
+			.theme-menu {
+				right: 0;
+			}
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			a,
+			button {
+				transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+			}
+		}
+	</style>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">本文へ移動</a>
+
+	<header class="site-header">
+		<div class="shell site-header__inner">
+			<a class="wordmark" href="#">moni's page</a>
+			<div class="header-actions">
+				<nav class="primary-nav" aria-label="メインナビゲーション">
+					<ul>
+						<li><a href="#">ホーム</a></li>
+						<li><a aria-current="page" href="#">ブログ</a></li>
+					</ul>
+				</nav>
+				<div class="header-utilities">
+					<div class="language-control">
+						<button aria-controls="language-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示言語を変更" class="language-trigger" id="language-trigger" type="button">
+							<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 3.75 5.5 3.75 9S14.5 18.5 12 21M12 3C9.5 5.5 8.25 8.5 8.25 12S9.5 18.5 12 21"></path></svg>
+						</button>
+						<div aria-labelledby="language-trigger" class="language-menu" hidden id="language-menu" role="menu">
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button"><span>日本語</span><span class="language-state">選択中</span></button>
+							<button aria-checked="false" aria-disabled="true" lang="en" role="menuitemradio" tabindex="-1" type="button"><span>English</span><span class="language-availability">準備中</span></button>
+						</div>
+					</div>
+					<div class="theme-control">
+						<button aria-controls="theme-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示テーマを変更" class="theme-trigger" id="theme-trigger" type="button">
+							<svg aria-hidden="true" class="theme-icon--sun" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+							<svg aria-hidden="true" class="theme-icon--moon" fill="none" viewBox="0 0 24 24"><path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"></path></svg>
+						</button>
+						<div aria-labelledby="theme-trigger" class="theme-menu" hidden id="theme-menu" role="menu">
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="light"><span>ライト</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="dark"><span>ダーク</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button" value="system"><span>システム</span><span class="theme-state">選択中</span></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="shell" id="main-content">
+		<header class="page-header">
+			<h1>ブログ</h1>
+			<p class="page-description">勉強したことの備忘録や日常の出来事</p>
+		</header>
+
+		<div class="archive-layout">
+			<aside class="discovery-sidebar" aria-label="記事を探す">
+				<form action="/blog" class="archive-search" role="search">
+					<label class="discovery-heading" for="archive-search">記事を検索</label>
+					<div class="archive-search__field">
+						<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+						<input id="archive-search" name="q" placeholder="キーワードを入力" type="search">
+					</div>
+				</form>
+				<details class="filter-disclosure">
+					<summary><span>記事を絞り込む</span><span aria-hidden="true" class="disclosure-indicator"></span></summary>
+					<nav class="filter-panel" aria-label="記事の分類">
+						<h2 class="filter-panel__heading">記事を絞り込む</h2>
+						<section class="filter-group">
+							<h2>カテゴリー</h2>
+							<ul><li><a aria-current="true" href="#">すべて</a></li><li><a href="#">Programming</a></li><li><a href="#">Mathematics</a></li><li><a href="#">日記</a></li></ul>
+						</section>
+						<section class="filter-group">
+							<h2>タグ</h2>
+							<ul><li><a href="#">TypeScript</a></li><li><a href="#">Rust</a></li><li><a href="#">design-system</a></li><li><a href="#">学習記録</a></li></ul>
+						</section>
+						<section class="filter-group">
+							<h2>年</h2>
+							<ul><li><a href="#">2026年</a></li><li><a href="#">2025年</a></li></ul>
+						</section>
+						<section class="filter-group">
+							<h2>月</h2>
+							<ul><li><a href="#">2026年7月</a></li><li><a href="#">2026年6月</a></li><li><a href="#">2026年5月</a></li></ul>
+						</section>
+					</nav>
+				</details>
+			</aside>
+
+			<section aria-labelledby="post-list-heading">
+				<header class="results-heading">
+					<h2 id="post-list-heading">記事一覧</h2>
+					<p>全24件</p>
+				</header>
+				<div class="post-list">
+					<article class="post-row">
+						<a aria-labelledby="post-title-1" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-16">2026.07.16</time><span>Programming</span></p>
+								<h3 id="post-title-1">読みやすい技術記事の余白を考える</h3>
+								<ul class="post-tags" aria-label="タグ"><li>design-system</li><li>css</li><li>writing</li></ul>
+							</div>
+							<div class="thumbnail"><img alt="" height="1440" src="../../public/cat.jpg" width="1920"></div>
+						</a>
+					</article>
+
+					<article class="post-row">
+						<a aria-labelledby="post-title-2" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-02">2026.07.02</time><span>Mathematics</span></p>
+								<h3 id="post-title-2">数式を文章の一部として配置する</h3>
+								<ul class="post-tags" aria-label="タグ"><li>LaTeX</li><li>typography</li></ul>
+							</div>
+							<div class="thumbnail thumbnail--empty"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div>
+						</a>
+					</article>
+
+					<article class="post-row">
+						<a aria-labelledby="post-title-3" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-06-18">2026.06.18</time><span>日記</span></p>
+								<h3 id="post-title-3">静かな個人ブログを作り直した記録</h3>
+								<ul class="post-tags" aria-label="タグ"><li>blog</li><li>振り返り</li></ul>
+							</div>
+							<div class="thumbnail"><img alt="" height="1024" src="../../public/post-assets/2026/20260503-learning-typescript/cat.png" width="1024"></div>
+						</a>
+					</article>
+
+					<article class="post-row">
+						<a aria-labelledby="post-title-4" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-06-05">2026.06.05</time><span>Programming</span></p>
+								<h3 id="post-title-4">Rustの所有権を小さなコードで確かめる</h3>
+								<ul class="post-tags" aria-label="タグ"><li>rust</li><li>learning</li></ul>
+							</div>
+							<div class="thumbnail thumbnail--empty"><svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="4"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 18 4.5-4.5 3 3 2-2L19 18"></path></svg></div>
+						</a>
+					</article>
+				</div>
+				<div class="load-more-region">
+					<p id="visible-count">24件中10件を表示</p>
+					<button aria-describedby="visible-count" class="load-more" type="button">さらに読み込む</button>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<footer class="site-footer">
+		<div class="shell site-footer__inner">
+			<nav aria-label="フッターナビゲーション"><ul><li><a href="#">X (Twitter)</a></li><li><a href="#">GitHub</a></li><li><a href="#">Feed</a></li></ul></nav>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
+		</div>
+	</footer>
+
+	<script>
+		(function () {
+			var disclosure = document.querySelector(".filter-disclosure");
+			var desktop = window.matchMedia("(min-width: 64.001rem)");
+			var mobileOpen = disclosure.open;
+
+			if (desktop.matches) disclosure.open = true;
+			desktop.addEventListener("change", function (event) {
+				if (event.matches) {
+					mobileOpen = disclosure.open;
+					disclosure.open = true;
+				} else {
+					disclosure.open = mobileOpen;
+				}
+			});
+		})();
+
+		(function () {
+			function initializeMenu(controlSelector, applySelection) {
+				var control = document.querySelector(controlSelector);
+				var trigger = control.querySelector('[aria-haspopup="menu"]');
+				var menu = control.querySelector('[role="menu"]');
+				var options = Array.from(menu.querySelectorAll('[role="menuitemradio"]'));
+
+				function openMenu() {
+					menu.hidden = false;
+					trigger.setAttribute("aria-expanded", "true");
+					var selected = options.findIndex(function (option) { return option.getAttribute("aria-checked") === "true"; });
+					options[Math.max(selected, 0)].focus();
+				}
+
+				function closeMenu(restoreFocus) {
+					menu.hidden = true;
+					trigger.setAttribute("aria-expanded", "false");
+					if (restoreFocus) trigger.focus();
+				}
+
+				trigger.addEventListener("click", function () { if (menu.hidden) openMenu(); else closeMenu(false); });
+				trigger.addEventListener("keydown", function (event) { if (event.key === "ArrowDown") { event.preventDefault(); openMenu(); } });
+				options.forEach(function (option) {
+					option.addEventListener("click", function () {
+						if (option.getAttribute("aria-disabled") === "true") return;
+						if (applySelection) applySelection(option, options);
+						closeMenu(true);
+					});
+				});
+				menu.addEventListener("keydown", function (event) {
+					var index = options.indexOf(document.activeElement);
+					if (event.key === "Escape") { event.preventDefault(); closeMenu(true); }
+					else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+						event.preventDefault();
+						var direction = event.key === "ArrowDown" ? 1 : -1;
+						options[(index + direction + options.length) % options.length].focus();
+					}
+				});
+				document.addEventListener("click", function (event) { if (!menu.hidden && !control.contains(event.target)) closeMenu(false); });
+			}
+
+			var selectedTheme = "system";
+			try {
+				var storedTheme = localStorage.getItem("theme");
+				if (storedTheme === "light" || storedTheme === "dark") selectedTheme = storedTheme;
+			} catch (error) {}
+			document.querySelectorAll('.theme-menu [role="menuitemradio"]').forEach(function (option) {
+				option.setAttribute("aria-checked", String(option.value === selectedTheme));
+			});
+
+			initializeMenu(".language-control");
+			initializeMenu(".theme-control", function (option, options) {
+				var theme = option.value;
+				options.forEach(function (item) { item.setAttribute("aria-checked", String(item === option)); });
+				if (theme === "system") document.documentElement.removeAttribute("data-theme");
+				else document.documentElement.dataset.theme = theme;
+				try { localStorage.setItem("theme", theme); } catch (error) {}
+			});
+		})();
+	</script>
+</body>
+</html>

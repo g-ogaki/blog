@@ -26,3 +26,25 @@ Read these documents in this order before changing the project:
 | Delivery and secrets | `deployment_design.md` |
 
 Other documents should link to the canonical document instead of duplicating its rules.
+
+## Exploratory design artifacts
+
+- [`wireframes/blog-entry.html`](wireframes/blog-entry.html) — standalone
+  low-fidelity layout study for the blog entry page. `DESIGN.md` remains the
+  canonical visual source of truth.
+- [`wireframes/blog-entry-hi-fi.html`](wireframes/blog-entry-hi-fi.html) —
+  standalone high-fidelity application of the approved blog entry layout and
+  visual design system.
+- [`wireframes/blog-list.html`](wireframes/blog-list.html) — standalone
+  low-fidelity layout study for the responsive blog archive, context-aware
+  search and taxonomy filters, thumbnail-supported post rows, and planned
+  incremental loading control.
+- [`wireframes/blog-list-hi-fi.html`](wireframes/blog-list-hi-fi.html) —
+  standalone high-fidelity application of the approved blog archive layout and
+  visual design system.
+- [`wireframes/home.html`](wireframes/home.html) — standalone low-fidelity
+  layout and motion study for the responsive profile interview and recent-posts
+  sections on the homepage.
+- [`wireframes/home-hi-fi.html`](wireframes/home-hi-fi.html) — standalone
+  high-fidelity application of the approved homepage layout, responsive profile,
+  terminal introduction, and recent-post presentation.

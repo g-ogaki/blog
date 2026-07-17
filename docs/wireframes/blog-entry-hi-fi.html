@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Quiet Technical Journalデザインシステムに基づくブログ記事ページの高精細プロトタイプ。">
+	<title>読みやすい技術記事の余白を考える | moni's page</title>
+	<script>
+		(function () {
+			try {
+				var theme = localStorage.getItem("theme");
+				if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+			} catch (error) {}
+		})();
+	</script>
+	<style>
+		:root {
+			--surface: oklch(98.5% 0 0);
+			--surface-raised: #ffffff;
+			--surface-subtle: oklch(96.7% 0.001 286.375);
+			--hover-surface: oklch(92% 0.004 286.32);
+			--selected-surface: oklch(92% 0.004 286.32);
+			--muted-container: oklch(96.7% 0.001 286.375);
+			--text: oklch(37% 0.013 285.805);
+			--text-muted: oklch(44.2% 0.017 285.786);
+			--text-subtle: oklch(55.2% 0.016 285.938);
+			--border: oklch(87.1% 0.006 286.286);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(0.52 0.21 261.44);
+			--action-hover: oklch(0.46 0.21 261.44);
+			--on-action: #ffffff;
+			--focus: oklch(0.52 0.21 261.44);
+			--code-keyword: #cf222e;
+			--code-type: #8250df;
+			--code-string: #0a3069;
+			--code-comment: #6e7781;
+			--article-width: 48rem;
+			--shell-width: 80rem;
+			color-scheme: light;
+		}
+
+		:root[data-theme="dark"] {
+			--surface: oklch(21% 0.006 285.885);
+			--surface-raised: oklch(27.4% 0.006 286.033);
+			--surface-subtle: oklch(37% 0.013 285.805);
+			--hover-surface: oklch(27.4% 0.006 286.033);
+			--selected-surface: oklch(27.4% 0.006 286.033);
+			--muted-container: oklch(27.4% 0.006 286.033);
+			--text: oklch(87.1% 0.006 286.286);
+			--text-muted: oklch(70.5% 0.015 286.067);
+			--text-subtle: oklch(70.5% 0.015 286.067);
+			--border: oklch(37% 0.013 285.805);
+			--control-border: oklch(55.2% 0.016 285.938);
+			--action: oklch(70.7% 0.165 254.624);
+			--action-hover: oklch(80.9% 0.105 251.813);
+			--on-action: oklch(14.1% 0.005 285.823);
+			--focus: oklch(70.7% 0.165 254.624);
+			--code-keyword: #ff7b72;
+			--code-type: #d2a8ff;
+			--code-string: #a5d6ff;
+			--code-comment: #8b949e;
+			color-scheme: dark;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--surface: oklch(21% 0.006 285.885);
+				--surface-raised: oklch(27.4% 0.006 286.033);
+				--surface-subtle: oklch(37% 0.013 285.805);
+				--hover-surface: oklch(27.4% 0.006 286.033);
+				--selected-surface: oklch(27.4% 0.006 286.033);
+				--muted-container: oklch(27.4% 0.006 286.033);
+				--text: oklch(87.1% 0.006 286.286);
+				--text-muted: oklch(70.5% 0.015 286.067);
+				--text-subtle: oklch(70.5% 0.015 286.067);
+				--border: oklch(37% 0.013 285.805);
+				--control-border: oklch(55.2% 0.016 285.938);
+				--action: oklch(70.7% 0.165 254.624);
+				--action-hover: oklch(80.9% 0.105 251.813);
+				--on-action: oklch(14.1% 0.005 285.823);
+				--focus: oklch(70.7% 0.165 254.624);
+				--code-keyword: #ff7b72;
+				--code-type: #d2a8ff;
+				--code-string: #a5d6ff;
+				--code-comment: #8b949e;
+				color-scheme: dark;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		html {
+			scroll-behavior: auto;
+		}
+
+		body {
+			margin: 0;
+			background: var(--surface);
+			color: var(--text);
+			font-family: ui-sans-serif, system-ui, sans-serif;
+			font-size: 1rem;
+			line-height: 1.5;
+			text-rendering: optimizeLegibility;
+		}
+
+		a {
+			color: inherit;
+		}
+
+		a:focus-visible,
+		button:focus-visible,
+		input:focus-visible,
+		textarea:focus-visible {
+			outline: 2px solid var(--focus);
+			outline-offset: 3px;
+		}
+
+		.skip-link {
+			position: fixed;
+			top: 0.75rem;
+			left: 0.75rem;
+			z-index: 20;
+			padding: 0.75rem 1rem;
+			border-radius: 0.375rem;
+			background: var(--action);
+			color: var(--on-action);
+			font-size: 0.875rem;
+			font-weight: 600;
+			transform: translateY(-180%);
+		}
+
+		.skip-link:focus {
+			transform: translateY(0);
+		}
+
+		.visually-hidden {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		.shell {
+			width: min(calc(100% - 3rem), var(--shell-width));
+			margin-inline: auto;
+		}
+
+		.site-header {
+			border-bottom: 1px solid var(--border);
+			background: var(--surface);
+		}
+
+		.site-header__inner {
+			display: flex;
+			min-height: 4rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.wordmark {
+			font-size: 1rem;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+			text-decoration: none;
+		}
+
+		.header-actions,
+		.primary-nav ul {
+			display: flex;
+			align-items: center;
+		}
+
+		.header-actions {
+			gap: 1.5rem;
+		}
+
+		.header-utilities {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.primary-nav ul {
+			gap: 1.25rem;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.primary-nav a {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.primary-nav a:hover {
+			background: var(--hover-surface);
+		}
+
+		.primary-nav a[aria-current="page"] {
+			background: var(--selected-surface);
+			color: var(--action);
+			font-weight: 600;
+		}
+
+		.header-search {
+			position: relative;
+			display: flex;
+			align-items: center;
+		}
+
+		.header-search svg {
+			position: absolute;
+			left: 0.75rem;
+			width: 1rem;
+			height: 1rem;
+			pointer-events: none;
+			stroke: var(--text-muted);
+		}
+
+		.header-search input {
+			width: 14rem;
+			height: 2.75rem;
+			padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			color: var(--text);
+			font: inherit;
+			font-size: 0.875rem;
+		}
+
+		.header-search input::placeholder {
+			color: var(--text-muted);
+		}
+
+		.language-control,
+		.theme-control {
+			position: relative;
+		}
+
+		.language-trigger,
+		.theme-trigger {
+			display: grid;
+			width: 2.75rem;
+			height: 2.75rem;
+			place-items: center;
+			padding: 0;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: transparent;
+			color: var(--text);
+			cursor: pointer;
+		}
+
+		.language-trigger:hover,
+		.language-trigger[aria-expanded="true"],
+		.theme-trigger:hover,
+		.theme-trigger[aria-expanded="true"] {
+			background: var(--hover-surface);
+		}
+
+		.language-trigger svg,
+		.theme-trigger svg {
+			width: 1.25rem;
+			height: 1.25rem;
+			stroke: currentColor;
+		}
+
+		.theme-icon--moon {
+			display: none;
+		}
+
+		:root[data-theme="dark"] .theme-icon--sun {
+			display: none;
+		}
+
+		:root[data-theme="dark"] .theme-icon--moon {
+			display: block;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) .theme-icon--sun {
+				display: none;
+			}
+
+			:root:not([data-theme="light"]) .theme-icon--moon {
+				display: block;
+			}
+		}
+
+		.language-menu,
+		.theme-menu {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			z-index: 10;
+			display: grid;
+			min-width: 10rem;
+			gap: 0.25rem;
+			padding: 0.375rem;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 12%, transparent);
+		}
+
+		.language-menu[hidden],
+		.theme-menu[hidden] {
+			display: none;
+		}
+
+		.language-menu button,
+		.theme-menu button {
+			display: flex;
+			min-height: 2.75rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding-inline: 0.75rem;
+			border: 0;
+			border-radius: 0.375rem;
+			background: transparent;
+			color: var(--text-muted);
+			font: inherit;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-align: left;
+			cursor: pointer;
+		}
+
+		.language-menu button:hover:not([aria-disabled="true"]),
+		.language-menu button:focus-visible,
+		.theme-menu button:hover,
+		.theme-menu button:focus-visible {
+			background: var(--hover-surface);
+			color: var(--text);
+		}
+
+		.language-menu button[aria-checked="true"],
+		.theme-menu button[aria-checked="true"] {
+			background: var(--selected-surface);
+			color: var(--action);
+		}
+
+		.theme-menu button[aria-checked="true"] {
+			font-weight: 600;
+		}
+
+		.language-menu button[aria-checked="true"] {
+			font-weight: 600;
+		}
+
+		.language-menu button[aria-disabled="true"] {
+			cursor: not-allowed;
+			opacity: 0.65;
+		}
+
+		.language-availability,
+		.language-state,
+		.theme-state {
+			font-size: 0.75rem;
+			font-weight: 500;
+		}
+
+		.language-menu button[aria-checked="false"] .language-state,
+		.theme-menu button[aria-checked="false"] .theme-state {
+			visibility: hidden;
+		}
+
+		main {
+			padding-block: 2rem 6rem;
+		}
+
+		.breadcrumb {
+			margin-bottom: 3rem;
+			font-size: 0.875rem;
+		}
+
+		.breadcrumb ol {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin: 0;
+			padding: 0;
+			color: var(--text-subtle);
+			list-style: none;
+		}
+
+		.breadcrumb a {
+			display: inline-flex;
+			margin: -0.25rem;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			color: var(--text);
+			font-weight: 400;
+			text-decoration: none;
+		}
+
+		.breadcrumb a:hover {
+			background: var(--hover-surface);
+		}
+
+		.article,
+		.comments {
+			width: min(100%, var(--article-width));
+			margin-inline: auto;
+		}
+
+		.category-label {
+			margin: 0 0 1rem;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: clamp(1.875rem, 6vw, 2.25rem);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+		}
+
+		.article-meta {
+			margin-top: 1.5rem;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.tag-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin: 1rem 0 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.tag-list li {
+			padding: 0.25rem 0.625rem;
+			border-radius: 9999px;
+			background: var(--muted-container);
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.article-body {
+			padding-top: 3rem;
+			font-size: 1.125rem;
+			line-height: 2;
+		}
+
+		.article-body > * {
+			margin-block: 0;
+		}
+
+		.article-body > * + * {
+			margin-top: 2.25rem;
+		}
+
+		.article-body > * + :where(.code-block, figure, .link-card),
+		.article-body > :where(.code-block, figure, .link-card) + * {
+			margin-top: 3rem;
+		}
+
+		.article-body > h2 + *,
+		.article-body > h3 + * {
+			margin-top: 1.5rem;
+		}
+
+		.article-body h2 {
+			margin-top: 4rem;
+			font-size: 1.5rem;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+			line-height: 1.333;
+		}
+
+		.article-body h3 {
+			margin-top: 3rem;
+			font-size: 1.25rem;
+			font-weight: 600;
+			line-height: 1.4;
+		}
+
+		.article-body p {
+			line-break: strict;
+		}
+
+		.article-body a:not(.link-card) {
+			color: var(--action);
+			text-decoration-thickness: 1px;
+			text-underline-offset: 0.2em;
+		}
+
+		.article-body a:not(.link-card):hover {
+			color: var(--action-hover);
+		}
+
+		.article-body ul {
+			padding-left: 1.5rem;
+		}
+
+		.article-body li + li {
+			margin-top: 0.75rem;
+		}
+
+		.article-body blockquote {
+			padding-left: 1.5rem;
+			border-left: 3px solid var(--border);
+			color: var(--text-muted);
+		}
+
+		.article-body :not(pre) > code {
+			padding: 0.15rem 0.35rem;
+			border-radius: 0.25rem;
+			background: var(--surface-subtle);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.9em;
+		}
+
+		.code-block {
+			overflow: hidden;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+		}
+
+		.code-label {
+			padding: 0.5rem 1rem;
+			border-bottom: 1px solid var(--border);
+			background: var(--surface-subtle);
+			color: var(--text);
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.75rem;
+		}
+
+		.code-block pre {
+			overflow-x: auto;
+			margin: 0;
+			padding: 1.25rem;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+			font-size: 0.875rem;
+			line-height: 1.7;
+			tab-size: 2;
+		}
+
+		.code-keyword { color: var(--code-keyword); }
+		.code-type { color: var(--code-type); }
+		.code-string { color: var(--code-string); }
+		.code-comment { color: var(--code-comment); }
+
+		.math-block {
+			overflow-x: auto;
+			text-align: center;
+		}
+
+		.math-block math {
+			font-size: 1.35rem;
+		}
+
+		.article-figure img {
+			display: block;
+			width: 100%;
+			height: auto;
+			aspect-ratio: 4 / 3;
+			border-radius: 0.5rem;
+			object-fit: cover;
+		}
+
+		.article-figure figcaption {
+			margin-top: 0.5rem;
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.link-card {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(9rem, 30%);
+			height: 12rem;
+			min-height: 0;
+			overflow: hidden;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+			text-decoration: none;
+		}
+
+		.link-card:hover {
+			border-color: var(--action);
+		}
+
+		.link-card__copy {
+			display: flex;
+			min-width: 0;
+			flex-direction: column;
+			justify-content: center;
+			gap: 0.5rem;
+			padding: 1rem;
+		}
+
+		.link-card__copy strong {
+			color: var(--action);
+			font-size: 1rem;
+		}
+
+		.link-card__copy span,
+		.link-card__copy small {
+			color: var(--text-muted);
+		}
+
+		.link-card__copy span {
+			font-size: 0.875rem;
+		}
+
+		.link-card__copy small {
+			font-size: 0.75rem;
+		}
+
+		.link-card img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			min-height: 0;
+			border-left: 1px solid var(--border);
+			background: var(--surface-subtle);
+			object-fit: cover;
+		}
+
+		.comments {
+			margin-top: 4rem;
+		}
+
+		.section-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+
+		.section-heading h2,
+		.comment-form h3 {
+			margin: 0;
+			font-size: 1.5rem;
+			font-weight: 600;
+			line-height: 1.333;
+		}
+
+		.section-heading p,
+		.form-note {
+			margin: 0;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.comment-list {
+			margin: 2rem 0 0;
+			padding: 0;
+			border-top: 1px solid var(--border);
+			list-style: none;
+		}
+
+		.comment-list li {
+			padding-block: 1.5rem;
+		}
+
+		.comment-list li + li {
+			margin-top: 0.5rem;
+		}
+
+		.comment-meta {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+			font-size: 0.875rem;
+		}
+
+		.comment-meta time {
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.comment-body {
+			margin: 1rem 0 0;
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+
+		.comment-form {
+			display: grid;
+			gap: 1rem;
+			margin-top: 2rem;
+			padding: 1.5rem;
+			border: 1px solid var(--border);
+			border-radius: 0.375rem;
+			background: var(--surface-raised);
+		}
+
+		.comment-form__heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+
+		.comment-form label {
+			display: grid;
+			gap: 0.5rem;
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+
+		.comment-form input,
+		.comment-form textarea {
+			width: 100%;
+			padding: 0.75rem;
+			border: 1px solid var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--surface);
+			color: var(--text);
+			font: inherit;
+		}
+
+		.comment-form input {
+			min-height: 2.75rem;
+		}
+
+		.comment-form textarea {
+			min-height: 9rem;
+			resize: vertical;
+		}
+
+		.field-hint {
+			justify-self: end;
+			color: var(--text-muted);
+			font-size: 0.75rem;
+			font-weight: 400;
+		}
+
+		.verification-placeholder {
+			display: grid;
+			min-height: 4.5rem;
+			place-items: center;
+			border: 1px dashed var(--control-border);
+			border-radius: 0.375rem;
+			background: var(--muted-container);
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.primary-button {
+			width: fit-content;
+			min-height: 2.75rem;
+			padding-inline: 1rem;
+			border: 0;
+			border-radius: 0.375rem;
+			background: var(--action);
+			color: var(--on-action);
+			font: inherit;
+			font-size: 0.875rem;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		.primary-button:hover {
+			background: var(--action-hover);
+		}
+
+		.site-footer {
+			border-top: 1px solid var(--border);
+			background: var(--surface-raised);
+		}
+
+		.site-footer__inner {
+			display: flex;
+			min-height: 7rem;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 1rem;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+			text-align: center;
+		}
+
+		.site-footer nav ul {
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.site-footer a {
+			display: inline-flex;
+			margin: -0.25rem;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			color: var(--text);
+			text-decoration: none;
+		}
+
+		.site-footer a:hover {
+			background: var(--hover-surface);
+		}
+
+		.footer-legal {
+			margin: 0;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			color: inherit;
+		}
+
+		@media (max-width: 48rem) {
+			.shell {
+				width: min(calc(100% - 2rem), var(--shell-width));
+			}
+
+			.site-header__inner {
+				display: grid;
+				grid-template-areas:
+					"brand navigation"
+					"search utilities";
+				grid-template-columns: minmax(0, 1fr) auto;
+				align-items: center;
+				justify-content: stretch;
+				gap: 0.75rem;
+				padding-block: 1rem;
+			}
+
+			.wordmark {
+				grid-area: brand;
+				white-space: nowrap;
+			}
+
+			.header-actions {
+				display: contents;
+			}
+
+			.primary-nav {
+				grid-area: navigation;
+				justify-self: end;
+			}
+
+			.header-search {
+				grid-area: search;
+				width: 100%;
+				min-width: 0;
+				flex: none;
+			}
+
+			.header-search input {
+				width: 100%;
+				min-width: 0;
+			}
+
+			.header-utilities {
+				grid-area: utilities;
+				justify-self: end;
+			}
+
+			.primary-nav ul {
+				flex-wrap: nowrap;
+				gap: 0.25rem;
+			}
+
+			main {
+				padding-block: 1.5rem 4rem;
+			}
+
+			.breadcrumb {
+				margin-bottom: 2rem;
+			}
+
+			.article-body {
+				font-size: 1rem;
+			}
+
+			.comments {
+				margin-top: 4rem;
+			}
+		}
+
+		@media (max-width: 36rem) {
+			.link-card {
+				grid-template-columns: 1fr;
+				height: auto;
+			}
+
+			.link-card img {
+				order: -1;
+				height: 10rem;
+				border-bottom: 1px solid var(--border);
+				border-left: 0;
+			}
+
+			.section-heading,
+			.comment-form__heading,
+			.comment-meta {
+				align-items: flex-start;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+
+			.comment-form {
+				padding: 1rem;
+			}
+
+			.site-footer__inner {
+				padding-block: 1.5rem;
+			}
+
+			.site-footer nav ul {
+				flex-wrap: wrap;
+			}
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			a,
+			button {
+				transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+			}
+		}
+	</style>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">本文へ移動</a>
+
+	<header class="site-header">
+		<div class="shell site-header__inner">
+			<a class="wordmark" href="#">moni's page</a>
+			<div class="header-actions">
+				<nav class="primary-nav" aria-label="メインナビゲーション">
+					<ul>
+						<li><a href="#">ホーム</a></li>
+						<li><a aria-current="page" href="#">ブログ</a></li>
+					</ul>
+				</nav>
+				<form action="/blog" class="header-search" role="search">
+					<label class="sr-only" for="header-search-input">ブログを検索</label>
+					<svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+						<circle cx="11" cy="11" r="7"></circle>
+						<path d="m20 20-4-4"></path>
+					</svg>
+					<input id="header-search-input" name="q" placeholder="検索" type="search">
+				</form>
+				<div class="header-utilities">
+					<div class="language-control">
+						<button aria-controls="language-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示言語を変更" class="language-trigger" id="language-trigger" type="button">
+							<svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+								<circle cx="12" cy="12" r="9"></circle>
+								<path d="M3 12h18M12 3c2.5 2.5 3.75 5.5 3.75 9S14.5 18.5 12 21M12 3C9.5 5.5 8.25 8.5 8.25 12S9.5 18.5 12 21"></path>
+							</svg>
+						</button>
+						<div aria-labelledby="language-trigger" class="language-menu" hidden id="language-menu" role="menu">
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button"><span>日本語</span><span class="language-state">選択中</span></button>
+							<button aria-checked="false" aria-disabled="true" lang="en" role="menuitemradio" tabindex="-1" type="button"><span>English</span><span class="language-availability">準備中</span></button>
+						</div>
+					</div>
+					<div class="theme-control">
+						<button aria-controls="theme-menu" aria-expanded="false" aria-haspopup="menu" aria-label="表示テーマを変更" class="theme-trigger" id="theme-trigger" type="button">
+							<svg aria-hidden="true" class="theme-icon--sun" fill="none" viewBox="0 0 24 24">
+								<circle cx="12" cy="12" r="4"></circle>
+								<path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+							</svg>
+							<svg aria-hidden="true" class="theme-icon--moon" fill="none" viewBox="0 0 24 24">
+								<path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"></path>
+							</svg>
+						</button>
+						<div aria-labelledby="theme-trigger" class="theme-menu" hidden id="theme-menu" role="menu">
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="light"><span>ライト</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="false" role="menuitemradio" tabindex="-1" type="button" value="dark"><span>ダーク</span><span class="theme-state">選択中</span></button>
+							<button aria-checked="true" role="menuitemradio" tabindex="-1" type="button" value="system"><span>システム</span><span class="theme-state">選択中</span></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="shell" id="main-content">
+		<nav class="breadcrumb" aria-label="パンくず">
+			<ol>
+				<li><a href="#">ブログ</a></li>
+				<li aria-hidden="true">/</li>
+				<li><span aria-current="page">読みやすい技術記事の余白を考える</span></li>
+			</ol>
+		</nav>
+
+		<article class="article">
+			<header class="article-header">
+				<p class="category-label">Programming</p>
+				<h1>読みやすい技術記事の余白を考える</h1>
+				<div class="article-meta">
+					<time datetime="2026-07-16">2026.07.16</time>
+				</div>
+				<ul class="tag-list" aria-label="タグ">
+					<li>design-system</li>
+					<li>css</li>
+					<li>writing</li>
+				</ul>
+			</header>
+
+			<div class="article-body">
+				<p>技術記事では、情報の正確さだけでなく、読者が迷わず読み進められる余白も大切です。要素を大きく見せる代わりに、文章と文章の間に十分な空間を置くと、画面全体が静かになります。</p>
+				<p>このページでは、<a href="#">デザインシステムの方針</a>に沿って本文の幅を抑え、見出しと最初の内容を近づけています。段落、引用、リスト、数式は文章の流れとして扱い、コード、画像、リンクカードには広めの間隔を設けます。</p>
+
+				<h2>余白を役割で分ける</h2>
+				<p>すべての間隔を同じ値にすると、関連の強さが見えにくくなります。そこで、見出しから最初の内容までは24px、文章の流れは36px、コードや画像などの独立したブロックとの間は48pxとして、近さそのものに意味を持たせます。</p>
+				<ul>
+					<li>見出しと最初の内容は、ひとつのまとまりとして扱う。</li>
+					<li>独立した内容ブロックには、呼吸できる余白を置く。</li>
+					<li>フォームやナビゲーションの内部は、操作しやすい密度を保つ。</li>
+				</ul>
+
+				<h3>値をコードで表現する</h3>
+				<p>余白の役割を名前にすると、実装者が数値を推測する必要がなくなります。たとえば、次のような小さな型でも意図を共有できます。</p>
+				<div class="code-block">
+					<div class="code-label">typescript</div>
+					<pre><code><span class="code-keyword">type</span> <span class="code-type">ArticleRhythm</span> = {
+  headingToContent: <span class="code-string">"1.5rem"</span>;
+  flowToFlow: <span class="code-string">"2.25rem"</span>;
+  detachedBlock: <span class="code-string">"3rem"</span>;
+  subsection: <span class="code-string">"3rem"</span>;
+  section: <span class="code-string">"4rem"</span>;
+};
+
+<span class="code-comment">// 数値ではなく、関係を名前にする。</span></code></pre>
+				</div>
+
+				<h2>長い文章のリズム</h2>
+				<p>日本語の本文は1行が長くなりすぎると、次の行の先頭を探しにくくなります。このレイアウトでは記事幅を最大48remに制限し、本文を18px、行高を2に設定しています。</p>
+				<blockquote>
+					<p>静かなデザインは、情報を薄くすることではありません。十分なコントラストを保ちながら、強調する要素を慎重に選ぶことです。</p>
+				</blockquote>
+
+				<h3>数式も同じ流れに置く</h3>
+				<p>数式だけを特別に浮かせず、本文と同じ垂直リズムの中に置きます。背景や境界を加えず、日本語や英語と同じように内容そのものを読ませます。</p>
+				<div class="math-block" aria-label="0から1までのxの2乗の積分は3分の1">
+					<math display="block">
+						<mrow>
+							<msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup>
+							<msup><mi>x</mi><mn>2</mn></msup><mo>ⅆ</mo><mi>x</mi>
+							<mo>=</mo><mfrac><mn>1</mn><mn>3</mn></mfrac>
+						</mrow>
+					</math>
+				</div>
+
+				<h2>画像と関連する記事</h2>
+				<p>画像は本文を補うときだけ使います。角丸は控えめにし、キャプションを近くに置くことで、画像が何を示すのかを明確にします。</p>
+				<figure class="article-figure">
+					<img alt="日差しの中で口を開けている茶色い猫" height="1440" src="../../public/cat.jpg" width="1920">
+					<figcaption>記事画像の表示例。画像は内容の一部として扱います。</figcaption>
+				</figure>
+				<a class="link-card" href="#">
+					<span class="link-card__copy">
+						<strong>TypeScriptを学び始めました</strong>
+						<span>型を小さく試しながら、学んだことを記録した記事です。</span>
+						<small>moni's page</small>
+					</span>
+					<img alt="" height="1024" src="../../public/post-assets/2026/20260503-learning-typescript/cat.png" width="1024">
+				</a>
+				<p>読みやすさは、目立つ要素を増やすことではなく、読者が内容に集中できる関係を整えることから生まれます。まず余白で構造を示し、その後に色や形を必要な場所だけへ加えます。</p>
+			</div>
+		</article>
+
+		<section class="comments" aria-labelledby="comments-heading">
+			<header class="section-heading">
+				<h2 id="comments-heading">コメント</h2>
+				<p>2件のコメント</p>
+			</header>
+
+			<ol class="comment-list">
+				<li>
+					<header class="comment-meta">
+						<strong>haru</strong>
+						<time datetime="2026-07-16">2026.07.16</time>
+					</header>
+					<p class="comment-body">見出しの直後だけ余白を狭くする考え方が参考になりました。コードブロックとの距離も読みやすいです。</p>
+				</li>
+				<li>
+					<header class="comment-meta">
+						<strong>sora</strong>
+						<time datetime="2026-07-15">2026.07.15</time>
+					</header>
+					<p class="comment-body">ダークテーマでも本文と補足情報の違いが分かりやすく、長い記事を落ち着いて読めました。</p>
+				</li>
+			</ol>
+
+			<form class="comment-form">
+				<div class="comment-form__heading">
+					<h3>コメントを書く</h3>
+					<p class="form-note">投稿は確認後に公開されます。</p>
+				</div>
+				<label>
+					<span>名前</span>
+					<input autocomplete="name" maxlength="80" name="name" required type="text">
+				</label>
+				<label>
+					<span>コメント</span>
+					<textarea maxlength="2000" name="comment" required rows="7"></textarea>
+					<span class="field-hint">0 / 2000</span>
+				</label>
+				<div class="verification-placeholder">Turnstile 認証領域</div>
+				<button class="primary-button" type="button">送信</button>
+			</form>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="shell site-footer__inner">
+			<nav aria-label="フッターナビゲーション">
+				<ul>
+					<li><a href="#">X (Twitter)</a></li>
+					<li><a href="#">GitHub</a></li>
+					<li><a href="#">Feed</a></li>
+				</ul>
+			</nav>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
+		</div>
+	</footer>
+
+	<script>
+		(function () {
+			var control = document.querySelector(".language-control");
+			var trigger = document.querySelector(".language-trigger");
+			var menu = document.querySelector(".language-menu");
+			var options = Array.from(menu.querySelectorAll('[role="menuitemradio"]'));
+
+			function openMenu(focusIndex) {
+				menu.hidden = false;
+				trigger.setAttribute("aria-expanded", "true");
+				options[focusIndex === undefined ? 0 : focusIndex].focus();
+			}
+
+			function closeMenu(restoreFocus) {
+				menu.hidden = true;
+				trigger.setAttribute("aria-expanded", "false");
+				if (restoreFocus) trigger.focus();
+			}
+
+			trigger.addEventListener("click", function () {
+				if (menu.hidden) openMenu();
+				else closeMenu(false);
+			});
+
+			trigger.addEventListener("keydown", function (event) {
+				if (event.key === "ArrowDown") {
+					event.preventDefault();
+					openMenu(0);
+				}
+			});
+
+			options.forEach(function (option) {
+				option.addEventListener("click", function () {
+					if (option.getAttribute("aria-disabled") !== "true") closeMenu(true);
+				});
+			});
+
+			menu.addEventListener("keydown", function (event) {
+				var currentIndex = options.indexOf(document.activeElement);
+				if (event.key === "Escape") {
+					event.preventDefault();
+					closeMenu(true);
+				} else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+					event.preventDefault();
+					var direction = event.key === "ArrowDown" ? 1 : -1;
+					options[(currentIndex + direction + options.length) % options.length].focus();
+				} else if (event.key === "Home" || event.key === "End") {
+					event.preventDefault();
+					options[event.key === "Home" ? 0 : options.length - 1].focus();
+				}
+			});
+
+			document.addEventListener("click", function (event) {
+				if (!menu.hidden && !control.contains(event.target)) closeMenu(false);
+			});
+		})();
+
+		(function () {
+			var control = document.querySelector(".theme-control");
+			var trigger = document.querySelector(".theme-trigger");
+			var menu = document.querySelector(".theme-menu");
+			var options = Array.from(menu.querySelectorAll('[role="menuitemradio"]'));
+			var selected = "system";
+
+			try {
+				var stored = localStorage.getItem("theme");
+				if (stored === "light" || stored === "dark") selected = stored;
+			} catch (error) {}
+
+			function updateSelection() {
+				options.forEach(function (option) {
+					option.setAttribute("aria-checked", String(option.value === selected));
+				});
+			}
+
+			function applyTheme(theme) {
+				selected = theme;
+				if (theme === "system") document.documentElement.removeAttribute("data-theme");
+				else document.documentElement.dataset.theme = theme;
+				try {
+					localStorage.setItem("theme", theme);
+				} catch (error) {}
+				updateSelection();
+			}
+
+			function openMenu(focusIndex) {
+				menu.hidden = false;
+				trigger.setAttribute("aria-expanded", "true");
+				var selectedIndex = options.findIndex(function (option) { return option.value === selected; });
+				options[focusIndex === undefined ? selectedIndex : focusIndex].focus();
+			}
+
+			function closeMenu(restoreFocus) {
+				menu.hidden = true;
+				trigger.setAttribute("aria-expanded", "false");
+				if (restoreFocus) trigger.focus();
+			}
+
+			trigger.addEventListener("click", function () {
+				if (menu.hidden) openMenu();
+				else closeMenu(false);
+			});
+
+			trigger.addEventListener("keydown", function (event) {
+				if (event.key === "ArrowDown") {
+					event.preventDefault();
+					openMenu(0);
+				}
+			});
+
+			options.forEach(function (option) {
+				option.addEventListener("click", function () {
+					applyTheme(option.value);
+					closeMenu(true);
+				});
+			});
+
+			menu.addEventListener("keydown", function (event) {
+				var currentIndex = options.indexOf(document.activeElement);
+				if (event.key === "Escape") {
+					event.preventDefault();
+					closeMenu(true);
+				} else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+					event.preventDefault();
+					var direction = event.key === "ArrowDown" ? 1 : -1;
+					options[(currentIndex + direction + options.length) % options.length].focus();
+				} else if (event.key === "Home" || event.key === "End") {
+					event.preventDefault();
+					options[event.key === "Home" ? 0 : options.length - 1].focus();
+				}
+			});
+
+			document.addEventListener("click", function (event) {
+				if (!menu.hidden && !control.contains(event.target)) closeMenu(false);
+			});
+
+			updateSelection();
+		})();
+	</script>
+</body>
+</html>

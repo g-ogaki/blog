@@ -5,13 +5,76 @@
 The root layout owns the shared header, footer, skip link, Japanese document
 language, metadata defaults, and theme initialization. Primary navigation links
 to the homepage and blog archive. The shell uses semantic landmarks and visible
-keyboard focus styles.
+keyboard focus styles. Search-bearing headers reflow into two rows at `48rem`
+and below, keeping the wordmark and navigation above search and the language/theme
+controls. The archive header omits search and may defer its compact arrangement
+until `36rem`; that smaller breakpoint also owns narrow gutters and viewport-bound
+menus. The homepage and blog-entry page share the same search-bearing header
+geometry and control treatments; only their semantic current-navigation item
+changes. Primary-navigation labels do not wrap internally.
+
+The centered footer places X (Twitter), GitHub, and Feed above the muted legal
+line `© YYYY moni · Licensed under CC0 1.0 Universal`. Only the license name links
+to `https://creativecommons.org/publicdomain/zero/1.0/deed.en`; the line remains
+regular-weight and may wrap naturally on narrow screens.
 
 ## Homepage
 
-The Japanese homepage introduces moni and the site's purpose, then lists at
-most the latest five published posts. Drafts are excluded through the canonical
-content loader. The latest-post section links to the complete blog archive.
+The Japanese homepage introduces moni and the site's purpose in a profile panel
+beside a short three-turn prepared interview, then presents the newest published
+post as a featured item with four supporting recent posts. The profile uses the
+existing selfie as a circular `12rem` portrait, presents no professional title,
+and keeps X and GitHub available as labeled icon links. Its purpose copy is
+separated by whitespace rather than a divider. The latest-post section links to
+the complete blog archive. Drafts are excluded through the canonical content loader.
+
+Homepage main content uses a centered `max-w-6xl` measure inside the wider
+`max-w-7xl` site shell. On wide screens, the profile and interview use a
+one-third/two-thirds grid with a `3rem` gap; they stack at `48rem` and below.
+The portrait, name, and social links remain centered at every width while the
+purpose sentence remains left-aligned.
+The recent-post area uses equal-width columns so that its four supporting items
+retain readable copy and `10rem` thumbnails beside the narrower featured post.
+
+The interview is the homepage's single playful motion treatment and uses a
+Claude Code-inspired terminal application rather than chat bubbles or a plain
+shell transcript. Its shell identity separates the visitor account `guest`, the
+fictional host `notebook`, the working directory `~/about`, and the launched
+program `moni`. On ordinary motion preferences, the command in
+`guest@notebook:~/about$ moni` is typed first. The macOS-style title changes from
+`about — zsh` to `about — moni`, then the startup banner appears within space
+already reserved for it. The title bar uses three noninteractive red, amber, and
+green traffic-light circles in macOS order plus one folder icon; these remain
+decorative and local to this terminal. The banner
+contains a small seated-cat SVG with a Tailwind Yellow 600 body and Yellow 700
+outline/details, the program version, and the site domain without a professional
+title. Each prepared question is subsequently typed into
+the fixed input row,
+submitted as a `>` prompt, and followed by a streamed `●` response. Terminal
+chrome, banner metadata, prompts, typed questions, and the launch-command cursor
+use the system monospace stack; Japanese responses
+retain the system sans-serif stack. The transcript scrolls internally and follows
+the newest output with an immediate, non-smooth scroll, while the input remains
+fixed. After the prepared sequence, that row becomes a real single-line form
+control. It accepts repeated nonempty submissions of up to 200 characters and
+answers each with the fixed response `自由記述に対する返答はできないのです。あと誰か猫のアイコン描いて`.
+The control is disabled while the prepared sequence or a response is playing;
+submissions are appended with DOM text rather than interpreted as markup. The
+terminal has no status footer. Its high-fidelity treatment uses the same dark
+neutral-grey surface in both site themes. Primary reading text uses a soft green,
+secondary chrome and metadata use a muted green, and the brighter green is
+reserved for prompts, output markers, focus, and active terminal feedback. This
+palette is local to the terminal and does not replace the site's Blue interaction
+color elsewhere. Use `oklch(30% 0 0)` for the main surface, `oklch(32% 0 0)`
+for title-bar chrome, and `oklch(59% 0 0)` for meaningful terminal boundaries
+so that the panel remains dark and monochrome without reading as pure black
+against the light site surface.
+The illustrated cat remains decorative and local to this banner; it is not a site mascot.
+Reduced-motion visitors see the completed transcript, receive an enabled input
+immediately, and get the fixed response without streaming. No-JavaScript visitors
+see the completed prepared transcript and an explicitly disabled input. Assistive
+technology receives the complete prepared conversation without incremental live
+announcements; completed visitor responses use a polite live status.
 
 ## Blog archive
 
@@ -24,8 +87,9 @@ are unavailable.
 
 ## Dates
 
-Visible post dates use Japanese formatting with the `Asia/Tokyo` timezone. The
-machine-readable `datetime` attribute retains the source `YYYY-MM-DD` value.
+Visible post and comment dates use `YYYY.MM.DD` formatting with the
+`Asia/Tokyo` timezone. The machine-readable `datetime` attribute retains the
+source date or timestamp value.
 
 ## Themes
 

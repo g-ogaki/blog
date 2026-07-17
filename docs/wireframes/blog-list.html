@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ブログ一覧ページ — Lo-Fi Wireframe</title>
+	<style>
+		:root {
+			--canvas: #f5f5f5;
+			--surface: #ffffff;
+			--surface-muted: #e5e5e5;
+			--surface-strong: #d4d4d4;
+			--line: #a3a3a3;
+			--ink: #262626;
+			--muted: #525252;
+			--shell-width: 80rem;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: var(--canvas);
+			color: var(--ink);
+			font-family: ui-sans-serif, system-ui, sans-serif;
+			font-size: 1rem;
+			line-height: 1.5;
+		}
+
+		a {
+			color: inherit;
+			text-underline-offset: 0.2em;
+		}
+
+		a:focus-visible,
+		button:focus-visible,
+		input:focus-visible,
+		summary:focus-visible {
+			outline: 2px solid var(--ink);
+			outline-offset: 3px;
+		}
+
+		button,
+		input {
+			font: inherit;
+		}
+
+		.skip-link {
+			position: absolute;
+			top: 0.5rem;
+			left: 0.5rem;
+			z-index: 10;
+			padding: 0.75rem 1rem;
+			background: var(--surface);
+			transform: translateY(-150%);
+		}
+
+		.skip-link:focus {
+			transform: translateY(0);
+		}
+
+		.shell {
+			width: min(calc(100% - 3rem), var(--shell-width));
+			margin-inline: auto;
+		}
+
+		.wireframe-note {
+			margin: 0;
+			padding: 0.5rem 1rem;
+			border-bottom: 1px dashed var(--line);
+			color: var(--muted);
+			font-size: 0.75rem;
+			text-align: center;
+		}
+
+		.site-header {
+			border-bottom: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.site-header__inner {
+			display: flex;
+			min-height: 4rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.wordmark {
+			font-weight: 600;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.header-actions,
+		.primary-nav ul,
+		.header-utilities {
+			display: flex;
+			align-items: center;
+		}
+
+		.header-actions,
+		.primary-nav ul {
+			gap: 1.5rem;
+		}
+
+		.header-utilities {
+			gap: 0.75rem;
+		}
+
+		.primary-nav ul,
+		.footer-nav ul,
+		.filter-group ul,
+		.post-tags {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.primary-nav a {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.primary-nav a:hover,
+		.footer-nav a:hover {
+			background: var(--surface-muted);
+		}
+
+		.primary-nav a[aria-current="page"] {
+			background: var(--surface-muted);
+			font-weight: 600;
+		}
+
+		.control-placeholder {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding-inline: 0.75rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface-muted);
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		main {
+			padding-block: 4rem 6rem;
+		}
+
+		.page-header {
+			max-width: 48rem;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: clamp(2rem, 5vw, 2.25rem);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+		}
+
+		.page-description {
+			max-width: 42rem;
+			margin: 1.5rem 0 0;
+			color: var(--muted);
+		}
+
+		.load-more {
+			min-height: 2.75rem;
+			padding: 0.75rem 1rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface-muted);
+			color: var(--ink);
+			font-weight: 500;
+			cursor: pointer;
+		}
+
+		.archive-layout {
+			display: grid;
+			grid-template-columns: 14rem minmax(0, 1fr);
+			gap: 4rem;
+			margin-top: 4rem;
+		}
+
+		.discovery-sidebar {
+			position: sticky;
+			top: 1.5rem;
+			align-self: start;
+		}
+
+		.archive-search {
+			margin-bottom: 2rem;
+		}
+
+		.archive-search label {
+			display: block;
+			margin-bottom: 0.75rem;
+			font-size: 1rem;
+			font-weight: 600;
+		}
+
+		.archive-search input {
+			width: 100%;
+			min-height: 2.75rem;
+			padding: 0.75rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface);
+			color: var(--ink);
+		}
+
+		.filter-disclosure {
+			align-self: start;
+		}
+
+		.filter-disclosure > summary {
+			display: none;
+		}
+
+		.filter-panel {
+			display: block;
+			position: static;
+		}
+
+		.filter-panel__heading {
+			margin: 0 0 1.5rem;
+			font-size: 1rem;
+			font-weight: 600;
+		}
+
+		.filter-group + .filter-group {
+			margin-top: 2rem;
+		}
+
+		.filter-group h2 {
+			margin: 0 0 0.75rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+
+		.filter-group ul {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.filter-group a {
+			display: inline-block;
+			padding: 0.25rem 0.375rem;
+			border-radius: 0.25rem;
+			font-size: 0.875rem;
+			text-decoration: none;
+		}
+
+		.filter-group a:hover,
+		.filter-group a[aria-current="true"] {
+			background: var(--surface-muted);
+		}
+
+		.filter-group a[aria-current="true"] {
+			font-weight: 600;
+		}
+
+		.results-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.results-heading h2,
+		.results-heading p {
+			margin: 0;
+		}
+
+		.results-heading h2 {
+			font-size: 1.5rem;
+			font-weight: 600;
+		}
+
+		.results-heading p {
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.post-list {
+			border-top: 1px solid var(--line);
+		}
+
+		.post-row {
+			border-bottom: 1px solid var(--line);
+		}
+
+		.post-row__link {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem);
+			gap: 2rem;
+			align-items: start;
+			padding-block: 2rem;
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.post-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1rem;
+			margin: 0;
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		.post-row h3 {
+			margin: 0.75rem 0 0;
+			font-size: 1.25rem;
+			font-weight: 600;
+			line-height: 1.4;
+		}
+
+		.post-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-top: 1rem;
+		}
+
+		.post-tags li {
+			padding: 0.25rem 0.5rem;
+			border-radius: 9999px;
+			background: var(--surface-muted);
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		.thumbnail {
+			display: grid;
+			width: 100%;
+			aspect-ratio: 16 / 9;
+			place-items: center;
+			overflow: hidden;
+			border: 1px solid var(--line);
+			border-radius: 0.5rem;
+			background: var(--surface-strong);
+			color: var(--muted);
+			font-size: 0.75rem;
+			text-align: center;
+		}
+
+		.thumbnail--neutral {
+			background: var(--surface-muted);
+		}
+
+		.load-more-region {
+			padding-top: 2rem;
+			text-align: center;
+		}
+
+		.load-more-region p {
+			margin: 0 0 0.75rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.site-footer {
+			padding-block: 2rem;
+			border-top: 1px solid var(--line);
+			background: var(--surface);
+			text-align: center;
+		}
+
+		.footer-nav ul {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.5rem 1rem;
+		}
+
+		.footer-nav a {
+			display: inline-block;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			text-decoration: none;
+		}
+
+		.footer-legal {
+			margin-top: 1rem;
+			margin-bottom: 0;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			margin: -0.25rem;
+			padding: 0.25rem;
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.footer-legal a:hover {
+			background: var(--surface-muted);
+		}
+
+		@media (max-width: 64rem) {
+			.archive-layout {
+				grid-template-columns: 1fr;
+				gap: 3rem;
+			}
+
+			.discovery-sidebar {
+				position: static;
+			}
+
+			.archive-search {
+				max-width: 30rem;
+			}
+
+			.filter-disclosure {
+				border: 0;
+				background: transparent;
+			}
+
+			.filter-disclosure > summary {
+				display: inline-flex;
+				min-height: 2.75rem;
+				align-items: center;
+				gap: 0.5rem;
+				padding: 0;
+				font-size: 1rem;
+				font-weight: 600;
+				list-style: none;
+				cursor: pointer;
+			}
+
+			.filter-disclosure > summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.disclosure-indicator {
+				display: inline-block;
+				width: 0.625rem;
+				height: 0.375rem;
+				background: currentColor;
+				color: var(--muted);
+				clip-path: polygon(0 0, 100% 0, 50% 100%);
+			}
+
+			.filter-disclosure[open] .disclosure-indicator {
+				transform: rotate(180deg);
+			}
+
+			.filter-panel {
+				position: static;
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 2rem;
+				padding: 1.5rem 0 0;
+				border: 0;
+			}
+
+			.filter-disclosure:not([open]) > .filter-panel {
+				display: none;
+			}
+
+			.filter-panel__heading {
+				display: none;
+			}
+
+			.filter-group + .filter-group {
+				margin-top: 0;
+			}
+		}
+
+		@media (max-width: 48rem) {
+			.post-row__link {
+				grid-template-columns: minmax(0, 1fr) minmax(9rem, 11rem);
+				gap: 1.5rem;
+			}
+		}
+
+		@media (max-width: 36rem) {
+			.shell {
+				width: min(calc(100% - 2rem), var(--shell-width));
+			}
+
+			.site-header__inner {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+				grid-template-areas:
+					"wordmark nav"
+					"utilities utilities";
+				gap: 0.75rem 1rem;
+				padding-block: 0.75rem;
+			}
+
+			.wordmark {
+				grid-area: wordmark;
+			}
+
+			.header-actions {
+				display: contents;
+			}
+
+			.primary-nav {
+				grid-area: nav;
+			}
+
+			.primary-nav ul {
+				gap: 0.25rem;
+			}
+
+			.primary-nav a {
+				padding-inline: 0.5rem;
+			}
+
+			.header-utilities {
+				grid-area: utilities;
+				justify-self: end;
+			}
+
+			main {
+				padding-block: 3rem 5rem;
+			}
+
+			.archive-layout {
+				margin-top: 3rem;
+			}
+
+			.filter-panel {
+				grid-template-columns: 1fr;
+			}
+
+			.results-heading {
+				align-items: flex-start;
+				flex-direction: column;
+			}
+
+			.post-row__link {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+
+			.thumbnail {
+				order: -1;
+			}
+		}
+	</style>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">本文へ移動</a>
+	<p class="wireframe-note">Lo-Fi Wireframe — 構造・情報階層・レスポンシブ配置の検討用</p>
+
+	<header class="site-header">
+		<div class="shell site-header__inner">
+			<a class="wordmark" href="#">moni's page</a>
+			<div class="header-actions">
+				<nav class="primary-nav" aria-label="メインナビゲーション">
+					<ul>
+						<li><a href="#">ホーム</a></li>
+						<li><a aria-current="page" href="#">ブログ</a></li>
+					</ul>
+				</nav>
+				<div class="header-utilities">
+					<span class="control-placeholder" aria-label="言語メニューの配置">言語</span>
+					<span class="control-placeholder" aria-label="テーマ切替の配置">テーマ</span>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="shell" id="main-content">
+		<header class="page-header">
+			<h1>ブログ</h1>
+			<p class="page-description">勉強したことの備忘録や日常の出来事</p>
+		</header>
+
+		<div class="archive-layout">
+			<aside class="discovery-sidebar" aria-label="記事を探す">
+				<form class="archive-search" action="#" role="search">
+					<label for="archive-search">記事を検索</label>
+					<input id="archive-search" name="q" type="search" placeholder="キーワードを入力">
+				</form>
+				<details class="filter-disclosure">
+					<summary>
+						<span>記事を絞り込む</span>
+						<span class="disclosure-indicator" aria-hidden="true"></span>
+					</summary>
+					<nav class="filter-panel" aria-label="記事の分類">
+						<h2 class="filter-panel__heading">記事を絞り込む</h2>
+						<section class="filter-group">
+							<h2>カテゴリー</h2>
+							<ul>
+								<li><a aria-current="true" href="#">すべて</a></li>
+								<li><a href="#">Programming</a></li>
+								<li><a href="#">Mathematics</a></li>
+								<li><a href="#">日記</a></li>
+							</ul>
+						</section>
+						<section class="filter-group">
+							<h2>タグ</h2>
+							<ul>
+								<li><a href="#">TypeScript</a></li>
+								<li><a href="#">Rust</a></li>
+								<li><a href="#">学習記録</a></li>
+							</ul>
+						</section>
+						<section class="filter-group">
+							<h2>年</h2>
+							<ul>
+								<li><a href="#">2026年</a></li>
+								<li><a href="#">2025年</a></li>
+							</ul>
+						</section>
+						<section class="filter-group">
+							<h2>月</h2>
+							<ul>
+								<li><a href="#">2026年7月</a></li>
+								<li><a href="#">2026年6月</a></li>
+								<li><a href="#">2026年5月</a></li>
+							</ul>
+						</section>
+					</nav>
+				</details>
+			</aside>
+
+			<section aria-labelledby="post-list-heading">
+				<header class="results-heading">
+					<h2 id="post-list-heading">記事一覧</h2>
+					<p>全24件</p>
+				</header>
+				<div class="post-list">
+					<article class="post-row">
+						<a aria-labelledby="post-title-1" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-16">2026.07.16</time><span>Programming</span></p>
+								<h3 id="post-title-1">読みやすい技術記事の余白を考える</h3>
+								<ul class="post-tags" aria-label="タグ"><li>CSS</li><li>Design</li></ul>
+							</div>
+							<div class="thumbnail">記事画像<br>16:9</div>
+						</a>
+					</article>
+					<article class="post-row">
+						<a aria-labelledby="post-title-2" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-07-02">2026.07.02</time><span>Mathematics</span></p>
+								<h3 id="post-title-2">数式を文章の一部として配置する</h3>
+								<ul class="post-tags" aria-label="タグ"><li>LaTeX</li><li>Typography</li></ul>
+							</div>
+							<div class="thumbnail thumbnail--neutral">画像なし<br>ニュートラル表示</div>
+						</a>
+					</article>
+					<article class="post-row">
+						<a aria-labelledby="post-title-3" class="post-row__link" href="#">
+							<div>
+								<p class="post-meta"><time datetime="2026-06-18">2026.06.18</time><span>日記</span></p>
+								<h3 id="post-title-3">静かな個人ブログを作り直した記録</h3>
+								<ul class="post-tags" aria-label="タグ"><li>Blog</li><li>振り返り</li></ul>
+							</div>
+							<div class="thumbnail">記事画像<br>16:9</div>
+						</a>
+					</article>
+				</div>
+				<div class="load-more-region">
+					<p id="visible-count">24件中10件を表示</p>
+					<button class="load-more" type="button" aria-describedby="visible-count">さらに読み込む</button>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<footer class="site-footer">
+		<div class="shell">
+			<nav class="footer-nav" aria-label="フッターナビゲーション">
+				<ul>
+					<li><a href="#">X (Twitter)</a></li>
+					<li><a href="#">GitHub</a></li>
+					<li><a href="#">Feed</a></li>
+				</ul>
+			</nav>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
+		</div>
+	</footer>
+
+	<script>
+		const filterDisclosure = document.querySelector(".filter-disclosure");
+		const desktopArchive = window.matchMedia("(min-width: 64.001rem)");
+		let mobileFilterOpen = filterDisclosure.open;
+
+		if (desktopArchive.matches) {
+			filterDisclosure.open = true;
+		}
+
+		desktopArchive.addEventListener("change", (event) => {
+			if (event.matches) {
+				mobileFilterOpen = filterDisclosure.open;
+				filterDisclosure.open = true;
+				return;
+			}
+
+			filterDisclosure.open = mobileFilterOpen;
+		});
+	</script>
+</body>
+</html>

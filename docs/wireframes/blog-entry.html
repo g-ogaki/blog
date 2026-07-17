@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ブログ記事ページ — Lo-Fi Wireframe</title>
+	<style>
+		:root {
+			--canvas: #f5f5f5;
+			--surface: #ffffff;
+			--surface-muted: #e5e5e5;
+			--surface-strong: #d4d4d4;
+			--line: #a3a3a3;
+			--ink: #262626;
+			--muted: #525252;
+			--article-width: 48rem;
+			--shell-width: 80rem;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			scroll-behavior: auto;
+		}
+
+		body {
+			margin: 0;
+			background: var(--canvas);
+			color: var(--ink);
+			font-size: 1rem;
+			line-height: 1.5;
+		}
+
+		a {
+			color: inherit;
+			text-underline-offset: 0.2em;
+		}
+
+		a:focus-visible,
+		button:focus-visible,
+		input:focus-visible,
+		textarea:focus-visible {
+			outline: 2px solid var(--ink);
+			outline-offset: 3px;
+		}
+
+		.skip-link {
+			position: absolute;
+			top: 0.5rem;
+			left: 0.5rem;
+			z-index: 10;
+			padding: 0.75rem 1rem;
+			background: var(--surface);
+			transform: translateY(-150%);
+		}
+
+		.skip-link:focus {
+			transform: translateY(0);
+		}
+
+		.shell {
+			width: min(calc(100% - 3rem), var(--shell-width));
+			margin-inline: auto;
+		}
+
+		.wireframe-note {
+			margin: 0;
+			padding: 0.5rem 1rem;
+			border-bottom: 1px dashed var(--line);
+			color: var(--muted);
+			font-size: 0.75rem;
+			text-align: center;
+		}
+
+		.site-header {
+			border-bottom: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.site-header__inner {
+			display: flex;
+			min-height: 4rem;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.wordmark {
+			font-weight: 600;
+			text-decoration: none;
+		}
+
+		.header-actions,
+		.primary-nav ul {
+			display: flex;
+			align-items: center;
+			gap: 1.5rem;
+		}
+
+		.header-utilities {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.primary-nav ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.primary-nav a {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.primary-nav a:hover {
+			background: var(--surface);
+		}
+
+		.primary-nav a[aria-current="page"] {
+			background: var(--surface-muted);
+			color: var(--ink);
+			font-weight: 600;
+		}
+
+		.control-placeholder {
+			display: inline-flex;
+			min-height: 2.75rem;
+			align-items: center;
+			padding-inline: 0.75rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface-muted);
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		.search-placeholder {
+			width: 14rem;
+			justify-content: flex-start;
+		}
+
+		main {
+			padding-block: 2rem 6rem;
+		}
+
+		.breadcrumb {
+			margin-bottom: 3rem;
+			font-size: 0.875rem;
+		}
+
+		.breadcrumb ol {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin: 0;
+			padding: 0;
+			color: var(--muted);
+			list-style: none;
+		}
+
+		.breadcrumb a {
+			display: inline-flex;
+			margin: -0.25rem;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			color: var(--ink);
+			font-weight: 400;
+			text-decoration: none;
+		}
+
+		.breadcrumb a:hover {
+			background: var(--surface-muted);
+		}
+
+		.article,
+		.comments {
+			width: min(100%, var(--article-width));
+			margin-inline: auto;
+		}
+
+		.article-header {
+			padding-bottom: 0;
+		}
+
+		.category-label {
+			margin: 0 0 1rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: clamp(1.875rem, 6vw, 2.25rem);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+		}
+
+		.article-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 1.5rem;
+			margin-top: 1.5rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.tag-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin: 1rem 0 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.tag-list li {
+			padding: 0.25rem 0.625rem;
+			border: 1px solid var(--line);
+			border-radius: 9999px;
+			background: var(--surface-muted);
+			font-size: 0.75rem;
+		}
+
+		.article-body {
+			padding-top: 3rem;
+			font-size: 1.125rem;
+			line-height: 2;
+		}
+
+		.article-body > * {
+			margin-block: 0;
+		}
+
+		.article-body > * + * {
+			margin-top: 2.25rem;
+		}
+
+		.article-body > * + :where(.placeholder--code, figure, .link-card),
+		.article-body > :where(.placeholder--code, figure, .link-card) + * {
+			margin-top: 3rem;
+		}
+
+		.article-body > h2 + *,
+		.article-body > h3 + * {
+			margin-top: 1.5rem;
+		}
+
+		.article-body h2 {
+			margin-top: 4rem;
+			font-size: 1.5rem;
+			line-height: 1.333;
+		}
+
+		.article-body h3 {
+			margin-top: 3rem;
+			font-size: 1.25rem;
+			line-height: 1.4;
+		}
+
+		.placeholder {
+			display: grid;
+			min-height: 6rem;
+			place-items: center;
+			padding: 1rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface-muted);
+			color: var(--muted);
+			font-size: 0.875rem;
+			text-align: center;
+		}
+
+		.placeholder--paragraph {
+			min-height: 9rem;
+			border-style: dashed;
+			background: transparent;
+		}
+
+		.placeholder--code {
+			min-height: 12rem;
+			place-items: start;
+			background: var(--surface-strong);
+			text-align: left;
+		}
+
+		.placeholder--math {
+			min-height: 7rem;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+		}
+
+		.placeholder--image {
+			aspect-ratio: 16 / 9;
+			min-height: auto;
+		}
+
+		figure {
+			margin-inline: 0;
+		}
+
+		figcaption {
+			margin-top: 0.5rem;
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		.link-card {
+			display: grid;
+			min-height: 9rem;
+			grid-template-columns: minmax(0, 1fr) minmax(8rem, 30%);
+			overflow: hidden;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface);
+		}
+
+		.link-card__copy,
+		.link-card__media {
+			display: grid;
+			place-items: center;
+			padding: 1rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+			text-align: center;
+		}
+
+		.link-card__media {
+			border-left: 1px solid var(--line);
+			background: var(--surface-muted);
+		}
+
+		.comments {
+			margin-top: 4rem;
+		}
+
+		.section-heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+
+		.section-heading h2,
+		.comment-form h3 {
+			margin: 0;
+			font-size: 1.5rem;
+			line-height: 1.333;
+		}
+
+		.section-heading p,
+		.form-note {
+			margin: 0;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.comment-list {
+			margin: 2rem 0 0;
+			padding: 0;
+			border-top: 1px solid var(--line);
+			list-style: none;
+		}
+
+		.comment-list li {
+			padding-block: 1.5rem;
+		}
+
+		.comment-meta {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+			font-size: 0.875rem;
+		}
+
+		.comment-meta time,
+		.comment-placeholder {
+			color: var(--muted);
+		}
+
+		.comment-placeholder {
+			margin: 1rem 0 0;
+			padding: 1rem;
+			border: 1px dashed var(--line);
+			font-size: 0.875rem;
+		}
+
+		.comment-form {
+			display: grid;
+			gap: 1rem;
+			margin-top: 2rem;
+			padding: 1.5rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--surface);
+		}
+
+		.comment-form__heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+
+		.comment-form label {
+			display: grid;
+			gap: 0.5rem;
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+
+		.comment-form input,
+		.comment-form textarea {
+			width: 100%;
+			padding: 0.75rem;
+			border: 1px solid var(--line);
+			border-radius: 0.375rem;
+			background: var(--canvas);
+			color: var(--ink);
+			font: inherit;
+		}
+
+		.comment-form textarea {
+			min-height: 9rem;
+			resize: vertical;
+		}
+
+		.verification-placeholder {
+			min-height: 4.5rem;
+		}
+
+		.comment-form button {
+			width: fit-content;
+			min-height: 2.75rem;
+			padding-inline: 1rem;
+			border: 1px solid var(--ink);
+			border-radius: 0.375rem;
+			background: var(--surface-strong);
+			color: var(--ink);
+			font: inherit;
+			font-weight: 600;
+		}
+
+		.site-footer {
+			border-top: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.site-footer__inner {
+			display: flex;
+			min-height: 7rem;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 1rem;
+			color: var(--muted);
+			font-size: 0.875rem;
+			text-align: center;
+		}
+
+		.site-footer nav ul {
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.site-footer a {
+			display: inline-flex;
+			margin: -0.25rem;
+			padding: 0.25rem;
+			border-radius: 0.25rem;
+			color: var(--ink);
+			text-decoration: none;
+		}
+
+		.site-footer a:hover {
+			background: var(--surface-muted);
+		}
+
+		.footer-legal {
+			margin: 0;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			color: inherit;
+		}
+
+		@media (max-width: 48rem) {
+			.shell {
+				width: min(calc(100% - 2rem), var(--shell-width));
+			}
+
+			.site-footer__inner {
+				align-items: center;
+				flex-direction: column;
+			}
+
+			.site-footer__inner {
+				padding-block: 1rem;
+			}
+
+			.site-header__inner {
+				display: grid;
+				grid-template-areas:
+					"brand navigation"
+					"search utilities";
+				grid-template-columns: minmax(0, 1fr) auto;
+				align-items: center;
+				justify-content: stretch;
+				gap: 0.75rem;
+				padding-block: 1rem;
+			}
+
+			.wordmark {
+				grid-area: brand;
+				white-space: nowrap;
+			}
+
+			.header-actions {
+				display: contents;
+			}
+
+			.primary-nav {
+				grid-area: navigation;
+				justify-self: end;
+			}
+
+			.search-placeholder {
+				grid-area: search;
+				width: 100%;
+				min-width: 0;
+				flex: none;
+			}
+
+			.primary-nav ul {
+				flex-wrap: nowrap;
+				gap: 0.25rem;
+			}
+
+			.header-utilities {
+				grid-area: utilities;
+				justify-self: end;
+			}
+
+			main {
+				padding-block: 1.5rem 4rem;
+			}
+
+			.breadcrumb {
+				margin-bottom: 2rem;
+			}
+
+			.article-body {
+				font-size: 1rem;
+			}
+
+			.link-card {
+				grid-template-columns: 1fr;
+			}
+
+			.link-card__media {
+				min-height: 7rem;
+				border-top: 1px solid var(--line);
+				border-left: 0;
+			}
+
+			.comments {
+				margin-top: 4rem;
+			}
+
+			.section-heading,
+			.comment-form__heading,
+			.comment-meta {
+				align-items: flex-start;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+
+			.comment-form {
+				padding: 1rem;
+			}
+		}
+
+		@media (max-width: 36rem) {
+		}
+	</style>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">本文へ移動</a>
+	<p class="wireframe-note">Lo-Fi Wireframe — レイアウトと情報階層の確認用</p>
+
+	<header class="site-header">
+		<div class="shell site-header__inner">
+			<a class="wordmark" href="#">moni's page</a>
+			<div class="header-actions">
+				<nav class="primary-nav" aria-label="メインナビゲーション">
+					<ul>
+						<li><a href="#">ホーム</a></li>
+						<li><a aria-current="page" href="#">ブログ</a></li>
+					</ul>
+				</nav>
+				<span class="control-placeholder search-placeholder" aria-label="検索欄の配置">検索</span>
+				<div class="header-utilities">
+					<span class="control-placeholder" aria-label="言語メニューの配置">言語</span>
+					<span class="control-placeholder" aria-label="テーマ切替の配置">テーマ</span>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="shell" id="main-content">
+		<nav class="breadcrumb" aria-label="パンくず">
+			<ol>
+				<li><a href="#">ブログ</a></li>
+				<li aria-hidden="true">/</li>
+				<li><span aria-current="page">記事タイトル</span></li>
+			</ol>
+		</nav>
+
+		<article class="article">
+			<header class="article-header">
+				<p class="category-label">カテゴリー</p>
+				<h1>読みやすさを優先した記事タイトル</h1>
+				<div class="article-meta">
+					<time datetime="2026-07-16">2026.07.16</time>
+				</div>
+				<ul class="tag-list" aria-label="タグ">
+					<li>タグ</li>
+					<li>タグ</li>
+				</ul>
+			</header>
+
+			<div class="article-body">
+				<div class="placeholder placeholder--paragraph">導入本文 — 4〜6行</div>
+
+				<h2>セクション見出し</h2>
+				<div class="placeholder placeholder--paragraph">本文段落 1</div>
+				<div class="placeholder placeholder--paragraph">本文段落 2 — 段落間 36px</div>
+				<div class="placeholder placeholder--code">コードブロック<br>横スクロール可能な領域</div>
+
+				<h3>サブセクション見出し</h3>
+				<div class="placeholder placeholder--paragraph">本文 — 補足説明</div>
+				<div class="placeholder placeholder--math">数式ブロック</div>
+
+				<h2>画像と関連リンク</h2>
+				<div class="placeholder placeholder--paragraph">本文 — 画像またはリンクへの導入</div>
+				<figure>
+					<div class="placeholder placeholder--image">記事画像 — 16:9</div>
+					<figcaption>画像キャプション</figcaption>
+				</figure>
+				<div class="link-card" aria-label="リンクカードの配置">
+					<div class="link-card__copy">リンクタイトル・概要・提供元</div>
+					<div class="link-card__media">サムネイル</div>
+				</div>
+				<div class="placeholder placeholder--paragraph">結びの本文 — 2〜4行</div>
+			</div>
+		</article>
+
+		<section class="comments" aria-labelledby="comments-heading">
+			<header class="section-heading">
+				<h2 id="comments-heading">コメント</h2>
+				<p>2件のコメント</p>
+			</header>
+
+			<ol class="comment-list">
+				<li>
+					<header class="comment-meta">
+						<strong>名前</strong>
+						<time datetime="2026-07-16">2026.07.16</time>
+					</header>
+					<p class="comment-placeholder">コメント本文 — 数行</p>
+				</li>
+				<li>
+					<header class="comment-meta">
+						<strong>名前</strong>
+						<time datetime="2026-07-15">2026.07.15</time>
+					</header>
+					<p class="comment-placeholder">コメント本文 — 数行</p>
+				</li>
+			</ol>
+
+			<form class="comment-form">
+				<div class="comment-form__heading">
+					<h3>コメントを書く</h3>
+					<p class="form-note">投稿は確認後に公開されます。</p>
+				</div>
+				<label>
+					<span>名前</span>
+					<input type="text" placeholder="入力欄">
+				</label>
+				<label>
+					<span>コメント</span>
+					<textarea placeholder="入力欄"></textarea>
+				</label>
+				<div class="placeholder verification-placeholder">Turnstile 認証</div>
+				<button type="button">送信</button>
+			</form>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="shell site-footer__inner">
+			<nav aria-label="フッターナビゲーション">
+				<ul>
+					<li><a href="#">X (Twitter)</a></li>
+					<li><a href="#">GitHub</a></li>
+					<li><a href="#">Feed</a></li>
+				</ul>
+			</nav>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
+		</div>
+	</footer>
+</body>
+</html>
