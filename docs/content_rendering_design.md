@@ -22,7 +22,9 @@ to avoid paying the full bundled-language startup cost for ordinary Markdown.
 
 Fenced code uses its info string as the language. Inline code opts into syntax
 highlighting with a trailing `{:language}` marker. Unmarked inline code remains
-a semantic `code` element.
+a semantic `code` element. A language-marked fenced block displays a compact
+language label above the highlighted code; the supported `ts` and `typescript`
+aliases both display as `typescript`. Plain fenced blocks have no label.
 
 ## Images and Open Graph
 
@@ -37,6 +39,10 @@ colocated files other than `index.md` to
 ignored by Git. Relative Markdown image and file URLs are rewritten to that
 public path. Development includes draft assets; production publication excludes
 draft assets even though drafts are still validated.
+
+A standalone Markdown image with a title renders as a semantic `figure`: the
+title becomes a visible `figcaption` and is removed from the image tooltip to
+avoid duplicate presentation. An untitled image remains an ordinary image.
 
 ## Link cards
 

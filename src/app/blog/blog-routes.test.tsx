@@ -49,8 +49,10 @@ describe("blog routes", () => {
 			"category[data-category], year[data-year], month[data-month]",
 		);
 		expect(screen.getByRole("article")).toHaveAttribute("data-url", "/blog/2026/20260503-learning-typescript");
+		expect(screen.getByRole("article")).toHaveAttribute("data-summary", "TypeScriptの型を試しながら学ぶためのサンプル記事です。");
+		expect(screen.getByRole("article")).toHaveAttribute("data-image", "/post-assets/2026/20260503-learning-typescript/cat.png");
 		expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("data-pagefind-meta", "title");
-		expect(screen.getByText("typescript")).toHaveAttribute("data-pagefind-filter", "tag");
+		expect(document.querySelector('[data-pagefind-filter="tag"]')).toHaveTextContent("typescript");
 	});
 
 	it("generates canonical and post-specific Open Graph metadata", async () => {

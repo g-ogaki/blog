@@ -12,6 +12,7 @@ export default function BlogPage() {
 	const posts = loadPosts({ includeDrafts: false });
 	const taxonomy = buildTaxonomy(posts);
 	const archivePosts = posts.map((post) => ({
+		imageUrl: post.metadata.image ? `/post-assets/${post.slug}/${post.metadata.image}` : undefined,
 		url: post.url,
 		metadata: {
 			category: post.metadata.category,
@@ -22,11 +23,10 @@ export default function BlogPage() {
 		},
 	}));
 	return (
-		<main className="site-shell" id="main-content">
+		<main className="shell archive-main" id="main-content">
 			<header className="page-header">
-				<p className="eyebrow">All notes / {String(posts.length).padStart(2, "0")}</p>
 				<h1>ブログ</h1>
-				<p className="page-description">技術、数学、日々の学びを静かに積み重ねています。分類から関心のある記録をたどれます。</p>
+				<p className="page-description">勉強したことの備忘録や日常の出来事</p>
 			</header>
 			<SearchArchive posts={archivePosts} taxonomy={taxonomy} />
 		</main>

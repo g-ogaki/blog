@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
@@ -23,9 +24,9 @@ export default function RootLayout({
 		<html lang="ja" suppressHydrationWarning>
 			<head>
 				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
-				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
 			</head>
 			<body>
+				<Script id="theme-initializer" strategy="beforeInteractive">{themeScript}</Script>
 				<a className="skip-link" href="#main-content">本文へ移動</a>
 				<SiteHeader />
 				{children}

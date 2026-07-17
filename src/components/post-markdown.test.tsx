@@ -58,6 +58,7 @@ describe("PostMarkdown", () => {
 		expect(highlightedBlocks[0]).toHaveTextContent("const answer: number = 42;");
 		expect(container.querySelector("span.shiki")).toHaveTextContent("const answer = 42");
 		expect(container.querySelectorAll(".shiki span[style]").length).toBeGreaterThan(0);
+		expect(screen.getByText("typescript", { selector: ".code-label" })).toBeInTheDocument();
 	});
 
 	it("renders links and rewrites post-relative image paths", async () => {
@@ -74,7 +75,16 @@ describe("PostMarkdown", () => {
 			"src",
 			"/post-assets/2026/20260503-learning-typescript/images/diagram.png",
 		);
-		expect(screen.getByRole("img", { name: "Diagram" })).toHaveAttribute("title", "Architecture");
+		expect(screen.getByRole("img", { name: "Diagram" })).not.toHaveAttribute("title");
+		expect(screen.getByText("Architecture", { selector: "figcaption" })).toBeInTheDocument();
+	});
+
+	it("keeps untitled images ordinary and unlabeled code fences unwrapped", async () => {
+		const { container } = await renderMarkdown("```\nplain text\n```\n\n![Diagram](images/diagram.png)");
+
+		expect(container.querySelector(".code-label")).not.toBeInTheDocument();
+		expect(container.querySelector("figure")).not.toBeInTheDocument();
+		expect(screen.getByRole("img", { name: "Diagram" })).toBeInTheDocument();
 	});
 
 	it("does not render raw HTML or unsafe URLs", async () => {

@@ -24,13 +24,13 @@
 │   │   └── comments/moderate/page.tsx
 │   ├── components/
 │   │   ├── comment-section.tsx
+│   │   ├── home-terminal.tsx
 │   │   ├── moderation-confirmation.tsx
 │   │   ├── post-list.tsx
 │   │   ├── post-markdown.tsx
 │   │   ├── search-archive.tsx
 │   │   ├── site-footer.tsx
-│   │   ├── site-header.tsx
-│   │   └── theme-switcher.tsx
+│   │   └── site-header.tsx
 │   ├── generated/
 │   │   └── published-posts.json
 │   ├── lib/

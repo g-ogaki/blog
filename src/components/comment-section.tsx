@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import type { PublicComment } from "@/lib/comments/repository";
+import { formatSiteDate } from "@/lib/format-date";
 
 interface TurnstileRenderOptions {
 	callback: (token: string) => void;
@@ -32,13 +33,6 @@ interface CommentSectionProps {
 
 type CommentsState = "loading" | "ready" | "error";
 type SubmissionState = "idle" | "submitting" | "success" | "error";
-
-function formatCommentDate(value: string) {
-	return new Intl.DateTimeFormat("ja-JP", {
-		dateStyle: "medium",
-		timeZone: "Asia/Tokyo",
-	}).format(new Date(value));
-}
 
 function submissionError(status: number) {
 	if (status === 400) return "入力内容を確認してください。";
@@ -155,21 +149,20 @@ export function CommentSection({ postSlug, siteKey, turnstileApi }: CommentSecti
 				/>
 			)}
 			<header className="comment-heading">
-				<p className="eyebrow">Discussion</p>
 				<h2 id="comments-heading">コメント</h2>
+				{commentsState === "ready" ? <p>{comments.length}件のコメント</p> : null}
 			</header>
 
 			<div aria-live="polite" className="comment-list-status">
 				{commentsState === "loading" ? <p>コメントを読み込んでいます。</p> : null}
 				{commentsState === "error" ? <p>コメントを読み込めませんでした。</p> : null}
 				{commentsState === "ready" && comments.length === 0 ? <p>まだコメントはありません。</p> : null}
-				{commentsState === "ready" && comments.length > 0 ? <p>{comments.length}件のコメント</p> : null}
 			</div>
 			{comments.length > 0 ? (
 				<ol className="comment-list">
 					{comments.map((item) => (
 						<li key={item.id}>
-							<header><strong>{item.name}</strong><time dateTime={item.created_at}>{formatCommentDate(item.created_at)}</time></header>
+							<header><strong>{item.name}</strong><time dateTime={item.created_at}>{formatSiteDate(item.created_at)}</time></header>
 							<p className="comment-body">{item.comment}</p>
 						</li>
 					))}
