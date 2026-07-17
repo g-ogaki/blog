@@ -120,6 +120,7 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			text-decoration: none;
+			white-space: nowrap;
 		}
 
 		.primary-nav a:hover {
@@ -486,12 +487,22 @@
 			padding: 0.25rem;
 			border-radius: 0.25rem;
 			color: var(--ink);
-			font-weight: 500;
 			text-decoration: none;
 		}
 
 		.site-footer a:hover {
 			background: var(--surface-muted);
+		}
+
+		.footer-legal {
+			margin: 0;
+			color: var(--muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			color: inherit;
 		}
 
 		@media (max-width: 48rem) {
@@ -504,23 +515,51 @@
 				flex-direction: column;
 			}
 
-			.site-header__inner,
 			.site-footer__inner {
 				padding-block: 1rem;
 			}
 
+			.site-header__inner {
+				display: grid;
+				grid-template-areas:
+					"brand navigation"
+					"search utilities";
+				grid-template-columns: minmax(0, 1fr) auto;
+				align-items: center;
+				justify-content: stretch;
+				gap: 0.75rem;
+				padding-block: 1rem;
+			}
+
+			.wordmark {
+				grid-area: brand;
+				white-space: nowrap;
+			}
+
 			.header-actions {
-				flex-wrap: wrap;
-				gap: 1rem;
+				display: contents;
+			}
+
+			.primary-nav {
+				grid-area: navigation;
+				justify-self: end;
 			}
 
 			.search-placeholder {
-				flex: 1 1 12rem;
+				grid-area: search;
+				width: 100%;
+				min-width: 0;
+				flex: none;
 			}
 
 			.primary-nav ul {
-				flex-wrap: wrap;
-				gap: 1rem;
+				flex-wrap: nowrap;
+				gap: 0.25rem;
+			}
+
+			.header-utilities {
+				grid-area: utilities;
+				justify-self: end;
 			}
 
 			main {
@@ -563,47 +602,6 @@
 		}
 
 		@media (max-width: 36rem) {
-			.site-header__inner {
-				display: grid;
-				grid-template-areas:
-					"brand navigation"
-					"search utilities";
-				grid-template-columns: minmax(0, 1fr) auto;
-				align-items: center;
-				justify-content: stretch;
-				gap: 0.75rem;
-				padding-block: 1rem;
-			}
-
-			.wordmark {
-				grid-area: brand;
-				white-space: nowrap;
-			}
-
-			.header-actions {
-				display: contents;
-			}
-
-			.primary-nav {
-				grid-area: navigation;
-				justify-self: end;
-			}
-
-			.search-placeholder {
-				grid-area: search;
-				width: 100%;
-				min-width: 0;
-				flex: none;
-			}
-
-			.header-utilities {
-				grid-area: utilities;
-				justify-self: end;
-			}
-
-			.primary-nav ul {
-				flex-wrap: nowrap;
-			}
 		}
 	</style>
 </head>
@@ -729,7 +727,7 @@
 					<li><a href="#">Feed</a></li>
 				</ul>
 			</nav>
-			<span>© 2026 moni</span>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
 		</div>
 	</footer>
 </body>

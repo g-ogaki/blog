@@ -28,9 +28,14 @@
 			--action: oklch(0.52 0.21 261.44);
 			--action-hover: oklch(0.46 0.21 261.44);
 			--focus: oklch(0.52 0.21 261.44);
-			--terminal-chrome: oklch(96.7% 0.001 286.375);
-			--terminal-code: oklch(37% 0.013 285.805);
-			--terminal-cat: oklch(44.2% 0.017 285.786);
+			--terminal-surface: oklch(30% 0 0);
+			--terminal-chrome: oklch(32% 0 0);
+			--terminal-text: oklch(87% 0.08 145);
+			--terminal-text-muted: oklch(70% 0.06 145);
+			--terminal-accent: oklch(79% 0.14 145);
+			--terminal-border: oklch(59% 0 0);
+			--terminal-cat-fill: oklch(68.1% 0.162 75.834);
+			--terminal-cat-line: oklch(55.4% 0.135 66.442);
 			--shell-width: 80rem;
 			--homepage-width: 72rem;
 			color-scheme: light;
@@ -50,9 +55,6 @@
 			--action: oklch(70.7% 0.165 254.624);
 			--action-hover: oklch(80.9% 0.105 251.813);
 			--focus: oklch(70.7% 0.165 254.624);
-			--terminal-chrome: oklch(23.5% 0.006 285.885);
-			--terminal-code: oklch(87.1% 0.006 286.286);
-			--terminal-cat: oklch(70.5% 0.015 286.067);
 			color-scheme: dark;
 		}
 
@@ -71,9 +73,6 @@
 				--action: oklch(70.7% 0.165 254.624);
 				--action-hover: oklch(80.9% 0.105 251.813);
 				--focus: oklch(70.7% 0.165 254.624);
-				--terminal-chrome: oklch(23.5% 0.006 285.885);
-				--terminal-code: oklch(87.1% 0.006 286.286);
-				--terminal-cat: oklch(70.5% 0.015 286.067);
 				color-scheme: dark;
 			}
 		}
@@ -136,21 +135,28 @@
 			gap: 1.5rem;
 		}
 		.wordmark {
+			font-size: 1rem;
 			font-weight: 600;
+			letter-spacing: -0.01em;
 			text-decoration: none;
 			white-space: nowrap;
 		}
-		.header-actions, .primary-nav ul, .header-utilities {
+		.header-actions, .primary-nav ul {
 			display: flex;
 			align-items: center;
 		}
 		.header-actions { min-width: 0; gap: 1.5rem; }
+		.header-utilities {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
 		.primary-nav ul, .profile-socials, .recent-list, .terminal-transcript, .site-footer ul {
 			margin: 0;
 			padding: 0;
 			list-style: none;
 		}
-		.primary-nav ul { gap: 0.5rem; }
+		.primary-nav ul { gap: 1.25rem; }
 		.primary-nav a {
 			display: inline-flex;
 			min-height: 2.75rem;
@@ -160,6 +166,7 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			text-decoration: none;
+			white-space: nowrap;
 		}
 		.primary-nav a:hover { background: var(--hover-surface); }
 		.primary-nav a[aria-current="page"] {
@@ -169,31 +176,29 @@
 		}
 		.header-search {
 			position: relative;
-			width: 14rem;
-			min-width: 8rem;
+			display: flex;
+			align-items: center;
 		}
 		.header-search svg {
 			position: absolute;
-			top: 50%;
 			left: 0.75rem;
 			width: 1rem;
 			height: 1rem;
-			color: var(--text-muted);
-			stroke-width: 1.75;
-			transform: translateY(-50%);
 			pointer-events: none;
+			stroke: var(--text-muted);
 		}
 		.header-search input {
-			width: 100%;
+			width: 14rem;
 			height: 2.75rem;
-			padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+			padding: 0.5rem 0.75rem 0.5rem 2.25rem;
 			border: 1px solid var(--control-border);
 			border-radius: 0.375rem;
 			background: var(--surface-raised);
 			color: var(--text);
+			font: inherit;
+			font-size: 0.875rem;
 		}
-		.header-search input::placeholder { color: var(--text-subtle); }
-		.header-utilities { gap: 0.5rem; }
+		.header-search input::placeholder { color: var(--text-muted); }
 		.language-control, .theme-control { position: relative; }
 		.language-trigger, .theme-trigger {
 			display: grid;
@@ -201,9 +206,10 @@
 			height: 2.75rem;
 			place-items: center;
 			padding: 0;
-			border: 1px solid var(--border);
+			border: 1px solid var(--control-border);
 			border-radius: 0.375rem;
-			background: var(--surface-raised);
+			background: transparent;
+			color: var(--text);
 			cursor: pointer;
 		}
 		.language-trigger:hover, .theme-trigger:hover,
@@ -211,10 +217,9 @@
 			background: var(--hover-surface);
 		}
 		.language-trigger svg, .theme-trigger svg {
-			width: 1.2rem;
-			height: 1.2rem;
+			width: 1.25rem;
+			height: 1.25rem;
 			stroke: currentColor;
-			stroke-width: 1.75;
 		}
 		.theme-icon--moon { display: none; }
 		:root[data-theme="dark"] .theme-icon--sun { display: none; }
@@ -227,42 +232,48 @@
 			position: absolute;
 			top: calc(100% + 0.5rem);
 			right: 0;
-			z-index: 30;
-			width: max-content;
-			min-width: 12rem;
+			z-index: 10;
+			display: grid;
+			min-width: 10rem;
+			gap: 0.25rem;
 			padding: 0.375rem;
 			border: 1px solid var(--border);
 			border-radius: 0.375rem;
 			background: var(--surface-raised);
-			box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+			box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 12%, transparent);
 		}
 		.language-menu[hidden], .theme-menu[hidden] { display: none; }
 		.language-menu button, .theme-menu button {
 			display: flex;
-			width: 100%;
 			min-height: 2.75rem;
 			align-items: center;
 			justify-content: space-between;
 			gap: 1rem;
-			padding: 0.625rem 0.75rem;
+			padding-inline: 0.75rem;
 			border: 0;
-			border-radius: 0.25rem;
+			border-radius: 0.375rem;
 			background: transparent;
+			color: var(--text-muted);
+			font: inherit;
 			font-size: 0.875rem;
+			font-weight: 500;
 			text-align: left;
 			cursor: pointer;
 		}
 		.language-menu button:hover:not([aria-disabled="true"]), .theme-menu button:hover,
-		.language-menu button:focus-visible, .theme-menu button:focus-visible { background: var(--hover-surface); }
+		.language-menu button:focus-visible, .theme-menu button:focus-visible {
+			background: var(--hover-surface);
+			color: var(--text);
+		}
 		.language-menu button[aria-checked="true"], .theme-menu button[aria-checked="true"] {
 			background: var(--selected-surface);
 			color: var(--action);
 			font-weight: 600;
 		}
-		.language-menu button[aria-disabled="true"] { color: var(--text-subtle); cursor: not-allowed; }
-		.language-state, .language-availability, .theme-state { color: var(--text-muted); font-size: 0.75rem; font-weight: 400; }
+		.language-menu button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.65; }
+		.language-state, .language-availability, .theme-state { font-size: 0.75rem; font-weight: 500; }
 		.language-menu button[aria-checked="false"] .language-state,
-		.theme-menu button[aria-checked="false"] .theme-state { display: none; }
+		.theme-menu button[aria-checked="false"] .theme-state { visibility: hidden; }
 
 		.home-main {
 			max-width: var(--homepage-width);
@@ -287,10 +298,10 @@
 			text-align: center;
 		}
 		.profile-portrait {
-			width: 9rem;
-			height: 9rem;
+			width: 12rem;
+			height: 12rem;
 			aspect-ratio: 1;
-			flex: 0 0 9rem;
+			flex: 0 0 12rem;
 			object-fit: cover;
 			border: 1px solid var(--border);
 			border-radius: 9999px;
@@ -305,8 +316,6 @@
 		.profile-purpose {
 			width: 100%;
 			margin: 2rem 0 0;
-			padding-top: 2rem;
-			border-top: 1px solid var(--border);
 			color: var(--text-muted);
 			text-align: left;
 		}
@@ -335,6 +344,10 @@
 			min-width: 0;
 			flex-direction: column;
 			overflow: hidden;
+			border-color: var(--terminal-border);
+			background: var(--terminal-surface);
+			color: var(--terminal-text);
+			color-scheme: dark;
 		}
 		.window-titlebar {
 			display: grid;
@@ -342,9 +355,9 @@
 			align-items: center;
 			gap: 0.75rem;
 			padding: 0.875rem 1.25rem;
-			border-bottom: 1px solid var(--border);
+			border-bottom: 1px solid var(--terminal-border);
 			background: var(--terminal-chrome);
-			color: var(--text-muted);
+			color: var(--terminal-text-muted);
 			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 			font-size: 0.75rem;
 			font-weight: 500;
@@ -368,13 +381,14 @@
 			overflow-y: auto;
 			padding: 1.5rem;
 			scrollbar-gutter: stable;
+			scrollbar-color: var(--terminal-border) var(--terminal-surface);
 		}
 		.terminal-launch {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.75rem;
 			margin-bottom: 1.5rem;
-			color: var(--terminal-code);
+			color: var(--terminal-text);
 			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 		}
 		.terminal-launch code { font: inherit; font-weight: 600; }
@@ -385,27 +399,38 @@
 			align-items: center;
 			gap: 1.5rem;
 			padding-bottom: 1.5rem;
-			border-bottom: 1px solid var(--border);
+			border-bottom: 1px solid var(--terminal-border);
 		}
 		.terminal-banner.is-pending { visibility: hidden; opacity: 0; }
 		.terminal-banner.is-popping { animation: terminal-banner-pop 180ms ease-out both; }
-		.pixel-cat {
+		.terminal-cat {
 			display: grid;
 			width: 5rem;
 			aspect-ratio: 1;
 			place-items: center;
-			color: var(--terminal-cat);
 		}
-		.pixel-cat svg { width: 4.5rem; height: 4.5rem; }
-		.pixel-cat .cat-mid { fill: var(--text-muted); }
-		.pixel-cat .cat-dark { fill: var(--text); }
+		.terminal-cat svg { width: 4.5rem; height: 4.5rem; overflow: visible; }
+		.terminal-cat__body {
+			fill: var(--terminal-cat-fill);
+			stroke: var(--terminal-cat-line);
+			stroke-width: 2.75;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+		}
+		.terminal-cat__detail {
+			fill: none;
+			stroke: var(--terminal-cat-line);
+			stroke-width: 2.5;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+		}
 		.terminal-banner-copy {
 			display: grid;
 			gap: 0.25rem;
 			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 		}
-		.terminal-banner-copy strong { color: var(--terminal-code); font-size: 1rem; font-weight: 600; }
-		.terminal-banner-copy span { color: var(--text-muted); font-size: 0.875rem; }
+		.terminal-banner-copy strong { color: var(--terminal-text); font-size: 1rem; font-weight: 600; }
+		.terminal-banner-copy span { color: var(--terminal-text-muted); font-size: 0.875rem; }
 		.terminal-transcript { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
 		.terminal-turn { display: grid; gap: 0.75rem; }
 		.terminal-submission, .terminal-input {
@@ -416,7 +441,7 @@
 		}
 		.terminal-prompt, .terminal-output-marker {
 			flex: 0 0 auto;
-			color: var(--action);
+			color: var(--terminal-accent);
 			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 			font-weight: 600;
 		}
@@ -425,7 +450,6 @@
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr);
 			gap: 0.75rem;
-			padding-left: 1.5rem;
 		}
 		.terminal-output p { margin: 0; }
 		.terminal-output-copy { display: grid; min-width: 0; font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.75; }
@@ -438,10 +462,23 @@
 			min-height: 3.25rem;
 			align-items: center;
 			padding: 0.875rem 1.5rem;
-			border-top: 1px solid var(--border);
-			color: var(--action);
+			border-top: 1px solid var(--terminal-border);
+			color: var(--terminal-accent);
 		}
-		.terminal-input-text { min-width: 0; color: var(--terminal-code); overflow-wrap: anywhere; }
+		.terminal-input:focus-within { outline: 2px solid var(--terminal-accent); outline-offset: -2px; }
+		.terminal-input-field {
+			min-width: 0;
+			flex: 1;
+			padding: 0;
+			border: 0;
+			outline: 0;
+			background: transparent;
+			color: var(--terminal-text);
+			font: inherit;
+		}
+		.terminal-input-field::placeholder { color: var(--terminal-text-muted); }
+		.terminal-input-field:disabled { opacity: 1; cursor: default; }
+		.terminal-input-field:focus-visible { outline: 0; }
 		.terminal-cursor {
 			display: inline-block;
 			width: 1px;
@@ -452,7 +489,6 @@
 			animation: none;
 		}
 		.terminal-cursor[hidden] { display: none !important; }
-		.terminal-input.is-typing .terminal-cursor { animation: cursor-blink 800ms steps(1, end) infinite; }
 		@keyframes cursor-blink { 50% { opacity: 0; } }
 		@keyframes terminal-banner-pop {
 			from { opacity: 0; transform: scale(0.98); }
@@ -532,42 +568,41 @@
 			text-align: center;
 		}
 		.site-footer ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1rem; }
-		.site-footer a { display: inline-flex; padding: 0.25rem; border-radius: 0.25rem; font-weight: 500; text-decoration: none; }
+		.site-footer a { display: inline-flex; padding: 0.25rem; border-radius: 0.25rem; text-decoration: none; }
 		.site-footer a:hover { background: var(--hover-surface); }
-		.site-footer span { color: var(--text-muted); font-size: 0.875rem; }
+		.footer-legal { margin: 0; color: var(--text-muted); font-size: 0.875rem; }
+		.footer-legal a { display: inline; margin: -0.25rem; color: inherit; }
 
 		@media (max-width: 48rem) {
-			.about-layout, .recent-grid { grid-template-columns: 1fr; }
-			.profile-panel { align-items: flex-start; text-align: left; }
-			.profile-socials { margin-top: 0; }
-		}
-		@media (max-width: 36rem) {
-			.shell { width: min(calc(100% - 2rem), var(--shell-width)); }
 			.site-header__inner {
 				display: grid;
 				grid-template-areas: "brand navigation" "search utilities";
 				grid-template-columns: minmax(0, 1fr) auto;
 				align-items: center;
+				justify-content: stretch;
 				gap: 0.75rem;
 				padding-block: 1rem;
 			}
 			.wordmark { grid-area: brand; }
 			.header-actions { display: contents; }
 			.primary-nav { grid-area: navigation; justify-self: end; }
-			.primary-nav ul { gap: 0.25rem; }
+			.primary-nav ul { flex-wrap: nowrap; gap: 0.25rem; }
 			.header-search { grid-area: search; width: 100%; min-width: 0; }
+			.header-search input { width: 100%; min-width: 0; }
 			.header-utilities { grid-area: utilities; justify-self: end; }
+			.about-layout, .recent-grid { grid-template-columns: 1fr; }
+			.profile-socials { margin-top: 0; }
+		}
+		@media (max-width: 36rem) {
+			.shell { width: min(calc(100% - 2rem), var(--shell-width)); }
 			.language-menu, .theme-menu { position: fixed; top: auto; right: 1rem; left: 1rem; }
 			.home-main { padding-block: 2rem 4rem; }
 			.about-layout { gap: 2rem; }
 			.profile-panel, .chat-stage { padding: 1rem; }
-			.profile-panel { align-items: center; text-align: center; }
-			.profile-purpose { text-align: left; }
 			.window-titlebar { padding-inline: 1rem; }
-			.terminal-output { padding-left: 0.75rem; }
 			.terminal-banner { grid-template-columns: 4rem minmax(0, 1fr); gap: 1rem; }
-			.pixel-cat { width: 4rem; }
-			.pixel-cat svg { width: 3.75rem; height: 3.75rem; }
+			.terminal-cat { width: 4rem; }
+			.terminal-cat svg { width: 3.75rem; height: 3.75rem; }
 			.terminal-input { padding-inline: 1rem; }
 			.section-heading { align-items: flex-start; flex-direction: column; gap: 0.75rem; }
 			.recent-post > a { grid-template-columns: 7rem minmax(0, 1fr); }
@@ -644,10 +679,15 @@
 					<div class="chat-stage">
 						<div class="terminal-launch" data-terminal-launch><span>guest@notebook:~/about$</span><code data-launch-command>moni</code><span class="terminal-cursor" data-launch-cursor hidden></span></div>
 						<div class="terminal-banner" data-terminal-banner>
-							<div class="pixel-cat" aria-hidden="true">
-								<svg viewBox="0 0 16 16" shape-rendering="crispEdges"><g fill="currentColor"><rect x="2" y="2" width="3" height="3"></rect><rect x="11" y="2" width="3" height="3"></rect><rect x="3" y="4" width="10" height="8"></rect><rect x="5" y="12" width="6" height="2"></rect></g><g class="cat-mid"><rect x="4" y="6" width="2" height="2"></rect><rect x="10" y="6" width="2" height="2"></rect><rect x="7" y="9" width="2" height="1"></rect></g><g class="cat-dark"><rect x="5" y="6" width="1" height="1"></rect><rect x="10" y="6" width="1" height="1"></rect><rect x="6" y="10" width="1" height="1"></rect><rect x="9" y="10" width="1" height="1"></rect><rect x="1" y="9" width="3" height="1"></rect><rect x="12" y="9" width="3" height="1"></rect></g></svg>
+							<div class="terminal-cat" aria-hidden="true">
+								<svg viewBox="0 0 64 64">
+									<path class="terminal-cat__body" d="M22 48C14 55 7 52 5 44c-2-8 1-17 5-21 2-2 5-2 7 0s1 5-1 7c-4 4-5 10-2 14 2 2 4 1 6-1Z"></path>
+									<path class="terminal-cat__body" d="M27 35c-6 3-9 10-8 18 .5 5 4 8 9 8h19c5 0 8-2 8-6 0-3-2-5-6-5 1-7-1-13-7-16Z"></path>
+									<path class="terminal-cat__body" d="m19 15-1-9 10 5c4-2 9-2 13 0l9-5-1 10c4 3 6 7 5 12-1 8-9 12-19 12S17 36 16 28c-1-5 0-10 3-13Z"></path>
+									<path class="terminal-cat__detail" d="M27 23v1m16-1v1m-11 5c2 2 4 2 6 0m-3-2v3m-14-4-8-2m8 6-8 2m36-6 8-2m-8 6 8 2M30 41c-1 7-1 13 1 17m11-17c0 7 1 13 3 17m-20-1c2 2 5 2 7 0m11 0c3 2 6 2 8 0"></path>
+								</svg>
 							</div>
-							<div class="terminal-banner-copy"><strong>moni v1.0.0</strong><span>monipy.org</span></div>
+				<div class="terminal-banner-copy"><strong>moni code v1.0.0</strong><span>monipy.org</span></div>
 						</div>
 
 						<div class="static-transcript" data-static-transcript>
@@ -665,7 +705,12 @@
 							</ol>
 						</div>
 					</div>
-					<div class="terminal-input" data-terminal-input><span class="terminal-prompt" aria-hidden="true">&gt;</span><span class="terminal-input-text" data-input-text></span><span class="terminal-cursor" aria-hidden="true"></span></div>
+					<form class="terminal-input" data-terminal-form>
+						<label class="sr-only" for="terminal-free-input">メッセージを入力</label>
+						<span class="terminal-prompt" aria-hidden="true">&gt;</span>
+						<input autocomplete="off" class="terminal-input-field" data-input-text disabled id="terminal-free-input" maxlength="200" placeholder="自由入力には JavaScript が必要です" type="text">
+					</form>
+					<p class="sr-only" data-terminal-status role="status" aria-live="polite"></p>
 				</div>
 			</div>
 		</section>
@@ -686,7 +731,7 @@
 		</section>
 	</main>
 
-	<footer class="site-footer"><div class="shell site-footer__inner"><nav aria-label="フッターナビゲーション"><ul><li><a href="#">X (Twitter)</a></li><li><a href="#">GitHub</a></li><li><a href="#">Feed</a></li></ul></nav><span>© 2026 moni</span></div></footer>
+	<footer class="site-footer"><div class="shell site-footer__inner"><nav aria-label="フッターナビゲーション"><ul><li><a href="#">X (Twitter)</a></li><li><a href="#">GitHub</a></li><li><a href="#">Feed</a></li></ul></nav><p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p></div></footer>
 
 	<script>
 		(function () {
@@ -723,7 +768,6 @@
 
 		(function () {
 			var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-			if (reduceMotion.matches) return;
 			var staticTranscript = document.querySelector("[data-static-transcript]");
 			var animatedTranscript = document.querySelector("[data-animated-transcript]");
 			var chatStage = animatedTranscript && animatedTranscript.closest(".chat-stage");
@@ -732,18 +776,64 @@
 			var launchCursor = terminalLaunch && terminalLaunch.querySelector("[data-launch-cursor]");
 			var windowTitle = document.querySelector("[data-window-title]");
 			var terminalBanner = document.querySelector("[data-terminal-banner]");
-			var terminalInput = document.querySelector("[data-terminal-input]");
-			var inputText = terminalInput && terminalInput.querySelector("[data-input-text]");
-			if (!staticTranscript || !animatedTranscript || !chatStage || !terminalLaunch || !launchCommand || !launchCursor || !windowTitle || !terminalBanner || !terminalInput || !inputText) return;
+			var terminalForm = document.querySelector("[data-terminal-form]");
+			var inputText = terminalForm && terminalForm.querySelector("[data-input-text]");
+			var terminalStatus = document.querySelector("[data-terminal-status]");
+			if (!staticTranscript || !animatedTranscript || !chatStage || !terminalLaunch || !launchCommand || !launchCursor || !windowTitle || !terminalBanner || !terminalForm || !inputText || !terminalStatus) return;
 
 			var turns = [
 				{ id: "turn-1", question: "自己紹介してください。", answer: "moniです。ソフトウェアエンジニアとして働きながら、興味を持ったことを学んでいます。" },
 				{ id: "turn-2", question: "どんなことに興味がありますか？", answer: "プログラミング、数学、投資、そして日々の暮らしに関心があります。" },
 				{ id: "turn-3", question: "普段はどのように学んでいますか？", answer: "気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。" }
 			];
+			var freeReply = "自由記述に対する返答はできないのです。あと誰か猫のアイコン描いて";
 			function sleep(duration) { return new Promise(function (resolve) { window.setTimeout(resolve, duration); }); }
 			function scrollToLatest() { chatStage.scrollTop = chatStage.scrollHeight; }
-			async function typeText(target, value, speed) { target.textContent = ""; for (var character of value) { target.textContent += character; scrollToLatest(); await sleep(speed); } }
+			function setText(target, value) {
+				if (target instanceof HTMLInputElement) target.value = value;
+				else target.textContent = value;
+			}
+			function getText(target) { return target instanceof HTMLInputElement ? target.value : target.textContent; }
+			async function typeText(target, value, speed) {
+				setText(target, "");
+				for (var character of value) {
+					setText(target, getText(target) + character);
+					scrollToLatest();
+					await sleep(speed);
+				}
+			}
+			function enableFreeInput() {
+				inputText.value = "";
+				inputText.disabled = false;
+				inputText.placeholder = "メッセージを入力して Enter";
+			}
+			function appendTurn(list, question, answer) {
+				var turn = document.createElement("li");
+				turn.className = "terminal-turn is-revealed";
+				var submission = document.createElement("div");
+				submission.className = "terminal-submission";
+				var prompt = document.createElement("span");
+				prompt.className = "terminal-prompt";
+				prompt.setAttribute("aria-hidden", "true");
+				prompt.textContent = ">";
+				var questionCopy = document.createElement("p");
+				questionCopy.className = "terminal-question";
+				questionCopy.textContent = question;
+				submission.append(prompt, questionCopy);
+				var output = document.createElement("div");
+				output.className = "terminal-output is-revealed";
+				var marker = document.createElement("span");
+				marker.className = "terminal-output-marker";
+				marker.setAttribute("aria-hidden", "true");
+				marker.textContent = "●";
+				var answerCopy = document.createElement("p");
+				answerCopy.className = "terminal-output-copy";
+				answerCopy.textContent = answer;
+				output.append(marker, answerCopy);
+				turn.append(submission, output);
+				list.append(turn);
+				return answerCopy;
+			}
 			function revealTurn(id) {
 				var turn = animatedTranscript.querySelector('[data-turn="' + id + '"]');
 				var outputRow = animatedTranscript.querySelector('[data-output-row="' + id + '"]');
@@ -751,6 +841,36 @@
 				if (!turn || !outputRow || !answer) throw new Error("Missing terminal turn: " + id);
 				turn.classList.add("is-revealed"); scrollToLatest(); return { outputRow: outputRow, answer: answer };
 			}
+			terminalForm.addEventListener("submit", async function (event) {
+				event.preventDefault();
+				var message = inputText.value.trim();
+				if (!message || inputText.disabled) return;
+				inputText.disabled = true;
+				inputText.value = "";
+				var visibleTranscript = animatedTranscript.hidden ? staticTranscript : animatedTranscript;
+				var visibleList = visibleTranscript.querySelector(".terminal-transcript");
+				var staticList = staticTranscript.querySelector(".terminal-transcript");
+				var visibleAnswer = appendTurn(visibleList, message, reduceMotion.matches ? freeReply : "");
+				if (visibleList !== staticList) appendTurn(staticList, message, freeReply);
+				scrollToLatest();
+				try {
+					if (!reduceMotion.matches) await typeText(visibleAnswer, freeReply, 18);
+				} catch (error) {
+					visibleAnswer.textContent = freeReply;
+				} finally {
+					terminalStatus.textContent = "";
+					window.setTimeout(function () { terminalStatus.textContent = freeReply; }, 0);
+					enableFreeInput();
+					try { inputText.focus({ preventScroll: true }); } catch (error) { inputText.focus(); }
+					scrollToLatest();
+				}
+			});
+
+			if (reduceMotion.matches) {
+				enableFreeInput();
+				return;
+			}
+			inputText.placeholder = "";
 			async function play() {
 				windowTitle.textContent = "about — zsh";
 				launchCommand.textContent = "";
@@ -770,19 +890,18 @@
 				await sleep(280);
 				terminalBanner.classList.remove("is-popping");
 				for (var turn of turns) {
-					terminalInput.classList.add("is-typing");
 					await typeText(inputText, turn.question, 42);
-					terminalInput.classList.remove("is-typing");
 					await sleep(220);
 					var question = animatedTranscript.querySelector('[data-question="' + turn.id + '"]');
 					question.textContent = turn.question;
-					inputText.textContent = "";
+					inputText.value = "";
 					var revealed = revealTurn(turn.id);
 					await sleep(300);
 					revealed.outputRow.classList.add("is-revealed");
 					await typeText(revealed.answer, turn.answer, 18);
 					await sleep(420);
 				}
+				enableFreeInput();
 				scrollToLatest();
 			}
 			play().catch(function () {
@@ -793,8 +912,7 @@
 				terminalBanner.classList.remove("is-pending", "is-popping");
 				animatedTranscript.hidden = true;
 				staticTranscript.classList.remove("sr-only");
-				inputText.textContent = "";
-				terminalInput.classList.remove("is-typing");
+				enableFreeInput();
 			});
 		})();
 	</script>

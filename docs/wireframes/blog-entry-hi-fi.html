@@ -216,6 +216,7 @@
 			font-size: 0.875rem;
 			font-weight: 500;
 			text-decoration: none;
+			white-space: nowrap;
 		}
 
 		.primary-nav a:hover {
@@ -825,7 +826,6 @@
 			padding: 0.25rem;
 			border-radius: 0.25rem;
 			color: var(--text);
-			font-weight: 500;
 			text-decoration: none;
 		}
 
@@ -833,42 +833,22 @@
 			background: var(--hover-surface);
 		}
 
+		.footer-legal {
+			margin: 0;
+			color: var(--text-muted);
+			font-size: 0.875rem;
+		}
+
+		.footer-legal a {
+			display: inline;
+			color: inherit;
+		}
+
 		@media (max-width: 48rem) {
 			.shell {
 				width: min(calc(100% - 2rem), var(--shell-width));
 			}
 
-			.header-actions {
-				flex-wrap: wrap;
-				gap: 1rem;
-			}
-
-			.header-search {
-				flex: 1 1 12rem;
-			}
-
-			.header-search input {
-				width: 100%;
-			}
-
-			main {
-				padding-block: 1.5rem 4rem;
-			}
-
-			.breadcrumb {
-				margin-bottom: 2rem;
-			}
-
-			.article-body {
-				font-size: 1rem;
-			}
-
-			.comments {
-				margin-top: 4rem;
-			}
-		}
-
-		@media (max-width: 36rem) {
 			.site-header__inner {
 				display: grid;
 				grid-template-areas:
@@ -914,8 +894,27 @@
 
 			.primary-nav ul {
 				flex-wrap: nowrap;
+				gap: 0.25rem;
 			}
 
+			main {
+				padding-block: 1.5rem 4rem;
+			}
+
+			.breadcrumb {
+				margin-bottom: 2rem;
+			}
+
+			.article-body {
+				font-size: 1rem;
+			}
+
+			.comments {
+				margin-top: 4rem;
+			}
+		}
+
+		@media (max-width: 36rem) {
 			.link-card {
 				grid-template-columns: 1fr;
 				height: auto;
@@ -1150,7 +1149,7 @@
 					<li><a href="#">Feed</a></li>
 				</ul>
 			</nav>
-			<span>© 2026 moni</span>
+			<p class="footer-legal">© 2026 moni · Licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
 		</div>
 	</footer>
 
