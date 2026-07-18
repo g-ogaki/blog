@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const preparedTurns = [
 	{ question: "こんにちは。", answer: "こんにちは！何かお手伝いできることはありますか？" },
-	{ question: "あなたについて教えて。", answer: "私は数学と音楽が好きなおじさんです。好きな音楽は Janne Da Arc とショパン、好きな定理は Riesz の表現定理です。" },
+	{ question: "あなたについて教えて。", answer: "来世は猫になりたいおじさんです。好きな音楽は Janne Da Arc とショパン、好きな数学の定理は Hilbert 射影定理です。" },
 	{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけどよく知らないので、ちゃんとした AI に聞いてね。" },
 ] as const;
 
