@@ -11,6 +11,12 @@ math, and code transformation before returning its React tree, so published
 article content does not require client-side JavaScript. Raw HTML in Markdown is
 ignored, and `react-markdown`'s default URL sanitizer remains enabled.
 
+Rendered content uses the high-fidelity entry wireframe's `article-body`,
+`math-block`, figure, code-block, and link-card layout contracts. Tailwind
+Preflight removes browser list markers and default figure and quotation margins,
+so those wireframe-dependent styles are restored explicitly rather than relying
+on browser defaults.
+
 ## Mathematics and code
 
 Use `remark-math` and `rehype-katex` for inline and block mathematics, and
@@ -89,4 +95,7 @@ Markdown link.
 
 Link cards use a horizontal text-and-image layout when space permits. On phone
 widths, the image moves above the text at a 16:9 ratio and the description wraps
-so the card remains readable without horizontal overflow.
+so the card remains readable without horizontal overflow. Titles display at
+most two lines and descriptions at most three lines. The complete fetched or
+authored metadata remains in the static markup; these are visual clamps rather
+than scraper-side character limits.

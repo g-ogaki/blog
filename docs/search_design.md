@@ -52,12 +52,20 @@ and unavailable states are announced in the interface. No database is required.
 ```text
 /blog?q=<query>
 /blog?category=<category>
-/blog?tag=<tag>
+/blog?tag=<tag>&tag=<tag>
 /blog?year=YYYY
 /blog?month=YYYY-MM
 ```
 
-One value per filter dimension is supported. Search text and filters can be
-combined, and the active state is reflected in the URL with `history.replaceState`.
+Category, year, and month accept one value each. Tags accept multiple selections
+as repeated `tag` parameters; an article must contain every selected tag. Search
+text and filters can be combined, and the active state is reflected in the URL
+with `history.replaceState`. Year and month form one date dimension: selecting a
+year clears the active month, and selecting a month clears the active year.
+
+With JavaScript active, matching articles are presented in batches of ten. The
+visible count and 「さらに読み込む」 control are shown only while another batch
+remains, and any query or filter change resets the batch. The server-rendered
+fallback keeps the complete published list available when JavaScript is absent.
 
 ---

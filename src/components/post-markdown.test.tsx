@@ -32,8 +32,9 @@ afterEach(cleanup);
 
 describe("PostMarkdown", () => {
 	it("renders semantic Markdown content", async () => {
-		await renderMarkdown("## Heading\n\nA **strong** paragraph.\n\n- first\n- second");
+		const { container } = await renderMarkdown("## Heading\n\nA **strong** paragraph.\n\n- first\n- second");
 
+		expect(container.firstElementChild).toHaveClass("article-body");
 		expect(screen.getByRole("heading", { level: 2, name: "Heading" })).toBeInTheDocument();
 		expect(screen.getByText("strong").tagName).toBe("STRONG");
 		expect(screen.getByRole("list")).toBeInTheDocument();
@@ -44,7 +45,7 @@ describe("PostMarkdown", () => {
 		const { container } = await renderMarkdown("Euler: $e^{i\\pi}+1=0$\n\n$$\n\\int_0^1 x^2 dx\n$$");
 
 		expect(container.querySelectorAll(".katex")).toHaveLength(2);
-		expect(container.querySelector(".katex-display")).toBeInTheDocument();
+		expect(container.querySelector(".katex-display")).toHaveClass("math-block");
 		expect(screen.getAllByText(/e|i|π|1|0/, { selector: ".katex-mathml *" }).length).toBeGreaterThan(0);
 	});
 
@@ -111,7 +112,10 @@ describe("PostMarkdown", () => {
 			loadLinkPreview,
 		);
 
-		expect(screen.getByRole("link", { name: /Example preview/ })).toHaveClass("link-card");
+		const card = screen.getByRole("link", { name: /Example preview/ });
+		expect(card).toHaveClass("link-card");
+		expect(card.querySelector(".link-card__copy")).toBeInTheDocument();
+		expect(card.querySelector("img")).toHaveAttribute("src", "https://example.com/card.png");
 		expect(screen.getByText("Fetched during the build.")).toBeInTheDocument();
 		expect(screen.getByText(/Inline https:\/\/example.com\/inline remains text/)).toBeInTheDocument();
 		expect(loadLinkPreview).toHaveBeenCalledTimes(1);

@@ -42,18 +42,16 @@ export function resolvePostAssetUrl(url: string, postSlug: string) {
 
 function LinkCard({ preview }: { preview: LinkPreview }) {
 	return (
-		<a className="link-card" href={preview.url}>
-			<span className="link-card-copy">
-				<strong>{preview.title}</strong>
-				{preview.description ? <span>{preview.description}</span> : null}
-				<small>{preview.provider}</small>
+		<a className="link-card grid h-auto min-h-0 grid-cols-1 overflow-hidden rounded-md border border-site-border bg-surface-raised no-underline hover:border-action sm:h-48 sm:grid-cols-[minmax(0,1fr)_minmax(9rem,30%)]" href={preview.url}>
+			<span className="link-card__copy flex min-w-0 flex-col justify-center gap-2 p-4">
+				<strong className="line-clamp-2 text-base text-action">{preview.title}</strong>
+				{preview.description ? <span className="line-clamp-3 text-sm text-text-muted">{preview.description}</span> : null}
+				<small className="text-xs text-text-muted">{preview.provider}</small>
 			</span>
 			{preview.image ? (
-				<span
-					aria-hidden="true"
-					className="link-card-image"
-					style={{ backgroundImage: `url(${JSON.stringify(preview.image)})` }}
-				/>
+				// The wireframe uses a decorative image with intrinsic card sizing.
+				// eslint-disable-next-line @next/next/no-img-element
+				<img alt="" className="order-first h-40 min-h-0 w-full border-b border-site-border bg-surface-subtle object-cover sm:order-none sm:h-full sm:border-b-0 sm:border-l" src={preview.image} />
 			) : null}
 		</a>
 	);
@@ -63,19 +61,23 @@ function codeLanguageLabel(language: string) {
 	return language === "ts" || language === "typescript" ? "typescript" : language;
 }
 
-function rehypeWrapCodeBlocks() {
+function rehypeNormalizeArticleBlocks() {
 	return (tree: Root) => {
 		const wrapChildren = (parent: Root | Element) => {
 			for (let index = 0; index < parent.children.length; index += 1) {
 				const node = parent.children[index];
 				if (node.type !== "element") continue;
+				const classNames = Array.isArray(node.properties.className) ? node.properties.className : [];
+				if (classNames.includes("katex-display") && !classNames.includes("math-block")) {
+					node.properties.className = [...classNames, "math-block"];
+				}
 				if (node.tagName !== "pre") {
 					wrapChildren(node);
 					continue;
 				}
 				const code = node.children.find((child): child is Element => child.type === "element" && child.tagName === "code");
-				const classNames = code?.properties.className;
-				const languageClass = Array.isArray(classNames) ? classNames.find((value) => typeof value === "string" && value.startsWith("language-")) : undefined;
+				const codeClassNames = code?.properties.className;
+				const languageClass = Array.isArray(codeClassNames) ? codeClassNames.find((value) => typeof value === "string" && value.startsWith("language-")) : undefined;
 				if (typeof languageClass !== "string") continue;
 				parent.children[index] = {
 					type: "element",
@@ -134,7 +136,7 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards],
 		rehypePlugins: [
 			rehypeKatex,
-			rehypeWrapCodeBlocks,
+			rehypeNormalizeArticleBlocks,
 			[
 				rehypeShikiFromHighlighter,
 				highlighter,
@@ -151,6 +153,6 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 	});
 
 	return (
-		<div className="post-markdown">{content}</div>
+		<div className="article-body pt-12 text-base leading-8 md:text-lg md:leading-9">{content}</div>
 	);
 }

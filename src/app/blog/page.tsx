@@ -23,10 +23,10 @@ export default function BlogPage() {
 		},
 	}));
 	return (
-		<main className="shell archive-main" id="main-content">
-			<header className="page-header">
-				<h1>ブログ</h1>
-				<p className="page-description">勉強したことの備忘録や日常の出来事</p>
+		<main className="archive-main mx-auto w-full max-w-7xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24" id="main-content">
+			<header className="page-header max-w-3xl">
+				<h1 className="text-3xl leading-9 font-semibold tracking-tight sm:text-4xl sm:leading-10">ブログ</h1>
+				<p className="page-description mt-6 text-lg leading-8 text-text-muted">勉強したことの備忘録や日常の出来事</p>
 			</header>
 			<SearchArchive posts={archivePosts} taxonomy={taxonomy} />
 		</main>

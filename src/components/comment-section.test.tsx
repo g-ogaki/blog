@@ -47,7 +47,7 @@ describe("CommentSection", () => {
 		widget.solve();
 		fireEvent.change(screen.getByRole("textbox", { name: "名前" }), { target: { value: "Grace" } });
 		fireEvent.change(screen.getByRole("textbox", { name: "コメント" }), { target: { value: "Hello\nWorld" } });
-		fireEvent.click(screen.getByRole("button", { name: "確認へ送信" }));
+		fireEvent.click(screen.getByRole("button", { name: "送信" }));
 
 		expect(await screen.findByRole("status")).toHaveTextContent("承認後に表示されます");
 		const [, request] = fetchMock.mock.calls[1];
@@ -69,13 +69,15 @@ describe("CommentSection", () => {
 		render(<CommentSection postSlug={postSlug} siteKey="site-key" turnstileApi={widget.api} />);
 
 		await waitFor(() => expect(widget.api.render).toHaveBeenCalled());
+		const emptyComment = await screen.findByText("まだコメントはありません。");
+		expect(emptyComment.closest("ol")).toHaveClass("comment-list");
 		widget.solve();
 		fireEvent.change(screen.getByRole("textbox", { name: "名前" }), { target: { value: "Ada" } });
 		fireEvent.change(screen.getByRole("textbox", { name: "コメント" }), { target: { value: "Hello" } });
-		fireEvent.click(screen.getByRole("button", { name: "確認へ送信" }));
+		fireEvent.click(screen.getByRole("button", { name: "送信" }));
 
 		expect(await screen.findByRole("alert")).toHaveTextContent("本日の投稿上限");
 		expect(widget.api.reset).toHaveBeenCalledWith("widget-id");
-		expect(screen.getByRole("button", { name: "確認へ送信" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "送信" })).toBeDisabled();
 	});
 });

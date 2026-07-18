@@ -22,7 +22,7 @@ The archive exposes stable taxonomy navigation URLs:
 ```text
 /blog?q=<query>
 /blog?category=<category>
-/blog?tag=<tag>
+/blog?tag=<tag>&tag=<tag>
 /blog?year=YYYY
 /blog?month=YYYY-MM
 ```
@@ -30,7 +30,10 @@ The archive exposes stable taxonomy navigation URLs:
 Search and taxonomy values are URL encoded. Pagefind reads these parameters and
 performs client-side keyword search and filtering. Without JavaScript or before
 the search index is available, taxonomy URLs still resolve to the complete,
-usable static archive.
+usable static archive. The archive UI treats year and month as mutually
+exclusive filters and only writes one of those parameters at a time. Category
+remains single-select; repeated tag parameters represent a multi-selection and
+use AND semantics, so matching articles contain every selected tag.
 
 OpenNext stores the generated listing and post responses in Workers Static
 Assets and intercepts cache hits before invoking the Worker. Route correctness

@@ -19,7 +19,7 @@ const posts = [{
 const taxonomy = {
 	categories: ["Programming"],
 	months: ["2026-05"],
-	tags: ["typescript"],
+	tags: ["typescript", "learning"],
 	years: ["2026"],
 };
 
@@ -30,6 +30,16 @@ afterEach(() => {
 });
 
 describe("SearchArchive", () => {
+	function mockPagefind() {
+		const search = vi.fn().mockResolvedValue({ results: [] });
+		pagefind.load.mockResolvedValue({
+			init: vi.fn().mockResolvedValue(undefined),
+			filters: vi.fn().mockResolvedValue({}),
+			search,
+		});
+		return search;
+	}
+
 	it("keeps the published list available when Pagefind cannot load", async () => {
 		pagefind.load.mockRejectedValue(new Error("missing index"));
 		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
@@ -76,5 +86,105 @@ describe("SearchArchive", () => {
 			"href",
 			"/blog/2026/canonical-post",
 		);
+	});
+
+	it("keeps year and month filters mutually exclusive", async () => {
+		const search = mockPagefind();
+		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
+		await screen.findByText("全1件");
+
+		fireEvent.click(screen.getByRole("link", { name: "2026年" }));
+		await waitFor(() => expect(window.location.search).toBe("?year=2026"));
+
+		fireEvent.click(screen.getByRole("link", { name: "2026年5月" }));
+		await waitFor(() => {
+			expect(window.location.search).toBe("?month=2026-05");
+			expect(search).toHaveBeenLastCalledWith(null, { filters: { month: "2026-05" } });
+		});
+
+		fireEvent.click(screen.getByRole("link", { name: "2026年" }));
+		await waitFor(() => {
+			expect(window.location.search).toBe("?year=2026");
+			expect(search).toHaveBeenLastCalledWith(null, { filters: { year: "2026" } });
+		});
+	});
+
+	it("clears an active category without an all-categories option", async () => {
+		mockPagefind();
+		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
+		await screen.findByText("全1件");
+
+		expect(screen.queryByRole("link", { name: "すべて" })).not.toBeInTheDocument();
+		const category = screen.getByRole("link", { name: "Programming" });
+		fireEvent.click(category);
+		expect(window.location.search).toBe("?category=Programming");
+
+		fireEvent.click(category);
+		expect(window.location.pathname).toBe("/blog");
+		expect(window.location.search).toBe("");
+	});
+
+	it("selects multiple tags with AND semantics and clears them independently", async () => {
+		const search = mockPagefind();
+		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
+		await screen.findByText("全1件");
+
+		const typescript = screen.getByRole("link", { name: "typescript" });
+		const learning = screen.getByRole("link", { name: "learning" });
+		fireEvent.click(typescript);
+		await waitFor(() => {
+			expect(window.location.search).toBe("?tag=typescript");
+			expect(search).toHaveBeenLastCalledWith(null, { filters: { tag: ["typescript"] } });
+		});
+
+		expect(learning).toHaveAttribute("href", "/blog?tag=typescript&tag=learning");
+		fireEvent.click(learning);
+		await waitFor(() => {
+			expect(window.location.search).toBe("?tag=typescript&tag=learning");
+			expect(search).toHaveBeenLastCalledWith(null, { filters: { tag: ["typescript", "learning"] } });
+			expect(typescript).toHaveAttribute("aria-current", "true");
+			expect(learning).toHaveAttribute("aria-current", "true");
+		});
+
+		fireEvent.click(typescript);
+		await waitFor(() => {
+			expect(window.location.search).toBe("?tag=learning");
+			expect(search).toHaveBeenLastCalledWith(null, { filters: { tag: ["learning"] } });
+			expect(typescript).not.toHaveAttribute("aria-current");
+			expect(learning).toHaveAttribute("aria-current", "true");
+		});
+	});
+
+	it("reveals matching articles in batches of ten", async () => {
+		const manyPosts = Array.from({ length: 12 }, (_, index) => ({
+			...posts[0],
+			url: `/blog/2026/post-${index + 1}`,
+			metadata: { ...posts[0].metadata, title: `記事${index + 1}` },
+		}));
+		pagefind.load.mockResolvedValue({
+			init: vi.fn().mockResolvedValue(undefined),
+			filters: vi.fn().mockResolvedValue({}),
+			search: vi.fn().mockResolvedValue({ results: manyPosts.map((post) => ({ data: vi.fn().mockResolvedValue({
+				meta: { ...post.metadata, tags: post.metadata.tags.join(","), url: post.url },
+				plain_excerpt: post.metadata.summary,
+				url: post.url,
+			}) })) }),
+		});
+		render(<SearchArchive posts={manyPosts} taxonomy={taxonomy} />);
+
+		await screen.findByText("全12件");
+		expect(screen.getByRole("link", { name: "記事10" })).toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "記事11" })).not.toBeInTheDocument();
+		expect(screen.getByText("12件中10件を表示")).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
+
+		expect(screen.getByRole("link", { name: "記事12" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "さらに読み込む" })).not.toBeInTheDocument();
+
+		fireEvent.change(screen.getByRole("searchbox", { name: "記事を検索" }), { target: { value: "記事" } });
+
+		expect(await screen.findByRole("button", { name: "さらに読み込む" })).toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "記事11" })).not.toBeInTheDocument();
 	});
 });

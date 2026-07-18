@@ -386,11 +386,12 @@
 		.terminal-launch {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0.75rem;
+			gap: 0.5rem;
 			margin-bottom: 1.5rem;
 			color: var(--terminal-text);
 			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 		}
+		.terminal-command { display: inline-flex; align-items: center; }
 		.terminal-launch code { font: inherit; font-weight: 600; }
 		.terminal-launch.is-typing .terminal-cursor { animation: cursor-blink 800ms steps(1, end) infinite; }
 		.terminal-banner {
@@ -431,7 +432,7 @@
 		}
 		.terminal-banner-copy strong { color: var(--terminal-text); font-size: 1rem; font-weight: 600; }
 		.terminal-banner-copy span { color: var(--terminal-text-muted); font-size: 0.875rem; }
-		.terminal-transcript { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
+		.terminal-transcript { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
 		.terminal-turn { display: grid; gap: 0.75rem; }
 		.terminal-submission, .terminal-input {
 			display: flex;
@@ -452,9 +453,11 @@
 			gap: 0.75rem;
 		}
 		.terminal-output p { margin: 0; }
-		.terminal-output-copy { display: grid; min-width: 0; font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.75; }
-		.terminal-output-copy .terminal-measure, .terminal-output-copy .terminal-stream { grid-area: 1 / 1; }
-		.terminal-measure { visibility: hidden; }
+		.terminal-output-copy { min-width: 0; font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.75; }
+		.terminal-stream a { color: var(--terminal-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25rem; }
+		.terminal-stream a:hover { color: var(--terminal-text); }
+		.terminal-working { color: var(--terminal-text-muted); font: 0.875rem/1.75 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+		.terminal-output-marker.is-working { animation: terminal-working-spin 1s linear infinite; }
 		.animated-transcript .terminal-turn, .animated-transcript .terminal-output { display: none; }
 		.animated-transcript .terminal-turn.is-revealed { display: grid; }
 		.animated-transcript .terminal-output.is-revealed { display: grid; }
@@ -494,6 +497,7 @@
 			from { opacity: 0; transform: scale(0.98); }
 			to { opacity: 1; transform: scale(1); }
 		}
+		@keyframes terminal-working-spin { to { transform: rotate(360deg); } }
 
 		.recent-section { margin-top: 4rem; }
 		.section-heading {
@@ -677,7 +681,7 @@
 						<span aria-hidden="true"></span>
 					</div>
 					<div class="chat-stage">
-						<div class="terminal-launch" data-terminal-launch><span>guest@notebook:~/about$</span><code data-launch-command>moni</code><span class="terminal-cursor" data-launch-cursor hidden></span></div>
+						<div class="terminal-launch" data-terminal-launch><span>guest@notebook:~/about$</span><span class="terminal-command"><code data-launch-command>moni</code><span class="terminal-cursor" data-launch-cursor hidden></span></span></div>
 						<div class="terminal-banner" data-terminal-banner>
 							<div class="terminal-cat" aria-hidden="true">
 								<svg viewBox="0 0 64 64">
@@ -697,11 +701,11 @@
 								<li class="terminal-turn"><div class="terminal-submission"><span class="terminal-prompt" aria-hidden="true">&gt;</span><p class="terminal-question">普段はどのように学んでいますか？</p></div><div class="terminal-output"><span class="terminal-output-marker" aria-hidden="true">●</span><p>気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。</p></div></li>
 							</ol>
 						</div>
-						<div class="animated-transcript" data-animated-transcript aria-hidden="true" hidden>
+						<div class="animated-transcript" data-animated-transcript hidden>
 							<ol class="terminal-transcript">
-								<li class="terminal-turn" data-turn="turn-1"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-1"></p></div><div class="terminal-output" data-output-row="turn-1"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">moniです。ソフトウェアエンジニアとして働きながら、興味を持ったことを学んでいます。</span><span class="terminal-stream" data-answer="turn-1"></span></span></div></li>
-								<li class="terminal-turn" data-turn="turn-2"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-2"></p></div><div class="terminal-output" data-output-row="turn-2"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">プログラミング、数学、投資、そして日々の暮らしに関心があります。</span><span class="terminal-stream" data-answer="turn-2"></span></span></div></li>
-								<li class="terminal-turn" data-turn="turn-3"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-3"></p></div><div class="terminal-output" data-output-row="turn-3"><span class="terminal-output-marker">●</span><span class="terminal-output-copy"><span class="terminal-measure">気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。</span><span class="terminal-stream" data-answer="turn-3"></span></span></div></li>
+								<li aria-hidden="true" class="terminal-turn" data-turn="turn-1"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-1"></p></div><div class="terminal-output" data-output-row="turn-1"><span class="terminal-output-marker" data-output-marker="turn-1">●</span><span class="terminal-output-copy"><span class="terminal-working" data-working="turn-1" hidden>Working…</span><span class="terminal-stream" data-answer="turn-1"></span></span></div></li>
+								<li aria-hidden="true" class="terminal-turn" data-turn="turn-2"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-2"></p></div><div class="terminal-output" data-output-row="turn-2"><span class="terminal-output-marker" data-output-marker="turn-2">●</span><span class="terminal-output-copy"><span class="terminal-working" data-working="turn-2" hidden>Working…</span><span class="terminal-stream" data-answer="turn-2"></span></span></div></li>
+								<li aria-hidden="true" class="terminal-turn" data-turn="turn-3"><div class="terminal-submission"><span class="terminal-prompt">&gt;</span><p class="terminal-question" data-question="turn-3"></p></div><div class="terminal-output" data-output-row="turn-3"><span class="terminal-output-marker" data-output-marker="turn-3">●</span><span class="terminal-output-copy"><span class="terminal-working" data-working="turn-3" hidden>Working…</span><span class="terminal-stream" data-answer="turn-3"></span></span></div></li>
 							</ol>
 						</div>
 					</div>
@@ -786,7 +790,16 @@
 				{ id: "turn-2", question: "どんなことに興味がありますか？", answer: "プログラミング、数学、投資、そして日々の暮らしに関心があります。" },
 				{ id: "turn-3", question: "普段はどのように学んでいますか？", answer: "気になったことを小さく試し、わからなかったことも含めて記録しながら学んでいます。" }
 			];
-			var freeReply = "自由記述に対する返答はできないのです。あと誰か猫のアイコン描いて";
+			var freeReplies = [
+				{ segments: [
+					{ text: "moni は退職を得意としており、気がついたら会社を辞めています。詳しくは" },
+					{ text: "こちら", href: "https://note.com/moni0627/n/n4eaadddb95f6" },
+					{ text: "を読んでね。" }
+				] }
+			];
+			var pendingDuration = 300;
+			var submitDelay = 300;
+			var workingDuration = 600;
 			function sleep(duration) { return new Promise(function (resolve) { window.setTimeout(resolve, duration); }); }
 			function scrollToLatest() { chatStage.scrollTop = chatStage.scrollHeight; }
 			function setText(target, value) {
@@ -794,10 +807,40 @@
 				else target.textContent = value;
 			}
 			function getText(target) { return target instanceof HTMLInputElement ? target.value : target.textContent; }
+			function getReplyText(reply) { return reply.segments.map(function (segment) { return segment.text; }).join(""); }
+			function pickFreeReply() { return freeReplies[Math.floor(Math.random() * freeReplies.length)]; }
+			function renderReply(target, reply, value) {
+				target.replaceChildren();
+				var remaining = Array.from(value).length;
+				reply.segments.forEach(function (segment) {
+					var characters = Array.from(segment.text);
+					var visible = characters.slice(0, remaining).join("");
+					remaining = Math.max(0, remaining - characters.length);
+					if (!visible) return;
+					if (segment.href) {
+						var link = document.createElement("a");
+						link.href = segment.href;
+						link.target = "_blank";
+						link.rel = "noopener noreferrer";
+						link.textContent = visible;
+						target.append(link);
+					} else target.append(document.createTextNode(visible));
+				});
+			}
 			async function typeText(target, value, speed) {
 				setText(target, "");
 				for (var character of value) {
 					setText(target, getText(target) + character);
+					scrollToLatest();
+					await sleep(speed);
+				}
+			}
+			async function typeReply(target, reply, speed) {
+				var visible = "";
+				renderReply(target, reply, visible);
+				for (var character of getReplyText(reply)) {
+					visible += character;
+					renderReply(target, reply, visible);
 					scrollToLatest();
 					await sleep(speed);
 				}
@@ -807,7 +850,12 @@
 				inputText.disabled = false;
 				inputText.placeholder = "メッセージを入力して Enter";
 			}
-			function appendTurn(list, question, answer) {
+			function setWorking(marker, workingCopy, active) {
+				marker.textContent = active ? "◒" : "●";
+				marker.classList.toggle("is-working", active);
+				workingCopy.hidden = !active;
+			}
+			function appendTurn(list, question, reply, answer, working, outputVisible) {
 				var turn = document.createElement("li");
 				turn.className = "terminal-turn is-revealed";
 				var submission = document.createElement("div");
@@ -821,45 +869,65 @@
 				questionCopy.textContent = question;
 				submission.append(prompt, questionCopy);
 				var output = document.createElement("div");
-				output.className = "terminal-output is-revealed";
+				output.className = "terminal-output" + (outputVisible ? " is-revealed" : "");
 				var marker = document.createElement("span");
 				marker.className = "terminal-output-marker";
 				marker.setAttribute("aria-hidden", "true");
 				marker.textContent = "●";
-				var answerCopy = document.createElement("p");
+				var answerCopy = document.createElement("span");
 				answerCopy.className = "terminal-output-copy";
-				answerCopy.textContent = answer;
+				var workingCopy = document.createElement("span");
+				workingCopy.className = "terminal-working";
+				workingCopy.textContent = "Working…";
+				var stream = document.createElement("span");
+				stream.className = "terminal-stream";
+				renderReply(stream, reply, answer);
+				answerCopy.append(workingCopy, stream);
+				setWorking(marker, workingCopy, working);
 				output.append(marker, answerCopy);
 				turn.append(submission, output);
 				list.append(turn);
-				return answerCopy;
+				return { answer: stream, marker: marker, output: output, working: workingCopy };
 			}
 			function revealTurn(id) {
 				var turn = animatedTranscript.querySelector('[data-turn="' + id + '"]');
 				var outputRow = animatedTranscript.querySelector('[data-output-row="' + id + '"]');
+				var marker = animatedTranscript.querySelector('[data-output-marker="' + id + '"]');
+				var working = animatedTranscript.querySelector('[data-working="' + id + '"]');
 				var answer = animatedTranscript.querySelector('[data-answer="' + id + '"]');
-				if (!turn || !outputRow || !answer) throw new Error("Missing terminal turn: " + id);
-				turn.classList.add("is-revealed"); scrollToLatest(); return { outputRow: outputRow, answer: answer };
+				if (!turn || !outputRow || !marker || !working || !answer) throw new Error("Missing terminal turn: " + id);
+				turn.classList.add("is-revealed"); scrollToLatest(); return { outputRow: outputRow, marker: marker, working: working, answer: answer };
 			}
 			terminalForm.addEventListener("submit", async function (event) {
 				event.preventDefault();
 				var message = inputText.value.trim();
 				if (!message || inputText.disabled) return;
+				var reply = pickFreeReply();
+				var replyText = getReplyText(reply);
 				inputText.disabled = true;
 				inputText.value = "";
 				var visibleTranscript = animatedTranscript.hidden ? staticTranscript : animatedTranscript;
 				var visibleList = visibleTranscript.querySelector(".terminal-transcript");
 				var staticList = staticTranscript.querySelector(".terminal-transcript");
-				var visibleAnswer = appendTurn(visibleList, message, reduceMotion.matches ? freeReply : "");
-				if (visibleList !== staticList) appendTurn(staticList, message, freeReply);
+				var visibleReply = appendTurn(visibleList, message, reply, reduceMotion.matches ? replyText : "", false, reduceMotion.matches);
+				if (visibleList !== staticList) appendTurn(staticList, message, reply, replyText, false, true);
 				scrollToLatest();
 				try {
-					if (!reduceMotion.matches) await typeText(visibleAnswer, freeReply, 18);
+					if (!reduceMotion.matches) {
+						await sleep(pendingDuration);
+						setWorking(visibleReply.marker, visibleReply.working, true);
+						visibleReply.output.classList.add("is-revealed");
+						scrollToLatest();
+						await sleep(workingDuration);
+						setWorking(visibleReply.marker, visibleReply.working, false);
+						await typeReply(visibleReply.answer, reply, 18);
+					}
 				} catch (error) {
-					visibleAnswer.textContent = freeReply;
+					setWorking(visibleReply.marker, visibleReply.working, false);
+					renderReply(visibleReply.answer, reply, replyText);
 				} finally {
 					terminalStatus.textContent = "";
-					window.setTimeout(function () { terminalStatus.textContent = freeReply; }, 0);
+					window.setTimeout(function () { terminalStatus.textContent = replyText; }, 0);
 					enableFreeInput();
 					try { inputText.focus({ preventScroll: true }); } catch (error) { inputText.focus(); }
 					scrollToLatest();
@@ -879,7 +947,7 @@
 				terminalBanner.classList.add("is-pending");
 				staticTranscript.classList.add("sr-only");
 				animatedTranscript.hidden = false;
-				await sleep(350);
+				await sleep(1000);
 				await typeText(launchCommand, "moni", 90);
 				terminalLaunch.classList.remove("is-typing");
 				launchCursor.hidden = true;
@@ -887,19 +955,22 @@
 				windowTitle.textContent = "about — moni";
 				terminalBanner.classList.remove("is-pending");
 				terminalBanner.classList.add("is-popping");
-				await sleep(280);
+				await sleep(420);
 				terminalBanner.classList.remove("is-popping");
 				for (var turn of turns) {
 					await typeText(inputText, turn.question, 42);
-					await sleep(220);
+					await sleep(submitDelay);
 					var question = animatedTranscript.querySelector('[data-question="' + turn.id + '"]');
 					question.textContent = turn.question;
 					inputText.value = "";
 					var revealed = revealTurn(turn.id);
-					await sleep(300);
+					await sleep(pendingDuration);
+					setWorking(revealed.marker, revealed.working, true);
 					revealed.outputRow.classList.add("is-revealed");
+					await sleep(workingDuration);
+					setWorking(revealed.marker, revealed.working, false);
 					await typeText(revealed.answer, turn.answer, 18);
-					await sleep(420);
+					await sleep(630);
 				}
 				enableFreeInput();
 				scrollToLatest();
