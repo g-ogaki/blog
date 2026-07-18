@@ -1,4 +1,3 @@
-import typescript from "@shikijs/langs/typescript";
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 import githubDark from "@shikijs/themes/github-dark";
 import githubLight from "@shikijs/themes/github-light";
@@ -7,8 +6,9 @@ import rehypeKatex from "rehype-katex";
 import { cloneElement, isValidElement, type ReactElement } from "react";
 import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
-import { createHighlighterCore } from "shiki/core";
+import { createBundledHighlighter } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import { productionLanguages } from "@/generated/shiki-languages";
 import {
 	extractStandaloneLinkUrls,
 	extractStandaloneInternalLinkUrls,
@@ -25,11 +25,27 @@ interface PostMarkdownProps {
 	posts?: readonly Post[];
 }
 
-const highlighterPromise = createHighlighterCore({
-	engine: createJavaScriptRegexEngine(),
-	langs: [typescript],
-	themes: [githubLight, githubDark],
-});
+async function createMarkdownHighlighter() {
+	const developmentLanguages = process.env.NODE_ENV === "development"
+		? (await import("shiki/langs")).bundledLanguages
+		: undefined;
+	const languages = developmentLanguages ?? productionLanguages;
+	const createHighlighter = createBundledHighlighter({
+		engine: createJavaScriptRegexEngine,
+		langs: languages,
+		themes: {
+			"github-dark": githubDark,
+			"github-light": githubLight,
+		},
+	});
+
+	return createHighlighter({
+		langs: [],
+		themes: ["github-light", "github-dark"],
+	});
+}
+
+const highlighterPromise = createMarkdownHighlighter();
 
 function isAbsoluteOrFragmentUrl(url: string) {
 	return url.startsWith("/") || url.startsWith("#") || /^[a-z][a-z\d+.-]*:/i.test(url);
@@ -145,6 +161,7 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 					defaultColor: false,
 					fallbackLanguage: "text",
 					inline: "tailing-curly-colon",
+					lazy: true,
 				},
 			],
 		],

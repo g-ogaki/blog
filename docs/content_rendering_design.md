@@ -23,14 +23,20 @@ Use `remark-math` and `rehype-katex` for inline and block mathematics, and
 Shiki's official rehype adapter for fenced code blocks and language-marked
 inline code. Shiki emits both GitHub light and dark theme variables; CSS selects
 the appropriate values from the user's color-scheme preference. The highlighter
-initializes with plain text only and loads requested language grammars on demand
-to avoid paying the full bundled-language startup cost for ordinary Markdown.
+initializes with plain text only and loads requested language grammars on demand.
+Development uses Shiki's full lazy catalog. Before a production Next.js build,
+published Markdown is scanned and a deterministic registry of literal grammar
+imports is generated, so the Worker includes only languages used by published
+posts. Draft-only languages are available in development but excluded from the
+production registry.
 
 Fenced code uses its info string as the language. Inline code opts into syntax
 highlighting with a trailing `{:language}` marker. Unmarked inline code remains
 a semantic `code` element. A language-marked fenced block displays a compact
-language label above the highlighted code; the supported `ts` and `typescript`
-aliases both display as `typescript`. Plain fenced blocks have no label.
+language label above the highlighted code; aliases such as `ts` resolve to their
+canonical grammar and both `ts` and `typescript` display as `typescript`. Plain
+fenced blocks have no label. Any Shiki language identifier may be used; an
+unknown identifier fails content validation with its post and source line.
 
 ## Images and Open Graph
 

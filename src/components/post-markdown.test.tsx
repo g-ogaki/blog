@@ -51,15 +51,17 @@ describe("PostMarkdown", () => {
 
 	it("highlights fenced and language-marked inline code with Shiki", async () => {
 		const { container } = await renderMarkdown(
-			"Use `const answer = 42{:ts}`.\n\n```ts\nconst answer: number = 42;\n```",
+			"Use `const answer = 42{:ts}`.\n\n```ts\nconst answer: number = 42;\n```\n\n```python\nprint('hello')\n```",
 		);
 
 		const highlightedBlocks = container.querySelectorAll("pre.shiki");
-		expect(highlightedBlocks).toHaveLength(1);
+		expect(highlightedBlocks).toHaveLength(2);
 		expect(highlightedBlocks[0]).toHaveTextContent("const answer: number = 42;");
+		expect(highlightedBlocks[1]).toHaveTextContent("print('hello')");
 		expect(container.querySelector("span.shiki")).toHaveTextContent("const answer = 42");
 		expect(container.querySelectorAll(".shiki span[style]").length).toBeGreaterThan(0);
 		expect(screen.getByText("typescript", { selector: ".code-label" })).toBeInTheDocument();
+		expect(screen.getByText("python", { selector: ".code-label" })).toBeInTheDocument();
 	});
 
 	it("renders links and rewrites post-relative image paths", async () => {

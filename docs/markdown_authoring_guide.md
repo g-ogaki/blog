@@ -95,9 +95,12 @@ const x = 42;
 ```
 ````
 
-The fenced block displays its language above the code. Both `ts` and
-`typescript` are displayed as `typescript`; a fence without a language has no
-label.
+The fenced block displays its language above the code. Shiki-supported language
+identifiers and aliases may be used without registering them in application
+code. For example, both `ts` and `typescript` load the TypeScript grammar and
+display as `typescript`; `py`, `cpp`, `json`, `html`, and `css` work the same
+way. A fence without a language has no label. An unknown or misspelled language
+fails content validation and reports its source line.
 
 To syntax-highlight inline code, append a Shiki language marker inside the
 backticks:

@@ -54,7 +54,11 @@ then generates `public/pagefind/` from the prerendered HTML. Keeping these
 content-derived outputs as public files prevents the filesystem Markdown loader,
 parser, and Pagefind dependencies from entering the Worker runtime bundle.
 Shiki is composed from fine-grained theme and language imports so unused grammar
-catalogs are likewise excluded from the Worker artifact.
+catalogs are likewise excluded from the Worker artifact. The production build
+scans published fenced and inline code markers before `next build` and generates
+literal lazy imports for the canonical grammars it finds. The development-only
+full registry must be removed by the production compiler; deployment dry runs
+verify that the complete compressed upload remains below the Workers Free limit.
 
 After OpenNext finishes, `npm run build:worker` runs `verify:release`. The
 verification fails unless the output contains a non-empty Worker entry point,
