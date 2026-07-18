@@ -13,7 +13,7 @@ export interface PagefindApi {
 	init(): Promise<void>;
 	search(
 		query: string | null,
-		options: { filters: Record<string, string> },
+		options: { filters: Record<string, string | string[]> },
 	): Promise<{ results: PagefindResult[] }>;
 }
 

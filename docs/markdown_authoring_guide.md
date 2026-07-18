@@ -58,6 +58,15 @@ Example:
 └── cover.png
 ```
 
+To add a visible caption to an article image, provide a Markdown image title:
+
+```md
+![猫のサンプル画像](cat.png "記事に同梱したサンプル画像")
+```
+
+When the titled image is the only content in its paragraph, the title is
+rendered as a visible caption. Images without a title do not render a caption.
+
 ---
 
 ## Mathematics and code
@@ -85,6 +94,13 @@ $$
 const x = 42;
 ```
 ````
+
+The fenced block displays its language above the code. Shiki-supported language
+identifiers and aliases may be used without registering them in application
+code. For example, both `ts` and `typescript` load the TypeScript grammar and
+display as `typescript`; `py`, `cpp`, `json`, `html`, and `css` work the same
+way. A fence without a language has no label. An unknown or misspelled language
+fails content validation and reports its source line.
 
 To syntax-highlight inline code, append a Shiki language marker inside the
 backticks:

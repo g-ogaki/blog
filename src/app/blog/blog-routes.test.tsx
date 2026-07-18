@@ -31,6 +31,9 @@ describe("blog routes", () => {
 
 	it("generates parameters only for published posts", () => {
 		expect(generateStaticParams()).toEqual([
+			{ year: "2026", post: "20260716-article-spacing" },
+			{ year: "2026", post: "20260702-math-as-prose" },
+			{ year: "2026", post: "20260618-quiet-blog-renewal" },
 			{ year: "2026", post: "20260605-hoge-huga" },
 			{ year: "2026", post: "20260503-learning-typescript" },
 		]);
@@ -49,8 +52,10 @@ describe("blog routes", () => {
 			"category[data-category], year[data-year], month[data-month]",
 		);
 		expect(screen.getByRole("article")).toHaveAttribute("data-url", "/blog/2026/20260503-learning-typescript");
+		expect(screen.getByRole("article")).toHaveAttribute("data-summary", "型を小さく試しながら、学んだことを記録した記事です。");
+		expect(screen.getByRole("article")).toHaveAttribute("data-image", "/post-assets/2026/20260503-learning-typescript/cat.png");
 		expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("data-pagefind-meta", "title");
-		expect(screen.getByText("typescript")).toHaveAttribute("data-pagefind-filter", "tag");
+		expect(document.querySelector('[data-pagefind-filter="tag"]')).toHaveTextContent("typescript");
 	});
 
 	it("generates canonical and post-specific Open Graph metadata", async () => {
@@ -59,7 +64,7 @@ describe("blog routes", () => {
 		});
 
 		expect(metadata.alternates?.canonical).toBe("/blog/2026/20260503-learning-typescript");
-		expect(metadata.description).toBe("TypeScriptの型を試しながら学ぶためのサンプル記事です。");
+		expect(metadata.description).toBe("型を小さく試しながら、学んだことを記録した記事です。");
 		expect(metadata.openGraph).toMatchObject({
 			type: "article",
 			images: ["/post-assets/2026/20260503-learning-typescript/cat.png"],

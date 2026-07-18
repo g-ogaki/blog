@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
@@ -20,13 +21,13 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="ja" suppressHydrationWarning>
+		<html className="scroll-auto" lang="ja" suppressHydrationWarning>
 			<head>
-				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
-				<script dangerouslySetInnerHTML={{ __html: themeScript }} />
+				<link rel="icon" href="/cat.png" type="image/png"></link>
 			</head>
-			<body>
-				<a className="skip-link" href="#main-content">本文へ移動</a>
+			<body className="flex min-h-screen flex-col bg-surface font-sans text-base leading-6 text-site-text">
+				<Script id="theme-initializer" strategy="beforeInteractive">{themeScript}</Script>
+				<a className="skip-link fixed top-3 left-3 z-100 -translate-y-[180%] rounded-md bg-action px-4 py-3 text-sm font-semibold text-on-action focus:translate-y-0" href="#main-content">本文へ移動</a>
 				<SiteHeader />
 				{children}
 				<SiteFooter />

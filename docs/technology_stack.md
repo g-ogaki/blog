@@ -29,10 +29,11 @@ Rendering is asynchronous on the server and produces static React output. Post
 assets are copied to the public output during development and production builds;
 no runtime content-file endpoint is used.
 
-Shiki uses its fine-grained core bundle with the JavaScript regex engine, the
-GitHub light/dark themes, and the TypeScript grammar. Add a grammar explicitly
-when the authoring guide adds another supported fenced-code language; do not use
-Shiki's full bundle in the Worker artifact.
+Shiki uses its fine-grained core bundle with the JavaScript regex engine and the
+GitHub light/dark themes. Development exposes Shiki's full lazy language catalog
+for immediate authoring feedback. Production scans published Markdown and
+generates literal dynamic imports for only the canonical grammars in use; the
+full language catalog must not enter the Worker artifact.
 
 Link previews use the Node.js DNS and HTTPS APIs during static rendering. HTTPS
 connections are pinned to DNS-vetted public addresses; no runtime Worker fetch

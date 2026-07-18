@@ -5,7 +5,7 @@ category: Programming
 tags:
   - typescript
   - learning
-summary: TypeScriptの型を試しながら学ぶためのサンプル記事です。
+summary: 型を小さく試しながら、学んだことを記録した記事です。
 draft: false
 image: cat.png
 ---

@@ -11,18 +11,32 @@ math, and code transformation before returning its React tree, so published
 article content does not require client-side JavaScript. Raw HTML in Markdown is
 ignored, and `react-markdown`'s default URL sanitizer remains enabled.
 
+Rendered content uses the high-fidelity entry wireframe's `article-body`,
+`math-block`, figure, code-block, and link-card layout contracts. Tailwind
+Preflight removes browser list markers and default figure and quotation margins,
+so those wireframe-dependent styles are restored explicitly rather than relying
+on browser defaults.
+
 ## Mathematics and code
 
 Use `remark-math` and `rehype-katex` for inline and block mathematics, and
 Shiki's official rehype adapter for fenced code blocks and language-marked
 inline code. Shiki emits both GitHub light and dark theme variables; CSS selects
 the appropriate values from the user's color-scheme preference. The highlighter
-initializes with plain text only and loads requested language grammars on demand
-to avoid paying the full bundled-language startup cost for ordinary Markdown.
+initializes with plain text only and loads requested language grammars on demand.
+Development uses Shiki's full lazy catalog. Before a production Next.js build,
+published Markdown is scanned and a deterministic registry of literal grammar
+imports is generated, so the Worker includes only languages used by published
+posts. Draft-only languages are available in development but excluded from the
+production registry.
 
 Fenced code uses its info string as the language. Inline code opts into syntax
 highlighting with a trailing `{:language}` marker. Unmarked inline code remains
-a semantic `code` element.
+a semantic `code` element. A language-marked fenced block displays a compact
+language label above the highlighted code; aliases such as `ts` resolve to their
+canonical grammar and both `ts` and `typescript` display as `typescript`. Plain
+fenced blocks have no label. Any Shiki language identifier may be used; an
+unknown identifier fails content validation with its post and source line.
 
 ## Images and Open Graph
 
@@ -37,6 +51,10 @@ colocated files other than `index.md` to
 ignored by Git. Relative Markdown image and file URLs are rewritten to that
 public path. Development includes draft assets; production publication excludes
 draft assets even though drafts are still validated.
+
+A standalone Markdown image with a title renders as a semantic `figure`: the
+title becomes a visible `figcaption` and is removed from the image tooltip to
+avoid duplicate presentation. An untitled image remains an ordinary image.
 
 ## Link cards
 
@@ -83,4 +101,7 @@ Markdown link.
 
 Link cards use a horizontal text-and-image layout when space permits. On phone
 widths, the image moves above the text at a 16:9 ratio and the description wraps
-so the card remains readable without horizontal overflow.
+so the card remains readable without horizontal overflow. Titles display at
+most two lines and descriptions at most three lines. The complete fetched or
+authored metadata remains in the static markup; these are visual clamps rather
+than scraper-side character limits.
