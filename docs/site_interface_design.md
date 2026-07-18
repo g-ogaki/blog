@@ -121,6 +121,16 @@ and the terminal's documented drawing and animation. Styles that depend on
 browser defaults are declared explicitly so Tailwind Preflight cannot silently
 remove required list presentation or media geometry.
 
+## Blog entries
+
+When an entry contains level-two or level-three Markdown headings, an
+always-expanded table of contents appears between its metadata and prose inside
+the `max-w-3xl` reading column. It uses the visible heading 「目次」, subtle
+horizontal borders, neutral unnumbered links, and default Tailwind spacing.
+Level-three links are indented beneath their level-two parent. The same inline
+treatment is retained at narrow and wide viewports; it does not become a card,
+collapsible control, sticky rail, or scroll-tracking client interface.
+
 ## Dates
 
 Visible post and comment dates use `YYYY.MM.DD` formatting with the

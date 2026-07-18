@@ -12,10 +12,28 @@ article content does not require client-side JavaScript. Raw HTML in Markdown is
 ignored, and `react-markdown`'s default URL sanitizer remains enabled.
 
 Rendered content uses the high-fidelity entry wireframe's `article-body`,
-`math-block`, figure, code-block, and link-card layout contracts. Tailwind
+table-of-contents, `math-block`, figure, code-block, and link-card layout
+contracts. Tailwind
 Preflight removes browser list markers and default figure and quotation margins,
 so those wireframe-dependent styles are restored explicitly rather than relying
 on browser defaults.
+
+## Headings and table of contents
+
+During Markdown transformation, `h2` and `h3` headings receive deterministic
+GitHub-compatible fragment IDs and are collected into a static table of contents.
+Japanese characters are preserved, Latin text is lowercased, whitespace becomes
+hyphens, and punctuation is removed. Duplicate normalized headings receive
+`-1`, `-2`, and subsequent suffixes; a heading that otherwise produces an empty
+slug uses `section` with the same uniqueness rule.
+
+The table of contents is rendered only when an eligible heading exists. It is an
+always-expanded navigation region labeled 「目次」 between article metadata and
+prose. `h3` entries nest beneath the preceding `h2`; an `h3` without a preceding
+`h2` remains top-level. Heading IDs and navigation are present in static HTML and
+do not require client-side parsing, scrolling state, or JavaScript. Pagefind
+ignores the navigation copy so heading text is indexed once from the article
+content rather than duplicated by the table of contents.
 
 ## Mathematics and code
 

@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Post } from "@/lib/content/posts";
 import type { LinkPreviewLoader } from "@/lib/content/link-preview";
@@ -34,11 +34,52 @@ describe("PostMarkdown", () => {
 	it("renders semantic Markdown content", async () => {
 		const { container } = await renderMarkdown("## Heading\n\nA **strong** paragraph.\n\n- first\n- second");
 
-		expect(container.firstElementChild).toHaveClass("article-body");
+		const articleBody = container.querySelector(".article-body");
+		expect(articleBody).toBeInTheDocument();
 		expect(screen.getByRole("heading", { level: 2, name: "Heading" })).toBeInTheDocument();
 		expect(screen.getByText("strong").tagName).toBe("STRONG");
-		expect(screen.getByRole("list")).toBeInTheDocument();
-		expect(screen.getAllByRole("listitem")).toHaveLength(2);
+		expect(within(articleBody as HTMLElement).getByRole("list")).toBeInTheDocument();
+		expect(within(articleBody as HTMLElement).getAllByRole("listitem")).toHaveLength(2);
+	});
+
+	it("renders a hierarchical table of contents linked to deterministic heading IDs", async () => {
+		await renderMarkdown([
+			"## 日本語の *見出し*",
+			"",
+			"### 子の `見出し`",
+			"",
+			"## 日本語の 見出し",
+		].join("\n"));
+
+		const navigation = screen.getByRole("navigation", { name: "目次" });
+		expect(navigation).toHaveAttribute("data-pagefind-ignore");
+		const matchingLinks = within(navigation).getAllByRole("link", { name: "日本語の 見出し" });
+		const parentLink = matchingLinks[0];
+		const childLink = within(navigation).getByRole("link", { name: "子の 見出し" });
+		const duplicateLink = matchingLinks[1];
+
+		expect(parentLink).toHaveAttribute("href", "#日本語の-見出し");
+		expect(childLink).toHaveAttribute("href", "#子の-見出し");
+		expect(within(parentLink.closest("li") as HTMLElement).getByRole("link", { name: "子の 見出し" })).toBe(childLink);
+		expect(screen.getAllByRole("heading", { level: 2, name: "日本語の 見出し" })[0]).toHaveAttribute("id", "日本語の-見出し");
+		expect(screen.getAllByRole("heading", { level: 2, name: "日本語の 見出し" })[1]).toHaveAttribute("id", "日本語の-見出し-1");
+		expect(duplicateLink).toHaveAttribute("href", "#日本語の-見出し-1");
+	});
+
+	it("handles empty slugs and orphan h3 headings without inventing a parent", async () => {
+		await renderMarkdown("### !!!\n\nText.\n\n### !!!");
+
+		const navigation = screen.getByRole("navigation", { name: "目次" });
+		const links = within(navigation).getAllByRole("link", { name: "!!!" });
+		expect(links[0]).toHaveAttribute("href", "#section");
+		expect(links[1]).toHaveAttribute("href", "#section-1");
+		expect(links[0].closest("ul")).toBe(links[1].closest("ul"));
+	});
+
+	it("omits the table of contents when Markdown has no h2 or h3 headings", async () => {
+		await renderMarkdown("# Title\n\n#### Detail\n\nText.");
+
+		expect(screen.queryByRole("navigation", { name: "目次" })).not.toBeInTheDocument();
 	});
 
 	it("renders inline and block mathematics with KaTeX", async () => {

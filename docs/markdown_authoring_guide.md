@@ -69,6 +69,30 @@ rendered as a visible caption. Images without a title do not render a caption.
 
 ---
 
+## Headings and table of contents
+
+Use level-two headings for article sections and level-three headings for their
+subsections:
+
+```md
+## 日本語の見出し
+
+### 小見出し
+```
+
+These headings automatically appear in the entry's 「目次」 navigation. Level
+three headings nest beneath the preceding level-two heading. The page title is
+the only level-one heading, and level-four or deeper headings are not included
+in the table of contents.
+
+Heading text also becomes its fragment ID. Japanese text is preserved, Latin
+text is lowercased, spaces become hyphens, and punctuation is removed. For
+example, `[見出しへ](#日本語の見出し)` links to the heading above. Repeated
+headings receive `-1`, `-2`, and later suffixes in document order. Prefer unique,
+descriptive headings so authored fragment links remain clear.
+
+---
+
 ## Mathematics and code
 
 Inline:

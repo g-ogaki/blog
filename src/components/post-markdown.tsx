@@ -18,6 +18,7 @@ import {
 	type LinkPreviewLoader,
 } from "@/lib/content/link-preview";
 import type { Post } from "@/lib/content/posts";
+import { remarkTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
 
 interface PostMarkdownProps {
 	loadLinkPreview?: LinkPreviewLoader;
@@ -73,6 +74,28 @@ function LinkCard({ preview }: { preview: LinkPreview }) {
 	);
 }
 
+function TableOfContentsList({ entries, nested = false }: { entries: readonly TableOfContentsEntry[]; nested?: boolean }) {
+	return (
+		<ul className={nested ? "mt-2 list-none space-y-2 pl-5" : "mt-4 ml-2 list-none space-y-3 p-0"}>
+			{entries.map((entry) => (
+				<li key={entry.id}>
+					<a className="inline-block rounded-sm text-sm leading-6 text-site-text no-underline hover:text-action" href={`#${entry.id}`}>{entry.label}</a>
+					{entry.children.length > 0 ? <TableOfContentsList entries={entry.children} nested /> : null}
+				</li>
+			))}
+		</ul>
+	);
+}
+
+function TableOfContents({ entries }: { entries: readonly TableOfContentsEntry[] }) {
+	return (
+		<nav aria-labelledby="table-of-contents-heading" className="mt-12 border-y border-site-border py-6" data-pagefind-ignore="">
+			<h2 className="text-lg leading-7 font-semibold" id="table-of-contents-heading">目次</h2>
+			<TableOfContentsList entries={entries} />
+		</nav>
+	);
+}
+
 function codeLanguageLabel(language: string) {
 	return language === "ts" || language === "typescript" ? "typescript" : language;
 }
@@ -109,6 +132,7 @@ function rehypeNormalizeArticleBlocks() {
 
 export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
 	const highlighter = await highlighterPromise;
+	const tableOfContents: TableOfContentsEntry[] = [];
 	const previewEntries = await Promise.all(
 		extractStandaloneLinkUrls(post.content).map(async (url) => [url, await loadLinkPreview(url)] as const),
 	);
@@ -149,7 +173,7 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 				return <div {...properties}><div className="code-label">{language}</div>{children}</div>;
 			},
 		},
-		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards],
+		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards, [remarkTableOfContents, { entries: tableOfContents }]],
 		rehypePlugins: [
 			rehypeKatex,
 			rehypeNormalizeArticleBlocks,
@@ -170,6 +194,9 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 	});
 
 	return (
-		<div className="article-body pt-12 text-base leading-8 md:text-lg md:leading-9">{content}</div>
+		<>
+			{tableOfContents.length > 0 ? <TableOfContents entries={tableOfContents} /> : null}
+			<div className="article-body pt-12 text-base leading-8 md:text-lg md:leading-9">{content}</div>
+		</>
 	);
 }
