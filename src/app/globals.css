@@ -126,8 +126,8 @@ summary:focus-visible {
 .article-body > * + :where(.code-block, figure, .link-card),
 .article-body > :where(.code-block, figure, .link-card) + * { @apply mt-12; }
 .article-body > h2 + *, .article-body > h3 + * { @apply mt-6; }
-.article-body h2 { @apply mt-16 text-2xl/8 font-semibold tracking-tight; }
-.article-body h3 { @apply mt-12 text-xl/7 font-semibold; }
+.article-body h2 { @apply mt-16 scroll-mt-6 text-2xl/8 font-semibold tracking-tight; }
+.article-body h3 { @apply mt-12 scroll-mt-6 text-xl/7 font-semibold; }
 .article-body p { line-break: strict; }
 .article-body a:not(.link-card) { @apply text-action underline hover:text-action-hover; text-decoration-thickness: 1px; text-underline-offset: .2em; }
 .article-body ul { @apply list-disc pl-6; }
@@ -139,13 +139,14 @@ summary:focus-visible {
 .code-label { @apply border-b border-site-border bg-surface-subtle px-4 py-2 font-mono text-xs text-site-text; }
 .article-body pre { margin: 0; padding: 1.25rem; overflow-x: auto; background: var(--surface-raised) !important; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: .875rem; line-height: 1.7; tab-size: 2; }
 .article-body pre:not(.shiki) { border: 1px solid var(--border); border-radius: .375rem; }
+.shiki, .shiki span { color: var(--shiki-light) !important; background-color: var(--surface-raised) !important; }
 :root[data-theme="dark"] .shiki, :root[data-theme="dark"] .shiki span { color: var(--shiki-dark) !important; background-color: var(--surface-raised) !important; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .shiki, :root:not([data-theme="light"]) .shiki span { color: var(--shiki-dark) !important; background-color: var(--surface-raised) !important; } }
 .math-block { overflow-x: auto; overflow-y: hidden; text-align: center; }
 .math-block .katex { font-size: 1.35rem; }
 .article-figure { @apply mx-10; }
 .article-figure img, .article-body > p > img { @apply block aspect-4/3 h-auto w-full rounded-lg object-cover; }
-.article-figure figcaption { @apply mt-2 text-xs text-text-muted; }
+.article-figure figcaption { @apply mt-2 text-right text-xs text-text-muted; }
 /* Comments and moderation */
 .comment-list-status:has(+ .comment-list) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 .filter-disclosure > summary::-webkit-details-marker { display: none; }
