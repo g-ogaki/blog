@@ -143,7 +143,7 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 			return [url, target ? {
 				url,
 				title: target.metadata.title,
-				description: target.metadata.summary,
+				description: target.description,
 				image: target.metadata.image ? `/post-assets/${target.slug}/${target.metadata.image}` : "/cat.jpg",
 				provider: "moni's page",
 			} : null] as const;

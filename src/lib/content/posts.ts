@@ -6,6 +6,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
+import { derivePostDescription } from "./post-description";
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const postDirectoryPattern = /^(\d{8})-(.+)$/;
@@ -17,7 +18,6 @@ const postMetadataSchema = z
 		date: z.string().regex(datePattern, "must use YYYY-MM-DD format"),
 		category: z.string().trim().min(1),
 		tags: z.array(z.string().trim().min(1)),
-		summary: z.string().trim().min(1),
 		draft: z.boolean(),
 		image: z.string().trim().min(1).optional(),
 	})
@@ -27,6 +27,7 @@ export type PostMetadata = z.infer<typeof postMetadataSchema>;
 
 export interface Post {
 	content: string;
+	description: string;
 	directoryName: string;
 	metadata: PostMetadata;
 	slug: string;
@@ -154,6 +155,7 @@ function loadPost(sourcePath: string, contentDirectory: string): Post {
 	const slug = path.relative(contentDirectory, postDirectory).split(path.sep).join("/");
 	return {
 		content,
+		description: derivePostDescription(content, metadata.title),
 		directoryName,
 		metadata,
 		slug,

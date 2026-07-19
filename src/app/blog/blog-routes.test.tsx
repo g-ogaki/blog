@@ -52,7 +52,12 @@ describe("blog routes", () => {
 			"category[data-category], year[data-year], month[data-month]",
 		);
 		expect(screen.getByRole("article")).toHaveAttribute("data-url", "/blog/2026/20260503-learning-typescript");
-		expect(screen.getByRole("article")).toHaveAttribute("data-summary", "型を小さく試しながら、学んだことを記録した記事です。");
+		expect(screen.getByRole("article")).toHaveAttribute("data-description");
+		expect(screen.getByRole("article").getAttribute("data-description")).toMatch(/^このサイトのコンテンツ読み込みを確認するため/);
+		expect(screen.getByRole("article")).toHaveAttribute(
+			"data-pagefind-meta",
+			"category[data-category], tags[data-tags], date[data-date], url[data-url], description[data-description], image[data-image]",
+		);
 		expect(screen.getByRole("article")).toHaveAttribute("data-image", "/post-assets/2026/20260503-learning-typescript/cat.png");
 		expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("data-pagefind-meta", "title");
 		expect(document.querySelector('[data-pagefind-filter="tag"]')).toHaveTextContent("typescript");
@@ -64,9 +69,10 @@ describe("blog routes", () => {
 		});
 
 		expect(metadata.alternates?.canonical).toBe("/blog/2026/20260503-learning-typescript");
-		expect(metadata.description).toBe("型を小さく試しながら、学んだことを記録した記事です。");
+		expect(metadata.description).toMatch(/^このサイトのコンテンツ読み込みを確認するため/);
 		expect(metadata.openGraph).toMatchObject({
 			type: "article",
+			description: metadata.description,
 			images: ["/post-assets/2026/20260503-learning-typescript/cat.png"],
 		});
 	});

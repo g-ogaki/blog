@@ -7,7 +7,7 @@ Pagefind
 ## Indexed Fields
 
 * Title
-* Summary
+* Derived description
 * Category
 * Tags
 * Full content

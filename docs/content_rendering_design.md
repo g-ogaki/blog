@@ -112,8 +112,8 @@ third-party failure cannot fail the site build.
 
 A paragraph containing only an internal Markdown link such as
 `[Related post](/blog/YYYY/YYYYMMDD-slug)` also becomes a card. Its title,
-summary, and image come directly from the validated target post metadata, so no
-HTTP request is made. Internal links embedded in a sentence remain ordinary
+derived description, and image come directly from the validated target post
+data, so no HTTP request is made. Internal links embedded in a sentence remain ordinary
 anchors. If the target is unavailable, rendering falls back to the authored
 Markdown link.
 

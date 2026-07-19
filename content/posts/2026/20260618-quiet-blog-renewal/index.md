@@ -5,7 +5,6 @@ category: 日記
 tags:
   - blog
   - design-system
-summary: 読むことに集中できる静かな個人ブログへ作り直した記録です。
 draft: false
 image: cat.jpg
 ---

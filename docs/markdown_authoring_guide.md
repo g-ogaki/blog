@@ -31,11 +31,16 @@ category: Programming
 tags:
   - typescript
   - learning
-summary: Notes from learning TypeScript.
 draft: false
 image: cover.png
 ---
 ```
+
+Do not add a `summary` or `description` field. The build derives a description
+from the opening ordinary paragraphs, removes Markdown presentation syntax, and
+reuses the result for metadata, RSS, search, and internal link cards. It is
+limited to 120 user-perceived characters; articles without suitable paragraph
+text fall back to `「<title>」についての記事です。`.
 
 ---
 

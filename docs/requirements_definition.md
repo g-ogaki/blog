@@ -26,7 +26,7 @@ nested comments, or portfolio functionality.
 
 * **Home:** personal introduction, site description, latest five posts.
 * **Blog:** post list, Pagefind search, category/tag/year/month filters.
-* **Post:** title, date, category, tags, summary, content, and comments.
+* **Post:** title, date, category, tags, derived description, content, and comments.
 
 ## Post metadata
 
@@ -39,7 +39,6 @@ category: Programming
 tags:
   - typescript
   - learning
-summary: Notes from learning TypeScript.
 draft: false
 ```
 
@@ -52,11 +51,15 @@ The directory year and `YYYYMMDD` prefix must match the frontmatter date. Post
 URLs are unique case-insensitively. Every post is validated during builds,
 including drafts; see `content_loading_design.md` for validation behavior.
 
+Each post receives a deterministic plain-text description derived from its
+opening prose during content loading. Authors do not maintain a separate
+description or summary field in frontmatter.
+
 ## Search and comments
 
-Pagefind indexes title, summary, category, tags, and full article content, and
-filters by category, tag, year, and month. Comments contain only name and
-comment. Names contain 1-80 characters and comments contain 1-2,000 characters.
+Pagefind indexes title, derived description, category, tags, and full article
+content, and filters by category, tag, year, and month. Comments contain only
+name and comment. Names contain 1-80 characters and comments contain 1-2,000 characters.
 Comments are plain text with line breaks preserved, require moderation before
 display, and have no email, website, login, or avatar. See their respective
 design documents for behavior.

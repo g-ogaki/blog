@@ -5,7 +5,6 @@ category: Programming
 tags:
   - rust
   - learning
-summary: Rustを学ぶために用意した下書きのサンプル記事です。
 draft: true
 ---
 

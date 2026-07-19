@@ -7,13 +7,13 @@ import { PostMarkdown } from "./post-markdown";
 function createPost(content: string): Post {
 	return {
 		content,
+		description: "Synthetic description.",
 		directoryName: "20260503-learning-typescript",
 		metadata: {
 			title: "Synthetic post",
 			date: "2026-05-03",
 			category: "Programming",
 			tags: ["typescript"],
-			summary: "Synthetic summary.",
 			draft: false,
 		},
 		slug: "2026/20260503-learning-typescript",
@@ -175,14 +175,14 @@ describe("PostMarkdown", () => {
 	it("renders a standalone internal Markdown link from post metadata", async () => {
 		const target = createPost("Target content");
 		target.metadata.title = "Linked post";
-		target.metadata.summary = "Local metadata summary.";
+		target.description = "Local derived description.";
 		target.url = "/blog/2026/20260503-learning-typescript";
 		await renderMarkdown("[Read this](/blog/2026/20260503-learning-typescript)", undefined, [target]);
 
 		const card = screen.getByRole("link", { name: /Linked post/ });
 		expect(card).toHaveClass("link-card");
 		expect(card).toHaveAttribute("href", target.url);
-		expect(screen.getByText("Local metadata summary.")).toBeInTheDocument();
+		expect(screen.getByText("Local derived description.")).toBeInTheDocument();
 	});
 
 	it("keeps inline internal Markdown links as ordinary links", async () => {

@@ -33,7 +33,6 @@ category: Programming
 tags:
   - typescript
   - learning
-summary: Synthetic summary.
 draft: ${options.draft ?? false}${options.image ? `\nimage: ${options.image}` : ""}`;
 }
 
@@ -51,6 +50,7 @@ describe("loadPosts", () => {
 		const [post] = loadPosts({ contentDirectory, includeDrafts: false });
 
 		expect(post).toMatchObject({
+			description: "Synthetic article content.",
 			year: "2026",
 			directoryName: "20260503-learning-typescript",
 			slug: "2026/20260503-learning-typescript",
@@ -60,7 +60,6 @@ describe("loadPosts", () => {
 				date: "2026-05-03",
 				category: "Programming",
 				tags: ["typescript", "learning"],
-				summary: "Synthetic summary.",
 				draft: false,
 			},
 		});
@@ -82,6 +81,7 @@ describe("loadPosts", () => {
 			"/blog/2026/20260504-draft",
 			"/blog/2026/20260503-published",
 		]);
+		expect(loadPosts({ contentDirectory, includeDrafts: true })[0].description).toBe("Synthetic article content.");
 	});
 
 	it("validates draft assets even when drafts are excluded", () => {
@@ -118,10 +118,21 @@ describe("loadPosts", () => {
 		writePost(
 			contentDirectory,
 			"2026/20260503-invalid",
-			validFrontmatter().replace("summary: Synthetic summary.\n", ""),
+			validFrontmatter().replace("title: Synthetic post\n", ""),
 		);
 
-		expect(() => loadPosts({ contentDirectory })).toThrow(/20260503-invalid\/index\.md.*summary/s);
+		expect(() => loadPosts({ contentDirectory })).toThrow(/20260503-invalid\/index\.md.*title/s);
+	});
+
+	it("rejects the obsolete summary frontmatter field", () => {
+		const contentDirectory = createContentDirectory();
+		writePost(
+			contentDirectory,
+			"2026/20260503-invalid",
+			`${validFrontmatter()}\nsummary: Obsolete summary.`,
+		);
+
+		expect(() => loadPosts({ contentDirectory })).toThrow(/20260503-invalid\/index\.md.*Unrecognized key.*summary/s);
 	});
 
 	it("rejects invalid dates and directory dates that disagree with frontmatter", () => {

@@ -7,7 +7,6 @@ export interface PostListPost {
 	metadata: {
 		category: string;
 		date: string;
-		summary: string;
 		tags: readonly string[];
 		title: string;
 	};

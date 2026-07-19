@@ -32,7 +32,7 @@ export function buildRssFeed(posts: readonly Post[]) {
       <link>${xmlEscape(url)}</link>
       <guid isPermaLink="true">${xmlEscape(url)}</guid>
       <pubDate>${jstDate(post.metadata.date).toUTCString()}</pubDate>
-      <description>${xmlEscape(post.metadata.summary)}</description>
+      <description>${xmlEscape(post.description)}</description>
     </item>`;
 	});
 	const lastBuildDate = visiblePosts[0]
