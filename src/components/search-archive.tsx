@@ -21,8 +21,8 @@ interface SearchArchiveProps {
 }
 
 type SearchStatus = "loading" | "ready" | "searching" | "unavailable";
-const POST_BATCH_SIZE = 2;
-const subscribeToHydration = () => () => {};
+const POST_BATCH_SIZE = 10;
+const subscribeToHydration = () => () => { };
 
 function SearchIcon() {
 	return <svg aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 stroke-text-muted" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>;
