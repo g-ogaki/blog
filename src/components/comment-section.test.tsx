@@ -53,6 +53,7 @@ describe("CommentSection", () => {
 		const [, request] = fetchMock.mock.calls[1];
 		expect(JSON.parse(request.body)).toEqual({
 			comment: "Hello\nWorld",
+			locale: "ja",
 			name: "Grace",
 			post_slug: postSlug,
 			turnstile_token: "verified-token",

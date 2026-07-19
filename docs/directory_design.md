@@ -9,7 +9,9 @@
 │   └── posts/
 │       ├── 2026/
 │       │   ├── 20260503-learning-typescript/
-│       │   │   └── index.md
+│       │   │   ├── index.md
+│       │   │   ├── index.en.md
+│       │   │   └── cover.png
 │       │   └── 20260515-rust-notes/
 │       │       └── index.md
 │       └── 2027/
@@ -89,18 +91,20 @@ Pagefind loader is tracked because it is the stable browser entry point for the
 generated search API.
 
 `src/generated/published-posts.json` is a tracked, build-generated manifest of
-published slugs, titles, and URLs used by the dynamic comment API and Discord
-notification. It keeps filesystem Markdown parsing out of the Worker request
-bundle and is refreshed by `npm run generate:metadata`.
+article slugs and their published localized titles and URLs. It is used by the
+dynamic comment API, Discord notification, and comment cleanup, and is refreshed
+by `npm run generate:metadata`.
 
 ## Post URL Structure
 
 ```text
 /blog/2026/20260503-learning-typescript
+/en/blog/2026/20260503-learning-typescript
 ```
 
 Derived from directory name.
 
-No slug field required.
+Both translations use the same directory-derived slug. No slug, locale, or
+translation key field is required.
 
 ---

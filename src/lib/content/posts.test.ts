@@ -24,6 +24,10 @@ function writePost(
 	return directory;
 }
 
+function writeEnglishTranslation(directory: string, frontmatter: string, content = "English article content.\n") {
+	writeFileSync(path.join(directory, "index.en.md"), `---\n${frontmatter}\n---\n\n${content}`);
+}
+
 function validFrontmatter(
 	options: { date?: string; draft?: boolean; image?: string } = {},
 ) {
@@ -43,6 +47,37 @@ afterEach(() => {
 });
 
 describe("loadPosts", () => {
+	it("loads an optional English sibling with the same article slug and shared directory", () => {
+		const contentDirectory = createContentDirectory();
+		const directory = writePost(contentDirectory, "2026/20260503-learning-typescript", validFrontmatter());
+		writeEnglishTranslation(directory, validFrontmatter(), "English introduction.\n");
+
+		const posts = loadPosts({ contentDirectory, includeDrafts: false, locale: "all" });
+		expect(posts.map((post) => ({ locale: post.locale, slug: post.slug, url: post.url }))).toEqual([
+			{ locale: "ja", slug: "2026/20260503-learning-typescript", url: "/blog/2026/20260503-learning-typescript" },
+			{ locale: "en", slug: "2026/20260503-learning-typescript", url: "/en/blog/2026/20260503-learning-typescript" },
+		]);
+		expect(posts.find((post) => post.locale === "en")?.description).toBe("English introduction.");
+	});
+
+	it("publishes translation drafts independently while still validating them", () => {
+		const contentDirectory = createContentDirectory();
+		const directory = writePost(contentDirectory, "2026/20260503-learning-typescript", validFrontmatter());
+		writeEnglishTranslation(directory, validFrontmatter({ draft: true }));
+
+		expect(loadPosts({ contentDirectory, includeDrafts: false, locale: "all" }).map((post) => post.locale)).toEqual(["ja"]);
+		expect(loadPosts({ contentDirectory, includeDrafts: true, locale: "en" })).toHaveLength(1);
+	});
+
+	it("uses an English description fallback and rejects unsupported translation filenames", () => {
+		const contentDirectory = createContentDirectory();
+		const directory = writePost(contentDirectory, "2026/20260503-learning-typescript", validFrontmatter());
+		writeEnglishTranslation(directory, validFrontmatter(), "## Heading only\n");
+		expect(loadPosts({ contentDirectory, locale: "en" })[0].description).toBe("An article about “Synthetic post”.");
+		writeFileSync(path.join(directory, "index.fr.md"), "unsupported");
+		expect(() => loadPosts({ contentDirectory })).toThrow(/translation filename must be index\.en\.md/);
+	});
+
 	it("loads typed metadata and derives the canonical post path", () => {
 		const contentDirectory = createContentDirectory();
 		writePost(contentDirectory, "2026/20260503-learning-typescript", validFrontmatter());

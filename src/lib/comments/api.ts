@@ -8,12 +8,14 @@ import {
 import { sendDiscordCommentNotification } from "./discord";
 import { createModerationToken } from "./tokens";
 import { verifyTurnstile } from "./turnstile";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 const postSlugPattern = /^\d{4}\/\d{8}-[^/\\]+$/;
-const submissionKeys = new Set(["comment", "name", "post_slug", "turnstile_token"]);
+const submissionKeys = new Set(["comment", "locale", "name", "post_slug", "turnstile_token"]);
 
 interface CommentSubmission {
 	comment: string;
+	locale: Locale;
 	name: string;
 	post_slug: string;
 	turnstile_token: string;
@@ -34,6 +36,7 @@ function parseSubmission(value: unknown): CommentSubmission | null {
 	if (keys.length !== submissionKeys.size || keys.some((key) => !submissionKeys.has(key))) return null;
 	if (
 		!isValidText(record.comment, 2_000) ||
+		!isLocale(record.locale) ||
 		!isValidText(record.name, 80) ||
 		!isValidPostSlug(record.post_slug) ||
 		!isValidText(record.turnstile_token, 2_048)
@@ -46,7 +49,7 @@ function parseSubmission(value: unknown): CommentSubmission | null {
 
 export interface CommentReadDependencies {
 	db: D1Database;
-	findPublishedPost: (slug: string) => PublishedPostReference | undefined;
+	findPublishedPost: (slug: string, locale: Locale) => PublishedPostReference | undefined;
 	listComments?: typeof listApprovedComments;
 }
 
@@ -86,7 +89,7 @@ export async function handlePostComment(request: Request, dependencies: CommentA
 
 	const parsed = parseSubmission(body);
 	if (!parsed) return invalidInput();
-	const post = dependencies.findPublishedPost(parsed.post_slug);
+	const post = dependencies.findPublishedPost(parsed.post_slug, parsed.locale);
 	if (!post) return invalidInput();
 
 	const ipAddress = request.headers.get("cf-connecting-ip");
@@ -144,8 +147,10 @@ export async function handlePostComment(request: Request, dependencies: CommentA
 }
 
 export async function handleGetComments(request: Request, dependencies: CommentReadDependencies) {
-	const post = new URL(request.url).searchParams.get("post");
-	if (!isValidPostSlug(post) || !dependencies.findPublishedPost(post)) return invalidInput();
+	const searchParams = new URL(request.url).searchParams;
+	const post = searchParams.get("post");
+	const locale = searchParams.get("locale");
+	if (!isValidPostSlug(post) || !isLocale(locale) || !dependencies.findPublishedPost(post, locale)) return invalidInput();
 
 	const listComments = dependencies.listComments ?? listApprovedComments;
 	const comments: PublicComment[] = await listComments(dependencies.db, post);

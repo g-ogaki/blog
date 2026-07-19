@@ -4,6 +4,7 @@ import { HomeTerminal } from "@/components/home-terminal";
 import { loadPosts, type Post } from "@/lib/content/posts";
 import { formatPostDate } from "@/lib/format-date";
 import { latestPosts } from "@/lib/content/taxonomy";
+import { blogPath, getDictionary, type Locale } from "@/lib/i18n";
 
 function XIcon() {
 	return <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" /></svg>;
@@ -25,8 +26,10 @@ function PostMedia({ post, priority = false }: { post: Post; priority?: boolean 
 	);
 }
 
-export default function Home() {
-	const posts = latestPosts(loadPosts({ includeDrafts: false }));
+export function HomePage({ locale }: { locale: Locale }) {
+	const copy = getDictionary(locale).home;
+	const archivePath = blogPath(locale);
+	const posts = latestPosts(loadPosts({ includeDrafts: false, locale }));
 	const [featured, ...supporting] = posts;
 	return (
 		<main className="home-main mx-auto w-full max-w-6xl px-4 pt-8 pb-16 sm:px-6 sm:pt-16 sm:pb-24" id="main-content">
@@ -35,34 +38,34 @@ export default function Home() {
 					<div className="profile-panel flex flex-col items-center rounded-lg border border-site-border bg-surface-raised p-4 text-center sm:p-8">
 						<Image alt="moni" className="profile-portrait size-48 flex-none rounded-full border border-site-border object-cover" height={276} priority src="/selfie.jpg" unoptimized width={277} />
 						<h1 className="mt-8 text-3xl leading-9 font-semibold tracking-tight sm:text-3xl sm:leading-10" id="profile-heading">moni</h1>
-						<p className="profile-purpose mt-8 w-full text-center text-text-muted">数学と音楽だけしていたい</p>
-						<ul aria-label="ソーシャルリンク" className="profile-socials mt-0 flex list-none gap-3 p-0 pt-8 md:mt-auto">
+						<p className="profile-purpose mt-8 w-full text-center text-text-muted">{copy.purpose}</p>
+						<ul aria-label={copy.socials} className="profile-socials mt-0 flex list-none gap-3 p-0 pt-8 md:mt-auto">
 							<li><a aria-label="X (Twitter)" className="grid size-11 place-items-center rounded-md border border-site-border bg-surface-subtle no-underline hover:bg-hover-surface [&_svg]:size-5 motion-safe:transition-colors motion-safe:duration-150" href="https://x.com/onakasuita_py" rel="noopener noreferrer" target="_blank"><XIcon /></a></li>
 							<li><a aria-label="GitHub" className="grid size-11 place-items-center rounded-md border border-site-border bg-surface-subtle no-underline hover:bg-hover-surface [&_svg]:size-5 motion-safe:transition-colors motion-safe:duration-150" href="https://github.com/g-ogaki" rel="noopener noreferrer" target="_blank"><GitHubIcon /></a></li>
 						</ul>
 					</div>
-					<HomeTerminal />
+					<HomeTerminal locale={locale} />
 				</div>
 			</section>
 
 			<section className="recent-section mt-16" aria-labelledby="recent-heading">
-				<header className="section-heading mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8"><h2 className="text-2xl leading-8 font-semibold tracking-tight" id="recent-heading">最近の記事</h2><Link className="rounded-sm p-2 text-sm font-medium no-underline hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" href="/blog">すべての記事を見る</Link></header>
+				<header className="section-heading mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-8"><h2 className="text-2xl leading-8 font-semibold tracking-tight" id="recent-heading">{copy.recent}</h2><Link className="rounded-sm p-2 text-sm font-medium no-underline hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" href={archivePath}>{copy.allPosts}</Link></header>
 				{featured ? (
 					<div className="recent-grid grid grid-cols-1 items-start gap-12 md:grid-cols-2">
 						<article className="featured-post">
 							<Link aria-label={featured.metadata.title} className="group -m-4 block rounded-md p-4 text-inherit no-underline hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" href={featured.url}>
 								<PostMedia post={featured} priority />
-								<p className="post-meta mt-4 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs leading-4 text-text-muted"><time dateTime={featured.metadata.date}>{formatPostDate(featured.metadata.date)}</time><span>{featured.metadata.category}</span></p>
+								<p className="post-meta mt-4 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs leading-4 text-text-muted"><time dateTime={featured.metadata.date}>{formatPostDate(featured.metadata.date, locale)}</time><span>{featured.metadata.category}</span></p>
 								<h3 className="mt-3 text-2xl leading-8 font-semibold group-hover:text-action-hover">{featured.metadata.title}</h3>
 							</Link>
 						</article>
 						<ol className="recent-list grid list-none gap-6 p-0" start={2}>
 							{supporting.map((post) => (
-								<li key={post.url}><article className="recent-post"><Link aria-label={post.metadata.title} className="group -m-3 grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-4 rounded-md p-3 text-inherit no-underline hover:bg-hover-surface sm:grid-cols-[10rem_minmax(0,1fr)] motion-safe:transition-colors motion-safe:duration-150" href={post.url}><PostMedia post={post} /><div><h3 className="text-base leading-snug font-semibold group-hover:text-action-hover">{post.metadata.title}</h3><p className="post-meta mt-2 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs leading-4 text-text-muted"><time dateTime={post.metadata.date}>{formatPostDate(post.metadata.date)}</time><span>{post.metadata.category}</span></p></div></Link></article></li>
+								<li key={post.url}><article className="recent-post"><Link aria-label={post.metadata.title} className="group -m-3 grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-4 rounded-md p-3 text-inherit no-underline hover:bg-hover-surface sm:grid-cols-[10rem_minmax(0,1fr)] motion-safe:transition-colors motion-safe:duration-150" href={post.url}><PostMedia post={post} /><div><h3 className="text-base leading-snug font-semibold group-hover:text-action-hover">{post.metadata.title}</h3><p className="post-meta mt-2 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs leading-4 text-text-muted"><time dateTime={post.metadata.date}>{formatPostDate(post.metadata.date, locale)}</time><span>{post.metadata.category}</span></p></div></Link></article></li>
 							))}
 						</ol>
 					</div>
-				) : <p>公開されている記事はまだありません。</p>}
+				) : <p>{copy.empty}</p>}
 			</section>
 		</main>
 	);

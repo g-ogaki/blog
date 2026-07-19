@@ -3,9 +3,22 @@
 import handler, { DOQueueHandler, DOShardedTagCache } from "./.open-next/worker.js";
 import publishedPosts from "./src/generated/published-posts.json";
 import { cleanupExpiredCommentData } from "./src/lib/comments/cleanup";
+import { preferredLocale } from "./src/lib/locale-routing";
 
 export default {
-	fetch: handler.fetch,
+	async fetch(request, env, ctx) {
+		const url = new URL(request.url);
+		if (request.method === "GET" && url.pathname === "/" && preferredLocale(request.headers.get("cookie"), request.headers.get("accept-language")) === "en") {
+			url.pathname = "/en";
+			const headers = new Headers({
+				"cache-control": "private, no-store",
+				location: url.toString(),
+				vary: "Cookie, Accept-Language",
+			});
+			return new Response(null, { status: 307, headers });
+		}
+		return handler.fetch(request, env, ctx);
+	},
 
 	async scheduled(event, env) {
 		const result = await cleanupExpiredCommentData(env.DB, {

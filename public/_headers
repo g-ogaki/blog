@@ -5,3 +5,6 @@
 
 /rss.xml
   Content-Type: application/rss+xml; charset=utf-8
+
+/en/rss.xml
+  Content-Type: application/rss+xml; charset=utf-8

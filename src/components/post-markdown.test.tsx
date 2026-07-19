@@ -9,6 +9,7 @@ function createPost(content: string): Post {
 		content,
 		description: "Synthetic description.",
 		directoryName: "20260503-learning-typescript",
+		locale: "ja",
 		metadata: {
 			title: "Synthetic post",
 			date: "2026-05-03",

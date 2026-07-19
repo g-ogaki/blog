@@ -2,9 +2,10 @@
 
 ## Site shell
 
-The root layout owns the shared header, footer, skip link, Japanese document
-language, metadata defaults, and theme initialization. Primary navigation links
-to the homepage and blog archive. The shell uses semantic landmarks and visible
+The locale root layouts own the shared header, footer, skip link, document
+language, localized metadata defaults, and theme initialization. Primary navigation links
+to the current locale's homepage and blog archive. Japanese keeps the unprefixed
+routes; English uses `/en`. The shell uses semantic landmarks and visible
 keyboard focus styles. Search-bearing headers reflow into two rows at `48rem`
 and below, keeping the wordmark and navigation above search and the language/theme
 controls. The archive header omits search and may defer its compact arrangement
@@ -12,6 +13,20 @@ until `36rem`; that smaller breakpoint also owns narrow gutters and viewport-bou
 menus. The homepage and blog-entry page share the same search-bearing header
 geometry and control treatments; only their semantic current-navigation item
 changes. Primary-navigation labels do not wrap internally.
+
+The language menu contains explicit Japanese and English links. Selecting a
+language stores the `site_locale` preference and navigates to the same article
+when that translation exists. When English is unavailable, it returns to the
+current Japanese article and renders an English availability notice after
+hydration. The notice has a dismiss button but no archive or replacement link.
+The menu therefore remains functional without client-side JavaScript.
+On `/` only, the Worker uses the saved preference and then `Accept-Language` to
+redirect English-preferring visitors to `/en`. An explicit localized URL is
+never replaced automatically. After hydration, visitors whose browser language
+differs from the current page receive a dismissible suggestion using the same
+published counterpart when available. Suggestion text uses the preferred
+reader language: English when suggesting English and Japanese when suggesting
+Japanese.
 
 The centered footer places X (Twitter), GitHub, and Feed above the muted legal
 line `© YYYY moni · Licensed under CC0 1.0 Universal`. Only the license name links
@@ -21,9 +36,9 @@ new tab; Feed stays in the current tab.
 
 ## Homepage
 
-The Japanese homepage introduces moni and the site's purpose in a profile panel
+Each localized homepage introduces moni and the site's purpose in a profile panel
 beside a short three-turn prepared interview, then presents the newest published
-post as a featured item with four supporting recent posts. The profile uses the
+post in that language as a featured item with up to four supporting recent posts. The profile uses the
 existing selfie as a circular `12rem` portrait, presents no professional title,
 and keeps X and GitHub available as labeled icon links. Its purpose copy is
 separated by whitespace rather than a divider. The latest-post section links to
@@ -100,13 +115,13 @@ announcements; completed visitor responses use a polite live status.
 
 ## Blog archive
 
-The archive lists published posts newest first and derives category, tag, year,
-and month navigation from their frontmatter. Taxonomy values use the query URL
+Each archive lists only that locale's published posts newest first and derives
+category, tag, year, and month navigation from their frontmatter. Taxonomy values use the query URL
 contract documented in `routing_design.md`. Pagefind performs keyword search
 and client-side filtering while keeping that URL in sync. The unfiltered archive
 remains usable while search loads, without JavaScript, and if its static assets
 are unavailable. Once JavaScript is active, the archive displays matching posts
-in batches of ten and offers 「さらに読み込む」 while more remain. Changing the
+in batches of ten and offers a localized load-more action while more remain. Changing the
 query or taxonomy selection resets the visible batch. Later rows remain in the
 server HTML and are hidden before first paint only when the root initializer
 confirms JavaScript is available, avoiding both layout shift and a reduced
@@ -127,6 +142,13 @@ remove required list presentation or media geometry.
 
 ## Blog entries
 
+Every English entry displays a subdued notice immediately after its metadata
+and before the table of contents or article body: “This English version was
+translated from the original Japanese using AI and may contain inaccuracies.”
+“Original Japanese article” links to the corresponding unprefixed post. The
+notice is labeled for assistive technology and excluded from Pagefind indexing.
+Japanese entries, archives, feeds, and metadata do not display the disclosure.
+
 When an entry contains level-two or level-three Markdown headings, an
 always-expanded table of contents appears between its metadata and prose inside
 the `max-w-3xl` reading column. It uses the visible heading 「目次」, subtle
@@ -137,9 +159,9 @@ collapsible control, sticky rail, or scroll-tracking client interface.
 
 ## Dates
 
-Visible post and comment dates use `YYYY.MM.DD` formatting with the
-`Asia/Tokyo` timezone. The machine-readable `datetime` attribute retains the
-source date or timestamp value.
+Visible post and comment dates use `YYYY.MM.DD` in Japanese and a localized
+English date format in English, both with the `Asia/Tokyo` timezone. The
+machine-readable `datetime` attribute retains the source date or timestamp value.
 
 ## Themes
 
@@ -147,8 +169,9 @@ The supported preferences are light, dark, and system. System is the default.
 An explicit selection is stored under the browser-local `theme` key and applied
 to the root `data-theme` attribute. A small head script applies explicit stored
 preferences before paint; system mode leaves the attribute unset and uses
-`prefers-color-scheme`. Theme choice is the only site-shell behavior that
-requires client-side JavaScript.
+`prefers-color-scheme`. Theme choice and the optional browser-language mismatch
+suggestion are the only site-shell enhancements that require client-side
+JavaScript; language navigation itself uses ordinary links.
 
 Both palettes follow the visual language and accessibility constraints in the
 root [`DESIGN.md`](../DESIGN.md), including accessible focus styles, responsive

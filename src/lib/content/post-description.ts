@@ -2,6 +2,7 @@ import type { Root } from "mdast";
 import remarkParse from "remark-parse";
 import remarkMath from "remark-math";
 import { unified } from "unified";
+import type { Locale } from "@/lib/i18n";
 
 const DESCRIPTION_LIMIT = 120;
 const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
@@ -75,7 +76,7 @@ function truncateDescription(value: string) {
 	return `${graphemes.slice(0, DESCRIPTION_LIMIT - 1).join("")}…`;
 }
 
-export function derivePostDescription(markdown: string, title: string) {
+export function derivePostDescription(markdown: string, title: string, locale: Locale = "ja") {
 	const tree = unified().use(remarkParse).use(remarkMath).parse(markdown) as Root;
 	const paragraphs = tree.children.flatMap((node) => {
 		if (node.type !== "paragraph" || isStandaloneLink(node) || containsNodeType(node, "html")) return [];
@@ -85,5 +86,6 @@ export function derivePostDescription(markdown: string, title: string) {
 		return [text];
 	});
 	const prose = normalizeWhitespace(paragraphs.join(" "));
-	return truncateDescription(prose || `「${title}」についての記事です。`);
+	const fallback = locale === "en" ? `An article about “${title}”.` : `「${title}」についての記事です。`;
+	return truncateDescription(prose || fallback);
 }

@@ -4,6 +4,10 @@
 
 Pagefind
 
+Pagefind detects each generated page's `html[lang]` and creates independent
+Japanese and English indexes. Its browser API automatically loads the active
+document language; locale is not implemented as a filter.
+
 ## Indexed Fields
 
 * Title
@@ -56,6 +60,8 @@ and unavailable states are announced in the interface. No database is required.
 /blog?year=YYYY
 /blog?month=YYYY-MM
 ```
+
+`/en/blog` uses the same query contract beneath its locale prefix.
 
 Category, year, and month accept one value each. Tags accept multiple selections
 as repeated `tag` parameters; an article must contain every selected tag. Search

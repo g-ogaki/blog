@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import ModerationPage from "./page";
+import ModerationPage from "@/app/(ja)/comments/moderate/page";
 
 describe("moderation confirmation page", () => {
 	it("renders a confirmation without making a moderation request on GET", async () => {

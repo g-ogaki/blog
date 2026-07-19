@@ -7,7 +7,11 @@ Published Markdown posts generate these static routes:
 ```text
 /blog
 /blog/YYYY/YYYYMMDD-slug
+/en
+/en/blog
+/en/blog/YYYY/YYYYMMDD-slug
 /rss.xml
+/en/rss.xml
 /sitemap.xml
 /robots.txt
 ```
@@ -17,6 +21,14 @@ validated content directories by `generateStaticParams`, and `dynamicParams` is
 disabled. Public route loading always excludes drafts, including direct URL
 lookups; a missing or draft path returns the Next.js not-found response.
 
+Japanese is the default locale and retains all existing URLs. English uses the
+`/en` prefix. A request to `/` uses the saved `site_locale` cookie and then
+`Accept-Language` to redirect English preference to `/en`. Explicit localized
+URLs are never redirected. The language selector stores a one-year preference
+cookie and navigates to the published counterpart when it exists. If English is
+unavailable for a Japanese article, selecting English returns to the same
+Japanese URL and renders an English availability notice without an archive link.
+
 The archive exposes stable taxonomy navigation URLs:
 
 ```text
@@ -25,6 +37,8 @@ The archive exposes stable taxonomy navigation URLs:
 /blog?tag=<tag>&tag=<tag>
 /blog?year=YYYY
 /blog?month=YYYY-MM
+
+/en/blog?q=<query>
 ```
 
 Search and taxonomy values are URL encoded. Pagefind reads these parameters and
@@ -39,12 +53,12 @@ OpenNext stores the generated listing and post responses in Workers Static
 Assets and intercepts cache hits before invoking the Worker. Route correctness
 must not depend on repository Markdown being available at runtime.
 
-The build writes RSS 2.0, sitemap, and robots files into `public/` before Next.js
+The build writes localized RSS 2.0 feeds, sitemap, and robots files into `public/` before Next.js
 runs, so OpenNext deploys them as static assets instead of retaining the
 filesystem content loader in the Worker bundle. RSS and sitemap entries are
 derived from published posts only, use absolute `https://monipy.org` URLs, and
 interpret frontmatter publication dates at JST midnight. The root metadata
-advertises `/rss.xml` for feed discovery. Generated files are ignored by Git.
+advertises the current locale's feed. Generated files are ignored by Git.
 
 ## Post output
 
@@ -59,5 +73,6 @@ form; failure of that dynamic section does not affect article rendering.
 The canonical origin is `https://monipy.org`. Every post emits its title,
 derived description, canonical URL, article publication time, author, and Open Graph image.
 An explicit frontmatter image maps to `/post-assets/<slug>/<image>`; otherwise
-`/cat.jpg` is used. Root metadata defines Japanese language, site title, default
-description, and the title template.
+`/cat.jpg` is used. Every localized page emits a self canonical and alternates
+only for published translations. Root layouts define the correct document
+language, localized default description, site title, and title template.

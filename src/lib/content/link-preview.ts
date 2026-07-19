@@ -210,7 +210,7 @@ export function extractStandaloneInternalLinkUrls(markdown: string) {
 	visit(tree, "paragraph", (paragraph) => {
 		if (paragraph.children.length !== 1 || paragraph.children[0].type !== "link") return;
 		const url = (paragraph.children[0] as Link).url;
-		if (url.startsWith("/blog/") && !urls.includes(url)) urls.push(url);
+		if ((url.startsWith("/blog/") || url.startsWith("/en/blog/")) && !urls.includes(url)) urls.push(url);
 	});
 	return urls;
 }
@@ -220,7 +220,7 @@ export function remarkMarkInternalLinkCards() {
 		visit(tree, "paragraph", (paragraph) => {
 			if (paragraph.children.length !== 1 || paragraph.children[0].type !== "link") return;
 			const url = (paragraph.children[0] as Link).url;
-			if (!url.startsWith("/blog/")) return;
+			if (!url.startsWith("/blog/") && !url.startsWith("/en/blog/")) return;
 			paragraph.data = {
 				...paragraph.data,
 				hProperties: { ...paragraph.data?.hProperties, "data-internal-link-card": url },

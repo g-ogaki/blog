@@ -1,12 +1,34 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { Locale } from "@/lib/i18n";
 
-const preparedTurns = [
-	{ question: "こんにちは。", answer: "こんにちは！何かお手伝いできることはありますか？" },
-	{ question: "あなたについて教えて。", answer: "来世は猫になりたいおじさんです。好きな音楽は Janne Da Arc とショパン、好きな数学の定理はヒルベルト空間の射影定理です。" },
-	{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけどよく知らないので、私じゃなく ChatGPT に聞いてね。" },
-] as const;
+const terminalCopy = {
+	ja: {
+		label: "moniの自己紹介インタビュー",
+		inputLabel: "メッセージを入力",
+		javascriptRequired: "自由入力には JavaScript が必要です",
+		placeholder: "質問する",
+		turns: [
+			{ question: "こんにちは。", answer: "こんにちは！何かお手伝いできることはありますか？" },
+			{ question: "あなたについて教えて。", answer: "人間よりも AI とばかり会話しているおじさんです。好きな音楽は Janne Da Arc とショパン、好きな数学の定理はヒルベルト空間の射影定理です。" },
+			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけどよく知らないので、私じゃなく ChatGPT に聞いてね。" },
+		],
+		freeReply: "自由回答機能を実装したいのですが、Cloudflare の有料プランが必要であり、無職なのでお金がありません助けて",
+	},
+	en: {
+		label: "Introduction interview with moni",
+		inputLabel: "Enter a message",
+		javascriptRequired: "JavaScript is required for free-form questions",
+		placeholder: "Ask a question",
+		turns: [
+			{ question: "Hello.", answer: "Hello! How can I help you?" },
+			{ question: "Tell me about yourself.", answer: "I am a middle-aged man who talks to AI more than humans. My favorite music is Janne Da Arc and Chopin, and my favorite mathematical theorem is the Hilbert projection theorem." },
+			{ question: "Why is the sky blue?", answer: "I would like to say it is because of Rayleigh scattering, but I do not know it well enough — please ask ChatGPT instead of me." },
+		],
+		freeReply: "I would like to implement free-form answers, but that needs a paid Cloudflare plan, and I am unemployed, so please help.",
+	},
+} as const;
 
 interface ReplySegment {
 	href?: string;
@@ -17,18 +39,6 @@ interface ConfiguredReply {
 	segments: readonly ReplySegment[];
 }
 
-const freeReplies: readonly [ConfiguredReply, ...ConfiguredReply[]] = [
-	{
-		// segments: [
-		// 	{ text: "私は退職を得意としており、気がついたら会社を辞めています。詳しくは" },
-		// 	{ href: "https://note.com/moni0627/n/n4eaadddb95f6", text: "こちら" },
-		// 	{ text: "を読んでね。" },
-		// ],
-		segments: [
-			{ text: "自由回答機能を実装したいのですが、Cloudflare の有料プランが必要であり、無職なのでお金がありません助けて" },
-		],
-	},
-];
 const STARTUP_DELAY_MS = 1000;
 const FIRST_QUESTION_DELAY_MS = 420;
 const INTER_TURN_DELAY_MS = 630;
@@ -51,8 +61,8 @@ function getReplyText(reply: ConfiguredReply) {
 	return reply.segments.map((segment) => segment.text).join("");
 }
 
-function pickFreeReply() {
-	return freeReplies[Math.floor(Math.random() * freeReplies.length)];
+function pickFreeReply(replies: readonly [ConfiguredReply, ...ConfiguredReply[]]) {
+	return replies[Math.floor(Math.random() * replies.length)];
 }
 
 function ReplyText({ reply, text }: { reply: ConfiguredReply; text: string }) {
@@ -118,7 +128,10 @@ async function typeText(value: string, speed: number, signal: AbortSignal, updat
 	}
 }
 
-export function HomeTerminal() {
+export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
+	const copy = terminalCopy[locale];
+	const preparedTurns = copy.turns;
+	const freeReplies: readonly [ConfiguredReply, ...ConfiguredReply[]] = [{ segments: [{ text: copy.freeReply }] }];
 	const [animated, setAnimated] = useState(false);
 	const [bannerVisible, setBannerVisible] = useState(true);
 	const [busy, setBusy] = useState(true);
@@ -174,7 +187,7 @@ export function HomeTerminal() {
 			window.clearTimeout(start);
 			controller.abort();
 		};
-	}, []);
+	}, [preparedTurns]);
 
 	useEffect(() => {
 		if (animated && typeof stageRef.current?.scrollTo === "function") stageRef.current.scrollTo({ top: stageRef.current.scrollHeight });
@@ -184,7 +197,7 @@ export function HomeTerminal() {
 		event.preventDefault();
 		const question = input.trim();
 		if (!question || busy) return;
-		const reply = pickFreeReply();
+		const reply = pickFreeReply(freeReplies);
 		const replyText = getReplyText(reply);
 		setInput("");
 		setBusy(true);
@@ -211,7 +224,7 @@ export function HomeTerminal() {
 
 	const staticTurns = preparedTurns.map((turn) => ({ ...turn }));
 	return (
-		<div aria-label="moniの自己紹介インタビュー" className="chat-window flex h-128 w-full min-w-0 flex-col overflow-hidden rounded-lg border border-terminal-border bg-terminal-surface text-terminal-text [color-scheme:dark]">
+		<div aria-label={copy.label} className="chat-window flex h-128 w-full min-w-0 flex-col overflow-hidden rounded-lg border border-terminal-border bg-terminal-surface text-terminal-text [color-scheme:dark]">
 			<div className="window-titlebar grid grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-3 border-b border-terminal-border bg-terminal-chrome px-4 py-3.5 font-mono text-xs font-medium text-terminal-text-muted sm:px-5">
 				<span aria-hidden="true" className="window-controls flex gap-1.5"><span className="window-control size-3 rounded-full border border-black/15 bg-[#ff5f57]" /><span className="window-control size-3 rounded-full border border-black/15 bg-[#febc2e]" /><span className="window-control size-3 rounded-full border border-black/15 bg-[#28c840]" /></span>
 				<span className="window-title flex min-w-0 items-center justify-center gap-2"><svg aria-hidden="true" className="size-4 flex-none stroke-current stroke-[1.75]" fill="none" viewBox="0 0 24 24"><path d="M3 6.5h7l2 2h9v9.5H3z" /></svg><span className="window-title-text overflow-hidden text-ellipsis whitespace-nowrap">{title}</span></span>
@@ -225,9 +238,9 @@ export function HomeTerminal() {
 				{animated ? <div className="animated-transcript"><Transcript turns={visibleTurns} /></div> : null}
 			</div>
 			<form className="terminal-input flex min-h-13 items-center gap-3 border-t border-terminal-border px-4 py-3.5 font-mono text-terminal-accent focus-within:-outline-offset-2 focus-within:outline-2 focus-within:outline-terminal-accent sm:px-6" onSubmit={submit}>
-				<label className="sr-only" htmlFor="terminal-free-input">メッセージを入力</label>
+				<label className="sr-only" htmlFor="terminal-free-input">{copy.inputLabel}</label>
 				<span aria-hidden="true" className="terminal-prompt grid h-7 w-4 flex-none place-items-center font-mono font-semibold text-terminal-accent">&gt;</span>
-				<input autoComplete="off" className="terminal-input-field min-w-0 flex-1 border-0 bg-transparent p-0 font-[inherit] text-terminal-text opacity-100 outline-0 placeholder:text-terminal-text-muted disabled:cursor-default" disabled={busy} id="terminal-free-input" maxLength={200} onChange={(event) => setInput(event.target.value)} placeholder={!hydrated ? "自由入力には JavaScript が必要です" : busy ? undefined : "質問する"} type="text" value={input} />
+				<input autoComplete="off" className="terminal-input-field min-w-0 flex-1 border-0 bg-transparent p-0 font-[inherit] text-terminal-text opacity-100 outline-0 placeholder:text-terminal-text-muted disabled:cursor-default" disabled={busy} id="terminal-free-input" maxLength={200} onChange={(event) => setInput(event.target.value)} placeholder={!hydrated ? copy.javascriptRequired : busy ? undefined : copy.placeholder} type="text" value={input} />
 			</form>
 			<p aria-live="polite" className="sr-only" role="status">{status}</p>
 		</div>

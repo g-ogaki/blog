@@ -14,6 +14,7 @@ function createReleaseFixture() {
 		".open-next/worker.js": "export default {};",
 		".open-next/assets/BUILD_ID": "build-123\n",
 		".open-next/assets/rss.xml": "<rss />",
+		".open-next/assets/en/rss.xml": "<rss />",
 		".open-next/assets/sitemap.xml": "<urlset />",
 		".open-next/assets/robots.txt": "User-agent: *",
 		".open-next/assets/cat.jpg": "image",
@@ -22,14 +23,20 @@ function createReleaseFixture() {
 			"  Cache-Control: public,max-age=31536000,immutable",
 			"/rss.xml",
 			"  Content-Type: application/rss+xml; charset=utf-8",
+			"/en/rss.xml",
+			"  Content-Type: application/rss+xml; charset=utf-8",
 		].join("\n"),
 		".open-next/assets/pagefind-loader.js": "export {};",
 		".open-next/assets/pagefind/pagefind-entry.json": "{}",
-		".open-next/assets/pagefind/index/ja.pf_index": "index",
+		".open-next/assets/pagefind/index/ja_fixture.pf_index": "index",
+		".open-next/assets/pagefind/index/en_fixture.pf_index": "index",
 		".open-next/cache/build-123/index.cache": "home",
 		".open-next/cache/build-123/blog.cache": "blog",
+		".open-next/cache/build-123/en.cache": "home-en",
+		".open-next/cache/build-123/en/blog.cache": "blog-en",
 		".open-next/cache/build-123/blog/2026/example.cache": "post",
-		"src/generated/published-posts.json": JSON.stringify([{ slug: "2026/example" }]),
+		".open-next/cache/build-123/en/blog/2026/example.cache": "post-en",
+		"src/generated/published-posts.json": JSON.stringify([{ slug: "2026/example", translations: { ja: { url: "/blog/2026/example" }, en: { url: "/en/blog/2026/example" } } }]),
 		"wrangler.jsonc": JSON.stringify({
 			main: "custom-worker.ts",
 			assets: { binding: "ASSETS", directory: ".open-next/assets" },
@@ -65,14 +72,14 @@ describe("verifyRelease", () => {
 		const root = createReleaseFixture();
 		rmSync(path.join(root, ".open-next/cache/build-123/blog/2026/example.cache"));
 
-		expect(() => verifyRelease(root)).toThrow("post cache for 2026/example");
+		expect(() => verifyRelease(root)).toThrow("Japanese post cache for 2026/example");
 	});
 
 	it("rejects a release missing its Pagefind index", () => {
 		const root = createReleaseFixture();
-		rmSync(path.join(root, ".open-next/assets/pagefind/index/ja.pf_index"));
+		rmSync(path.join(root, ".open-next/assets/pagefind/index/ja_fixture.pf_index"));
 
-		expect(() => verifyRelease(root)).toThrow("Pagefind index");
+		expect(() => verifyRelease(root)).toThrow("Pagefind ja index");
 	});
 
 	it("rejects a release missing a required Worker binding", () => {
