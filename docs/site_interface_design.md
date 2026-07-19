@@ -106,7 +106,7 @@ contract documented in `routing_design.md`. Pagefind performs keyword search
 and client-side filtering while keeping that URL in sync. The unfiltered archive
 remains usable while search loads, without JavaScript, and if its static assets
 are unavailable. Once JavaScript is active, the archive displays matching posts
-in batches of two and offers 「さらに読み込む」 while more remain. Changing the
+in batches of ten and offers 「さらに読み込む」 while more remain. Changing the
 query or taxonomy selection resets the visible batch. Later rows remain in the
 server HTML and are hidden before first paint only when the root initializer
 confirms JavaScript is available, avoiding both layout shift and a reduced

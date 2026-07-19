@@ -61,29 +61,29 @@ describe("SearchArchive", () => {
 	}
 
 	it("keeps incremental loading available when Pagefind cannot load", async () => {
-		const fallbackPosts = createPosts(5);
+		const fallbackPosts = createPosts(12);
 		pagefind.load.mockRejectedValue(new Error("missing index"));
 		const { container } = render(<SearchArchive posts={fallbackPosts} taxonomy={taxonomy} />);
 
 		expect(await screen.findByText("検索を利用できません。すべての記事を表示しています。")).toBeInTheDocument();
-		expect(visibleRows(container)).toHaveLength(2);
+		expect(visibleRows(container)).toHaveLength(10);
 		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
-		expect(visibleRows(container)).toHaveLength(4);
+		expect(visibleRows(container)).toHaveLength(12);
 	});
 
 	it("keeps every post in static HTML without rendering a nonfunctional control", () => {
-		const html = renderToStaticMarkup(<SearchArchive posts={createPosts(5)} taxonomy={taxonomy} />);
+		const html = renderToStaticMarkup(<SearchArchive posts={createPosts(12)} taxonomy={taxonomy} />);
 
-		for (let index = 1; index <= 5; index += 1) expect(html).toContain(`記事${index}`);
-		expect(html.match(/post-row--deferred/gu)).toHaveLength(3);
+		for (let index = 1; index <= 12; index += 1) expect(html).toContain(`記事${index}`);
+		expect(html.match(/post-row--deferred/gu)).toHaveLength(2);
 		expect(html).not.toContain("さらに読み込む");
 	});
 
 	it("offers incremental loading before Pagefind finishes initializing", async () => {
 		pagefind.load.mockReturnValue(new Promise(() => {}));
-		render(<SearchArchive posts={createPosts(5)} taxonomy={taxonomy} />);
+		render(<SearchArchive posts={createPosts(12)} taxonomy={taxonomy} />);
 
-		expect(await screen.findByText("5件中2件を表示")).toBeInTheDocument();
+		expect(await screen.findByText("12件中10件を表示")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "さらに読み込む" })).toBeInTheDocument();
 	});
 
@@ -194,8 +194,8 @@ describe("SearchArchive", () => {
 		});
 	});
 
-	it("reveals matching articles in batches of two and resets when criteria change", async () => {
-		const manyPosts = createPosts(5);
+	it("reveals matching articles in batches of ten and resets when criteria change", async () => {
+		const manyPosts = createPosts(25);
 		pagefind.load.mockResolvedValue({
 			init: vi.fn().mockResolvedValue(undefined),
 			filters: vi.fn().mockResolvedValue({}),
@@ -203,26 +203,26 @@ describe("SearchArchive", () => {
 		});
 		const { container } = render(<SearchArchive posts={manyPosts} taxonomy={taxonomy} />);
 
-		await screen.findByText("全5件");
-		expect(visibleRows(container)).toHaveLength(2);
-		expect(screen.getByText("5件中2件を表示")).toBeInTheDocument();
+		await screen.findByText("全25件");
+		expect(visibleRows(container)).toHaveLength(10);
+		expect(screen.getByText("25件中10件を表示")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
-		expect(visibleRows(container)).toHaveLength(4);
-		expect(screen.getByText("5件中4件を表示")).toBeInTheDocument();
+		expect(visibleRows(container)).toHaveLength(20);
+		expect(screen.getByText("25件中20件を表示")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
-		expect(visibleRows(container)).toHaveLength(5);
+		expect(visibleRows(container)).toHaveLength(25);
 		expect(screen.queryByRole("button", { name: "さらに読み込む" })).not.toBeInTheDocument();
-		expect(screen.queryByText(/5件中/)).not.toBeInTheDocument();
+		expect(screen.queryByText(/25件中/)).not.toBeInTheDocument();
 
 		fireEvent.change(screen.getByRole("searchbox", { name: "記事を検索" }), { target: { value: "記事" } });
-		await waitFor(() => expect(visibleRows(container)).toHaveLength(2));
-		expect(screen.getByText("5件中2件を表示")).toBeInTheDocument();
+		await waitFor(() => expect(visibleRows(container)).toHaveLength(10));
+		expect(screen.getByText("25件中10件を表示")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
-		expect(visibleRows(container)).toHaveLength(4);
+		expect(visibleRows(container)).toHaveLength(20);
 		fireEvent.click(screen.getByRole("link", { name: "Programming" }));
-		await waitFor(() => expect(visibleRows(container)).toHaveLength(2));
+		await waitFor(() => expect(visibleRows(container)).toHaveLength(10));
 	});
 });
