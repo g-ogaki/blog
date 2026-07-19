@@ -63,11 +63,9 @@ text and filters can be combined, and the active state is reflected in the URL
 with `history.replaceState`. Year and month form one date dimension: selecting a
 year clears the active month, and selecting a month clears the active year.
 
-With JavaScript active, matching articles are presented in batches of two. The
+With JavaScript active, matching articles are presented in batches of ten. The
 visible count and 「さらに読み込む」 control are shown only while another batch
-remains, disappear silently after the final reveal, and reset when any query or
-filter changes. Every result remains in server HTML; the pre-paint JavaScript
-marker hides deferred rows only for enhanced clients, so the complete list stays
-visible when JavaScript is absent.
+remains, and any query or filter change resets the batch. The server-rendered
+fallback keeps the complete published list available when JavaScript is absent.
 
 ---

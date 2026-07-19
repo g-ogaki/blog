@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SITE_DESCRIPTION, SITE_ORIGIN, SITE_TITLE } from "@/lib/site";
 import "./globals.css";
 
-const themeScript = `(function(){document.documentElement.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t}}catch(e){}})()`;
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t}}catch(e){}})()`;
 
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_ORIGIN),
