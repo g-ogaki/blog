@@ -106,11 +106,15 @@ contract documented in `routing_design.md`. Pagefind performs keyword search
 and client-side filtering while keeping that URL in sync. The unfiltered archive
 remains usable while search loads, without JavaScript, and if its static assets
 are unavailable. Once JavaScript is active, the archive displays matching posts
-in batches of ten and offers 「さらに読み込む」 while more remain. Changing the
-query or taxonomy selection resets the visible batch. Categories remain
+in batches of two and offers 「さらに読み込む」 while more remain. Changing the
+query or taxonomy selection resets the visible batch. Later rows remain in the
+server HTML and are hidden before first paint only when the root initializer
+confirms JavaScript is available, avoiding both layout shift and a reduced
+no-JavaScript archive. Categories remain
 single-select, while tags can be toggled independently and narrow results to
 articles containing every selected tag. Without JavaScript, all published posts
-remain present in the static archive.
+remain present and visible in the static archive. The count and load control are
+removed without a completion message after the final batch appears.
 
 The homepage, archive, and article layouts use Tailwind utilities directly and
 prefer its default spacing, typography, radius, sizing, transition, and
