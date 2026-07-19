@@ -3,13 +3,31 @@
 ## Rendering pipeline
 
 ```text
-Markdown → react-markdown → remark-math → rehype-katex → Shiki HAST → static React output
+Markdown → react-markdown → remark-math → raw HTML parsing → article HTML policy
+         → sanitization → table of contents → rehype-katex → Shiki HAST
+         → static React output
 ```
 
 `PostMarkdown` is an asynchronous server component. It completes all Markdown,
 math, and code transformation before returning its React tree, so published
-article content does not require client-side JavaScript. Raw HTML in Markdown is
-ignored, and `react-markdown`'s default URL sanitizer remains enabled.
+article content does not require client-side JavaScript. `react-markdown`'s
+default URL sanitizer remains enabled.
+
+Authored HTML is parsed with `rehype-raw`, validated against the explicit policy
+in `src/lib/content/article-html-policy.ts`, and sanitized before trusted plugins
+generate KaTeX and Shiki markup. The policy lists every permitted element and
+attribute; arbitrary classes, styles, IDs, event handlers, scripts, forms, and
+document-level elements are rejected. HTML written inside inline or fenced code
+remains literal code. Policy violations fail content validation with the post
+path instead of silently dropping authored content.
+
+The initial authored profile covers semantic prose and tables, `details` and
+`summary`, external HTTPS audio/video, and YouTube iframes. Disclosures require a
+nonempty first summary. Audio and video receive controls and metadata preload and
+cannot autoplay. YouTube embeds are the only accepted iframes, are normalized to
+`youtube-nocookie.com`, and receive fixed lazy-loading, sandbox, permissions,
+referrer, and responsive-layout properties. Adding a tag or embed provider
+requires changing the central policy, validation tests, and authoring guide.
 
 Rendered content uses the high-fidelity entry wireframe's `article-body`,
 table-of-contents, `math-block`, figure, code-block, and link-card layout
@@ -25,7 +43,9 @@ GitHub-compatible fragment IDs and are collected into a static table of contents
 Japanese characters are preserved, Latin text is lowercased, whitespace becomes
 hyphens, and punctuation is removed. Duplicate normalized headings receive
 `-1`, `-2`, and subsequent suffixes; a heading that otherwise produces an empty
-slug uses `section` with the same uniqueness rule.
+slug uses `section` with the same uniqueness rule. Headings inside a `details`
+element are intentionally excluded because their collapsed ancestor is not a
+reliable navigation target.
 
 The table of contents is rendered only when an eligible heading exists. It is an
 always-expanded navigation region labeled 「目次」 between article metadata and

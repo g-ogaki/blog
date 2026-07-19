@@ -6,6 +6,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
+import { ArticleHtmlPolicyError, validateArticleHtml } from "./article-html-policy";
 import { derivePostDescription } from "./post-description";
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -198,9 +199,8 @@ function validateMarkdownReferences(post: Post, availablePostUrls: ReadonlySet<s
 		fail(post.sourcePath, `contains invalid Markdown: ${error instanceof Error ? error.message : String(error)}`);
 	}
 
-	const validateReference = (node: Link | Image) => {
-		const reference = node.url;
-		if (node.type === "image") {
+	const validateReference = (reference: string, type: "image" | "link") => {
+		if (type === "image") {
 			validateLocalFile(reference, path.dirname(post.sourcePath), post.sourcePath, "Markdown image");
 			return;
 		}
@@ -225,8 +225,17 @@ function validateMarkdownReferences(post: Post, availablePostUrls: ReadonlySet<s
 		validateLocalFile(reference, path.dirname(post.sourcePath), post.sourcePath, "relative link");
 	};
 
-	visit(tree, "link", validateReference);
-	visit(tree, "image", validateReference);
+	visit(tree, "link", (node: Link) => validateReference(node.url, "link"));
+	visit(tree, "image", (node: Image) => validateReference(node.url, "image"));
+	try {
+		validateArticleHtml(post.content, {
+			onImageSource: (source) => validateLocalFile(source, path.dirname(post.sourcePath), post.sourcePath, "raw HTML image"),
+			onLink: (href) => validateReference(href, "link"),
+		});
+	} catch (error) {
+		if (error instanceof ArticleHtmlPolicyError) fail(post.sourcePath, error.message);
+		throw error;
+	}
 }
 
 export function validateUniquePostUrls(posts: readonly Pick<Post, "sourcePath" | "url">[]) {

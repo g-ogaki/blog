@@ -68,3 +68,17 @@ $$
 [TypeScriptを学び始めました](/blog/2026/20260503-learning-typescript)
 
 読みやすさは、目立つ要素を増やすことではなく、読者が内容に集中できる関係を整えることから生まれます。まず余白で構造を示し、その後に色や形を必要な場所だけへ加えます。
+
+<details>
+  <summary>Click here to expand :)</summary>
+
+  ### This is a hidden heading
+  * Hidden bullet point 1
+  * Hidden bullet point 2
+
+  ```javascript
+  console.log("Hidden code block");
+  ```
+</details>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HgLhL_1UesY?si=_Jn8BjtWYduLyZ0L" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

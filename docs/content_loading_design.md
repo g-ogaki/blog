@@ -24,6 +24,13 @@ identify a discovered post. In production validation, a published post cannot
 link to a draft-only post. External URLs, fragment links, and application routes
 outside `/blog/` are not resolved by the content loader.
 
+Raw article HTML is parsed with the same policy used by the renderer. Unsupported
+elements and attributes, unsafe URL protocols, malformed disclosure structure,
+non-YouTube iframes, and autoplay media stop the build with the source path.
+Raw HTML links follow the Markdown link contract, and raw images must reference
+validated files colocated with the post. Authored audio and video sources are
+the deliberate exception: they must be absolute HTTPS URLs.
+
 Validation runs during `npm run check`, `npm run build`, and the OpenNext Worker
 build. Failures include the source path and stop the build.
 

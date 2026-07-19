@@ -55,6 +55,10 @@ Each post receives a deterministic plain-text description derived from its
 opening prose during content loading. Authors do not maintain a separate
 description or summary field in frontmatter.
 
+Posts may combine Markdown with the validated HTML profile documented in
+`markdown_authoring_guide.md`. Unsupported elements, attributes, URL protocols,
+and embed providers fail content validation rather than being published.
+
 ## Search and comments
 
 Pagefind indexes title, derived description, category, tags, and full article

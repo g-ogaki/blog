@@ -77,7 +77,7 @@ describe("PostMarkdown", () => {
 	});
 
 	it("omits the table of contents when Markdown has no h2 or h3 headings", async () => {
-		await renderMarkdown("# Title\n\n#### Detail\n\nText.");
+		await renderMarkdown("#### Detail\n\nText.");
 
 		expect(screen.queryByRole("navigation", { name: "目次" })).not.toBeInTheDocument();
 	});
@@ -107,7 +107,7 @@ describe("PostMarkdown", () => {
 
 	it("renders links and rewrites post-relative image paths", async () => {
 		await renderMarkdown(
-			"[Internal](/blog/2026/20260504-next) and [External](https://example.com).\n\n![Diagram](images/diagram.png \"Architecture\")",
+			"[Internal](/blog/2026/20260504-next) and [External](https://example.com).\n\n![Diagram](images/diagram.png \"Architecture\")\n\n<img src=\"images/raw.png\" alt=\"Raw diagram\">",
 		);
 
 		expect(screen.getByRole("link", { name: "Internal" })).toHaveAttribute(
@@ -121,6 +121,10 @@ describe("PostMarkdown", () => {
 		);
 		expect(screen.getByRole("img", { name: "Diagram" })).not.toHaveAttribute("title");
 		expect(screen.getByText("Architecture", { selector: "figcaption" })).toBeInTheDocument();
+		expect(screen.getByRole("img", { name: "Raw diagram" })).toHaveAttribute(
+			"src",
+			"/post-assets/2026/20260503-learning-typescript/images/raw.png",
+		);
 	});
 
 	it("keeps untitled images ordinary and unlabeled code fences unwrapped", async () => {
@@ -131,14 +135,66 @@ describe("PostMarkdown", () => {
 		expect(screen.getByRole("img", { name: "Diagram" })).toBeInTheDocument();
 	});
 
-	it("does not render raw HTML or unsafe URLs", async () => {
-		const { container } = await renderMarkdown(
-			'<script>alert("xss")</script>\n\n<img src="/unvalidated.png" alt="raw">\n\n[Unsafe](javascript:alert(1))',
-		);
+	it("rejects unsupported raw HTML and unsafe Markdown URLs", async () => {
+		await expect(renderMarkdown('<script>alert("xss")</script>')).rejects.toThrow(/<script> is not allowed/);
+		await expect(renderMarkdown("[Unsafe](javascript:alert(1))")).rejects.toThrow(/href uses an unsupported URL/);
+	});
 
-		expect(container.querySelector("script")).not.toBeInTheDocument();
-		expect(screen.queryByRole("img", { name: "raw" })).not.toBeInTheDocument();
-		expect(screen.getByText("Unsafe").closest("a")).toHaveAttribute("href", "");
+	it("renders native details while excluding their headings from the table of contents", async () => {
+		const { container } = await renderMarkdown([
+			"## Visible heading",
+			"",
+			"<details>",
+			"<summary>Show example</summary>",
+			"",
+			"### Hidden heading",
+			"",
+			"- first",
+			"- second",
+			"",
+			"```html",
+			"<iframe src=\"https://example.com\"></iframe>",
+			"```",
+			"</details>",
+		].join("\n"));
+
+		const details = container.querySelector("details");
+		expect(details).toBeInTheDocument();
+		expect(details?.querySelector("summary")).toHaveTextContent("Show example");
+		expect(details?.querySelector("h3")).toHaveTextContent("Hidden heading");
+		expect(details?.querySelectorAll("li")).toHaveLength(2);
+		expect(details?.querySelector("pre")).toHaveTextContent('<iframe src="https://example.com"></iframe>');
+		expect(container.querySelector("iframe")).not.toBeInTheDocument();
+		const navigation = screen.getByRole("navigation", { name: "目次" });
+		expect(within(navigation).getByRole("link", { name: "Visible heading" })).toBeInTheDocument();
+		expect(within(navigation).queryByRole("link", { name: "Hidden heading" })).not.toBeInTheDocument();
+	});
+
+	it("normalizes YouTube embeds and external media", async () => {
+		const { container } = await renderMarkdown([
+			'<iframe width="560" height="315" src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&start=10" title="YouTube video" allow="autoplay" allowfullscreen></iframe>',
+			"",
+			'<video src="https://media.example.com/movie.mp4" poster="https://media.example.com/poster.jpg" muted loop></video>',
+			"",
+			'<audio><source src="https://media.example.com/audio.mp3" type="audio/mpeg"></audio>',
+		].join("\n"));
+
+		const iframe = container.querySelector("iframe");
+		expect(iframe).toHaveAttribute("src", "https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?start=10&controls=1&playsinline=1");
+		expect(iframe).toHaveAttribute("loading", "lazy");
+		expect(iframe).toHaveAttribute("sandbox", "allow-same-origin allow-scripts allow-presentation");
+		expect(iframe).not.toHaveAttribute("width");
+		expect(iframe).not.toHaveAttribute("autoplay");
+
+		const video = container.querySelector("video");
+		expect(video).toHaveAttribute("controls");
+		expect(video).toHaveAttribute("preload", "metadata");
+		expect(video).toHaveProperty("muted", true);
+		expect(video).toHaveAttribute("loop");
+		const audio = container.querySelector("audio");
+		expect(audio).toHaveAttribute("controls");
+		expect(audio).toHaveAttribute("preload", "metadata");
+		expect(audio?.querySelector("source")).toHaveAttribute("src", "https://media.example.com/audio.mp3");
 	});
 
 	it("renders standalone URLs as static cards while inline URLs remain unchanged", async () => {
