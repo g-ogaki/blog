@@ -1,7 +1,5 @@
 import GithubSlugger, { slug } from "github-slugger";
-import type { Heading, Root } from "mdast";
-import { toString } from "mdast-util-to-string";
-import { visit } from "unist-util-visit";
+import type { ElementContent, Root, RootContent } from "hast";
 
 export interface TableOfContentsEntry {
 	children: TableOfContentsEntry[];
@@ -14,23 +12,38 @@ interface TableOfContentsOptions {
 	entries: TableOfContentsEntry[];
 }
 
-export function remarkTableOfContents({ entries }: TableOfContentsOptions) {
+function toText(children: readonly ElementContent[]): string {
+	return children.map((child) => {
+		if (child.type === "text") return child.value;
+		if (child.type === "element") return toText(child.children);
+		return "";
+	}).join("");
+}
+
+export function rehypeTableOfContents({ entries }: TableOfContentsOptions) {
 	return (tree: Root) => {
 		const slugger = new GithubSlugger();
 		entries.length = 0;
 
-		visit(tree, "heading", (heading: Heading) => {
-			if (heading.depth !== 2 && heading.depth !== 3) return;
-			const label = toString(heading).trim();
-			const id = slugger.slug(slug(label) || "section");
-			const entry: TableOfContentsEntry = { children: [], id, label, level: heading.depth };
+		const walk = (children: readonly RootContent[], insideDetails: boolean) => {
+			for (const child of children) {
+				if (child.type !== "element") continue;
+				const nextInsideDetails = insideDetails || child.tagName === "details";
+				if (!nextInsideDetails && (child.tagName === "h2" || child.tagName === "h3")) {
+					const level = Number(child.tagName.slice(1)) as 2 | 3;
+					const label = toText(child.children).trim();
+					const id = slugger.slug(slug(label) || "section");
+					const entry: TableOfContentsEntry = { children: [], id, label, level };
+					child.properties.id = id;
 
-			heading.data ??= {};
-			heading.data.hProperties = { ...heading.data.hProperties, id };
+					const parent = entries.at(-1);
+					if (level === 3 && parent?.level === 2) parent.children.push(entry);
+					else entries.push(entry);
+				}
+				walk(child.children, nextInsideDetails);
+			}
+		};
 
-			const parent = entries.at(-1);
-			if (heading.depth === 3 && parent?.level === 2) parent.children.push(entry);
-			else entries.push(entry);
-		});
+		walk(tree.children, false);
 	};
 }

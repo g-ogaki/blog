@@ -3,6 +3,8 @@ import githubDark from "@shikijs/themes/github-dark";
 import githubLight from "@shikijs/themes/github-light";
 import type { Element, Root } from "hast";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import { cloneElement, isValidElement, type ReactElement } from "react";
 import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
@@ -18,7 +20,8 @@ import {
 	type LinkPreviewLoader,
 } from "@/lib/content/link-preview";
 import type { Post } from "@/lib/content/posts";
-import { remarkTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
+import { articleHtmlSanitizeSchema, rehypeArticleHtmlPolicy } from "@/lib/content/article-html-policy";
+import { rehypeTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
 
 interface PostMarkdownProps {
 	loadLinkPreview?: LinkPreviewLoader;
@@ -173,8 +176,12 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 				return <div {...properties}><div className="code-label">{language}</div>{children}</div>;
 			},
 		},
-		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards, [remarkTableOfContents, { entries: tableOfContents }]],
+		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards],
 		rehypePlugins: [
+			rehypeRaw,
+			rehypeArticleHtmlPolicy,
+			[rehypeSanitize, articleHtmlSanitizeSchema],
+			[rehypeTableOfContents, { entries: tableOfContents }],
 			rehypeKatex,
 			rehypeNormalizeArticleBlocks,
 			[
@@ -189,7 +196,6 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 				},
 			],
 		],
-		skipHtml: true,
 		urlTransform: (url) => resolvePostAssetUrl(url, post.slug),
 	});
 

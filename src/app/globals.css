@@ -135,6 +135,16 @@ summary:focus-visible {
 .article-body ol { @apply list-decimal pl-6; }
 .article-body li + li { @apply mt-3; }
 .article-body blockquote { @apply mx-10 border-l-3 border-site-border pl-6 text-text-muted; }
+.article-body details { @apply rounded-md border border-site-border bg-surface-raised p-4; }
+.article-body details > summary { @apply cursor-pointer font-medium; }
+.article-body details[open] > summary { @apply mb-4; }
+.article-body details > * + * { @apply mt-4; }
+.article-body details h2, .article-body details h3 { @apply mt-6; }
+.article-body table { @apply block w-full overflow-x-auto border-collapse text-left text-sm; }
+.article-body th, .article-body td { @apply border border-site-border px-3 py-2; }
+.article-body th { @apply bg-surface-subtle font-semibold; }
+.article-body iframe, .article-body video { @apply block aspect-video w-full rounded-md border border-site-border bg-surface-subtle; }
+.article-body audio { @apply block w-full; }
 .article-body :not(pre) > code { @apply rounded-sm bg-surface-subtle px-1.5 py-0.5 font-mono text-[.9em]; }
 .code-block { @apply overflow-hidden rounded-md border border-site-border bg-surface-raised; }
 .code-label { @apply border-b border-site-border bg-surface-subtle px-4 py-2 font-mono text-xs text-site-text; }

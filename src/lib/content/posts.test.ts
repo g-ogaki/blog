@@ -213,6 +213,30 @@ describe("loadPosts", () => {
 
 		expect(loadPosts({ contentDirectory, includeDrafts: false })).toHaveLength(2);
 	});
+
+	it("validates raw article HTML with the source path", () => {
+		const unsafeDirectory = createContentDirectory();
+		writePost(
+			unsafeDirectory,
+			"2026/20260503-unsafe-html",
+			validFrontmatter(),
+			'<details><summary>More</summary><script>alert("xss")</script></details>',
+		);
+		expect(() => loadPosts({ contentDirectory: unsafeDirectory })).toThrow(
+			/20260503-unsafe-html\/index\.md.*<script> is not allowed/s,
+		);
+
+		const imageDirectory = createContentDirectory();
+		writePost(
+			imageDirectory,
+			"2026/20260503-raw-image",
+			validFrontmatter(),
+			'<img src="missing.png" alt="Missing">',
+		);
+		expect(() => loadPosts({ contentDirectory: imageDirectory })).toThrow(
+			/raw HTML image.*missing\.png.*does not exist/s,
+		);
+	});
 });
 
 describe("validateUniquePostUrls", () => {

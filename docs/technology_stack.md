@@ -19,6 +19,8 @@
 
 * react-markdown
 * remark-math
+* remark-rehype and rehype-raw
+* rehype-sanitize
 * rehype-katex
 * KaTeX
 * Shiki and its official rehype adapter
@@ -28,6 +30,10 @@
 Rendering is asynchronous on the server and produces static React output. Post
 assets are copied to the public output during development and production builds;
 no runtime content-file endpoint is used.
+
+Raw article HTML is parsed into HAST, checked against the explicit content-layer
+policy, and sanitized before trusted KaTeX and Shiki transformations run. The
+same policy is applied during synchronous content validation.
 
 Shiki uses its fine-grained core bundle with the JavaScript regex engine and the
 GitHub light/dark themes. Development exposes Shiki's full lazy language catalog

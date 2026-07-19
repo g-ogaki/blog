@@ -138,8 +138,56 @@ backticks:
 `const x = 42{:ts}`
 ```
 
-Inline code without a marker remains normal inline code. Raw HTML is ignored;
-write content using Markdown rather than embedded HTML.
+Inline code without a marker remains normal inline code. HTML written inside
+inline or fenced code is displayed literally rather than interpreted.
+
+---
+
+## HTML in articles
+
+Standard HTML may be mixed with Markdown when Markdown has no equivalent. The
+supported semantic elements are `a`, `abbr`, `audio`, `b`, `blockquote`, `br`,
+`cite`, `code`, `dd`, `del`, `details`, `div`, `dl`, `dt`, `em`, `figcaption`,
+`figure`, `h2` through `h6`, `hr`, `i`, `iframe`, `img`, `ins`, `kbd`, `li`,
+`mark`, `ol`, `p`, `pre`, `q`, `s`, `samp`, `small`, `source`, `span`, `strong`,
+`sub`, `summary`, `sup`, table elements, `time`, `track`, `u`, `ul`, `var`, and
+`video`. Each element also has an explicit attribute allowlist. Unsupported
+markup fails content validation; arbitrary classes, inline styles, IDs, event
+handlers, scripts, forms, and unrestricted embeds are not accepted.
+
+Use blank lines around block HTML whose contents include Markdown:
+
+```md
+<details>
+<summary>Click here to expand</summary>
+
+### Hidden heading
+
+- First item
+- Second item
+
+</details>
+```
+
+`summary` must be the first element and must contain text. Headings inside a
+disclosure do not appear in the page-level table of contents.
+
+Audio and video sources must use absolute HTTPS URLs. Controls and metadata
+preloading are applied automatically, and autoplay is rejected:
+
+```html
+<video src="https://media.example.com/movie.mp4"
+       poster="https://media.example.com/poster.jpg"></video>
+```
+
+YouTube is the only supported iframe provider. Use its `/embed/` URL and provide
+a meaningful title; the renderer converts the source to privacy-enhanced mode
+and applies the security and loading attributes:
+
+```html
+<iframe src="https://www.youtube.com/embed/M7lc1UVf-VE"
+        title="YouTube video"></iframe>
+```
 
 ---
 
