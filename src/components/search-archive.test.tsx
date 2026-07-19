@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SearchArchive } from "./search-archive";
 
@@ -22,6 +23,26 @@ const taxonomy = {
 	years: ["2026"],
 };
 
+function createPosts(count: number) {
+	return Array.from({ length: count }, (_, index) => ({
+		...posts[0],
+		url: `/blog/2026/post-${index + 1}`,
+		metadata: { ...posts[0].metadata, title: `記事${index + 1}` },
+	}));
+}
+
+function visibleRows(container: HTMLElement) {
+	return container.querySelectorAll(".post-row:not(.post-row--deferred)");
+}
+
+function pagefindResults(resultPosts: ReturnType<typeof createPosts>) {
+	return resultPosts.map((post) => ({ data: vi.fn().mockResolvedValue({
+		meta: { ...post.metadata, tags: post.metadata.tags.join(","), url: post.url },
+		plain_excerpt: "記事の検索抜粋です。",
+		url: post.url,
+	}) }));
+}
+
 afterEach(() => {
 	cleanup();
 	pagefind.load.mockReset();
@@ -39,12 +60,31 @@ describe("SearchArchive", () => {
 		return search;
 	}
 
-	it("keeps the published list available when Pagefind cannot load", async () => {
+	it("keeps incremental loading available when Pagefind cannot load", async () => {
+		const fallbackPosts = createPosts(12);
 		pagefind.load.mockRejectedValue(new Error("missing index"));
-		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
+		const { container } = render(<SearchArchive posts={fallbackPosts} taxonomy={taxonomy} />);
 
 		expect(await screen.findByText("検索を利用できません。すべての記事を表示しています。")).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: "TypeScriptを学び始めました" })).toBeInTheDocument();
+		expect(visibleRows(container)).toHaveLength(10);
+		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
+		expect(visibleRows(container)).toHaveLength(12);
+	});
+
+	it("keeps every post in static HTML without rendering a nonfunctional control", () => {
+		const html = renderToStaticMarkup(<SearchArchive posts={createPosts(12)} taxonomy={taxonomy} />);
+
+		for (let index = 1; index <= 12; index += 1) expect(html).toContain(`記事${index}`);
+		expect(html.match(/post-row--deferred/gu)).toHaveLength(2);
+		expect(html).not.toContain("さらに読み込む");
+	});
+
+	it("offers incremental loading before Pagefind finishes initializing", async () => {
+		pagefind.load.mockReturnValue(new Promise(() => {}));
+		render(<SearchArchive posts={createPosts(12)} taxonomy={taxonomy} />);
+
+		expect(await screen.findByText("12件中10件を表示")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "さらに読み込む" })).toBeInTheDocument();
 	});
 
 	it("reports an empty result without hiding the search controls", async () => {
@@ -154,36 +194,35 @@ describe("SearchArchive", () => {
 		});
 	});
 
-	it("reveals matching articles in batches of ten", async () => {
-		const manyPosts = Array.from({ length: 12 }, (_, index) => ({
-			...posts[0],
-			url: `/blog/2026/post-${index + 1}`,
-			metadata: { ...posts[0].metadata, title: `記事${index + 1}` },
-		}));
+	it("reveals matching articles in batches of ten and resets when criteria change", async () => {
+		const manyPosts = createPosts(25);
 		pagefind.load.mockResolvedValue({
 			init: vi.fn().mockResolvedValue(undefined),
 			filters: vi.fn().mockResolvedValue({}),
-			search: vi.fn().mockResolvedValue({ results: manyPosts.map((post) => ({ data: vi.fn().mockResolvedValue({
-				meta: { ...post.metadata, tags: post.metadata.tags.join(","), url: post.url },
-				plain_excerpt: "記事の検索抜粋です。",
-				url: post.url,
-			}) })) }),
+			search: vi.fn().mockResolvedValue({ results: pagefindResults(manyPosts) }),
 		});
-		render(<SearchArchive posts={manyPosts} taxonomy={taxonomy} />);
+		const { container } = render(<SearchArchive posts={manyPosts} taxonomy={taxonomy} />);
 
-		await screen.findByText("全12件");
-		expect(screen.getByRole("link", { name: "記事10" })).toBeInTheDocument();
-		expect(screen.queryByRole("link", { name: "記事11" })).not.toBeInTheDocument();
-		expect(screen.getByText("12件中10件を表示")).toBeInTheDocument();
+		await screen.findByText("全25件");
+		expect(visibleRows(container)).toHaveLength(10);
+		expect(screen.getByText("25件中10件を表示")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
+		expect(visibleRows(container)).toHaveLength(20);
+		expect(screen.getByText("25件中20件を表示")).toBeInTheDocument();
 
-		expect(screen.getByRole("link", { name: "記事12" })).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
+		expect(visibleRows(container)).toHaveLength(25);
 		expect(screen.queryByRole("button", { name: "さらに読み込む" })).not.toBeInTheDocument();
+		expect(screen.queryByText(/25件中/)).not.toBeInTheDocument();
 
 		fireEvent.change(screen.getByRole("searchbox", { name: "記事を検索" }), { target: { value: "記事" } });
+		await waitFor(() => expect(visibleRows(container)).toHaveLength(10));
+		expect(screen.getByText("25件中10件を表示")).toBeInTheDocument();
 
-		expect(await screen.findByRole("button", { name: "さらに読み込む" })).toBeInTheDocument();
-		expect(screen.queryByRole("link", { name: "記事11" })).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "さらに読み込む" }));
+		expect(visibleRows(container)).toHaveLength(20);
+		fireEvent.click(screen.getByRole("link", { name: "Programming" }));
+		await waitFor(() => expect(visibleRows(container)).toHaveLength(10));
 	});
 });

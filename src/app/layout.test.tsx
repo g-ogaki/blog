@@ -26,5 +26,6 @@ describe("RootLayout", () => {
 			strategy: "beforeInteractive",
 		});
 		expect(captured.props?.children).toContain("localStorage.getItem('theme')");
+		expect(captured.props?.children).toContain("classList.add('js')");
 	});
 });
