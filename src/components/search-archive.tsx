@@ -157,7 +157,6 @@ function toPostListPosts(results: readonly PagefindResultData[]): PostListPost[]
 		metadata: {
 			category: result.meta.category ?? "",
 			date: result.meta.date ?? "",
-			summary: result.meta.summary ?? result.plain_excerpt,
 			tags: result.meta.tags?.split(",").map((tag) => tag.trim()).filter(Boolean) ?? [],
 			title: result.meta.title ?? result.url,
 		},

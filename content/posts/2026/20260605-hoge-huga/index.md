@@ -5,7 +5,6 @@ category: Programming
 tags:
   - rust
   - learning
-summary: Rustの所有権を小さなコードで確認するためのサンプル記事です。
 draft: false
 ---
 

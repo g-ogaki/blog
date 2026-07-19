@@ -5,13 +5,13 @@ import { buildRssFeed, buildSitemap } from "./syndication";
 function post(overrides: Partial<Post["metadata"]> = {}): Post {
 	return {
 		content: "Synthetic content.",
+		description: "Types < scripts > notes",
 		directoryName: "20260503-learning-typescript",
 		metadata: {
 			title: "TypeScript & XML",
 			date: "2026-05-03",
 			category: "Programming",
 			tags: ["typescript"],
-			summary: "Types < scripts > notes",
 			draft: false,
 			...overrides,
 		},

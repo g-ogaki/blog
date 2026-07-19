@@ -10,13 +10,13 @@ const temporaryDirectories: string[] = [];
 function post(title: string, draft: boolean): Post {
 	return {
 		content: "Synthetic content.",
+		description: "Synthetic description.",
 		directoryName: "20260503-synthetic",
 		metadata: {
 			title,
 			date: "2026-05-03",
 			category: "Testing",
 			tags: ["synthetic"],
-			summary: "Synthetic summary.",
 			draft,
 		},
 		slug: "2026/20260503-synthetic",

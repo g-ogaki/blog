@@ -33,12 +33,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 	if (!post) notFound();
 	return {
 		title: post.metadata.title,
-		description: post.metadata.summary,
+		description: post.description,
 		alternates: { canonical: post.url },
 		openGraph: {
 			type: "article",
 			title: post.metadata.title,
-			description: post.metadata.summary,
+			description: post.description,
 			url: post.url,
 			publishedTime: `${post.metadata.date}T00:00:00+09:00`,
 			authors: ["moni"],
@@ -64,8 +64,8 @@ export default async function PostPage({ params }: PostPageProps) {
 				data-month={post.metadata.date.slice(0, 7)}
 				data-pagefind-body=""
 				data-pagefind-filter="category[data-category], year[data-year], month[data-month]"
-				data-pagefind-meta="category[data-category], tags[data-tags], date[data-date], url[data-url], summary[data-summary], image[data-image]"
-				data-summary={post.metadata.summary}
+				data-description={post.description}
+				data-pagefind-meta="category[data-category], tags[data-tags], date[data-date], url[data-url], description[data-description], image[data-image]"
 				data-tags={post.metadata.tags.join(",")}
 				data-url={post.url}
 				data-year={post.year}

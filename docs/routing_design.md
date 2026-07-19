@@ -48,7 +48,7 @@ advertises `/rss.xml` for feed discovery. Generated files are ignored by Git.
 
 ## Post output
 
-The post route renders an `article` containing title, summary, category, JST
+The post route renders an `article` containing title, derived description metadata, category, JST
 publication date, author, and the static `PostMarkdown` output. No client-side
 JavaScript is required to read a post. After hydration, a separate client-only
 section fetches approved comments and exposes the Turnstile-protected submission
@@ -57,7 +57,7 @@ form; failure of that dynamic section does not affect article rendering.
 ## Metadata
 
 The canonical origin is `https://monipy.org`. Every post emits its title,
-summary, canonical URL, article publication time, author, and Open Graph image.
+derived description, canonical URL, article publication time, author, and Open Graph image.
 An explicit frontmatter image maps to `/post-assets/<slug>/<image>`; otherwise
 `/cat.jpg` is used. Root metadata defines Japanese language, site title, default
 description, and the title template.

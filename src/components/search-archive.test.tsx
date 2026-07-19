@@ -13,7 +13,6 @@ const posts = [{
 		date: "2026-05-03",
 		category: "Programming",
 		tags: ["typescript"],
-		summary: "TypeScriptの学習記録です。",
 	},
 }];
 const taxonomy = {
@@ -166,7 +165,7 @@ describe("SearchArchive", () => {
 			filters: vi.fn().mockResolvedValue({}),
 			search: vi.fn().mockResolvedValue({ results: manyPosts.map((post) => ({ data: vi.fn().mockResolvedValue({
 				meta: { ...post.metadata, tags: post.metadata.tags.join(","), url: post.url },
-				plain_excerpt: post.metadata.summary,
+				plain_excerpt: "記事の検索抜粋です。",
 				url: post.url,
 			}) })) }),
 		});

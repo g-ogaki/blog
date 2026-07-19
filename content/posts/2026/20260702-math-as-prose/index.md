@@ -5,7 +5,6 @@ category: Mathematics
 tags:
   - mathematics
   - writing
-summary: 数式を本文の流れに沿って読みやすく配置するためのサンプル記事です。
 draft: false
 image: cat.jpg
 ---

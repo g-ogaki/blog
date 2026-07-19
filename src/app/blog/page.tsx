@@ -17,7 +17,6 @@ export default function BlogPage() {
 		metadata: {
 			category: post.metadata.category,
 			date: post.metadata.date,
-			summary: post.metadata.summary,
 			tags: post.metadata.tags,
 			title: post.metadata.title,
 		},

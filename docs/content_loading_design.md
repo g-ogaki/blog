@@ -27,6 +27,25 @@ outside `/blog/` are not resolved by the content loader.
 Validation runs during `npm run check`, `npm run build`, and the OpenNext Worker
 build. Failures include the source path and stop the build.
 
+## Derived descriptions
+
+Each post receives one canonical `description` during content loading. Ordinary
+top-level Markdown paragraphs are considered in document order and their text
+is joined with single spaces until the description limit is reached. Visible
+text, emphasis content, link labels, and inline-code text are retained. Headings,
+lists, blockquotes, images, raw HTML, inline and block mathematics, code blocks,
+standalone links, standalone URLs, and paragraphs containing only inline code
+are ignored.
+
+Whitespace is collapsed before measuring. Descriptions contain at most 120
+Unicode grapheme clusters. Longer text keeps the first 119 clusters and appends
+`…`, so Japanese text and emoji are not split. When no suitable paragraph text
+exists, the deterministic fallback is `「<title>」についての記事です。`.
+
+This derived value is produced for drafts as well as published posts and is
+reused for page metadata, Open Graph metadata, Pagefind metadata, RSS, and
+internal link cards. Consumers do not parse Markdown independently.
+
 ## Drafts
 
 Draft metadata and local files are always validated. Drafts may be returned for
