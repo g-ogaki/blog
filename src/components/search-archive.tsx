@@ -22,7 +22,7 @@ interface SearchArchiveProps {
 
 type SearchStatus = "loading" | "ready" | "searching" | "unavailable";
 const POST_BATCH_SIZE = 10;
-const subscribeToHydration = () => () => { };
+const subscribeToHydration = () => () => {};
 
 function SearchIcon() {
 	return <svg aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 stroke-text-muted" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>;
@@ -111,8 +111,8 @@ export function SearchArchive({ posts, taxonomy }: SearchArchiveProps) {
 	const interactive = Boolean(pagefind) && status !== "unavailable";
 	const resultCount = results?.length ?? posts.length;
 	const listedPosts = results ? toPostListPosts(results) : posts;
-	const visibleCount = Math.min(visibleLimit, listedPosts.length);
-	const hasMorePosts = hydrated && visibleCount < listedPosts.length;
+	const displayedPosts = listedPosts.slice(0, hydrated ? visibleLimit : listedPosts.length);
+	const hasMorePosts = hydrated && displayedPosts.length < listedPosts.length && (status === "ready" || status === "unavailable");
 	return (
 		<div className="archive-layout mt-12 grid grid-cols-1 gap-12 sm:mt-16 lg:grid-cols-[15rem_minmax(0,1fr)] xl:gap-20">
 			<aside aria-label="記事を探す" className="discovery-sidebar self-start lg:sticky lg:top-6">
@@ -133,10 +133,10 @@ export function SearchArchive({ posts, taxonomy }: SearchArchiveProps) {
 			</aside>
 
 			<section aria-labelledby="post-list-heading">
-				<header className="results-heading mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline"><h2 className="text-2xl leading-8 font-semibold tracking-tight" id="post-list-heading">記事一覧</h2><SearchStatus status={status} count={resultCount} criteriaActive={criteriaActive} /></header>
+			<header className="results-heading mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline"><h2 className="text-2xl leading-8 font-semibold tracking-tight" id="post-list-heading">記事一覧</h2><SearchStatus status={status} count={resultCount} criteriaActive={criteriaActive} /></header>
 				{results?.length === 0 ? <p className="search-empty text-text-muted">条件に一致する記事はありません。</p> : null}
-				{listedPosts.length > 0 ? <PostList posts={listedPosts} visibleCount={visibleCount} /> : null}
-				{hasMorePosts ? <div className="load-more-region pt-8 text-center"><p className="mb-3 text-sm text-text-muted" id="visible-count">{listedPosts.length}件中{visibleCount}件を表示</p><button aria-describedby="visible-count" className="load-more min-h-11 cursor-pointer rounded-md border border-control-border bg-surface-raised px-4 py-3 font-medium text-site-text hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" onClick={() => setVisibleLimit((current) => Math.min(current + POST_BATCH_SIZE, listedPosts.length))} type="button">さらに読み込む</button></div> : null}
+				{listedPosts.length > 0 ? <PostList posts={displayedPosts} /> : null}
+				{hasMorePosts ? <div className="load-more-region pt-8 text-center"><p className="mb-3 text-sm text-text-muted" id="visible-count">{listedPosts.length}件中{displayedPosts.length}件を表示</p><button aria-describedby="visible-count" className="load-more min-h-11 cursor-pointer rounded-md border border-control-border bg-surface-raised px-4 py-3 font-medium text-site-text hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" onClick={() => setVisibleLimit((current) => current + POST_BATCH_SIZE)} type="button">さらに読み込む</button></div> : null}
 			</section>
 			<noscript><p className="search-note text-text-muted">検索と絞り込みにはJavaScriptが必要です。すべての記事は一覧から読めます。</p></noscript>
 		</div>

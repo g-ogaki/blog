@@ -93,7 +93,6 @@
 }
 
 body { text-rendering: optimizeLegibility; }
-:root.js .post-row--deferred { display: none; }
 
 a:focus-visible,
 button:focus-visible,

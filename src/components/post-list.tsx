@@ -27,14 +27,13 @@ export function PostThumbnail({ imageUrl }: { imageUrl?: string }) {
 
 interface PostListProps {
 	posts: readonly PostListPost[];
-	visibleCount?: number;
 }
 
-export function PostList({ posts, visibleCount = posts.length }: PostListProps) {
+export function PostList({ posts }: PostListProps) {
 	return (
 		<div className="post-list border-t border-site-border">
-			{posts.map((post, index) => (
-				<article className={`post-row border-b border-site-border${index >= visibleCount ? " post-row--deferred" : ""}`} key={post.url}>
+			{posts.map((post) => (
+				<article className="post-row border-b border-site-border" key={post.url}>
 					<Link aria-label={post.metadata.title} className="post-row__link group flex flex-col gap-6 py-8 text-inherit no-underline sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(10rem,12rem)] lg:grid-cols-[minmax(0,1fr)_minmax(12rem,15rem)] lg:gap-8" href={post.url}>
 						<div className="post-row-copy">
 							{post.metadata.date || post.metadata.category ? <p className="post-meta m-0 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs leading-6 text-text-muted">{post.metadata.date ? <time dateTime={post.metadata.date}>{formatPostDate(post.metadata.date)}</time> : null}{post.metadata.category ? <span>{post.metadata.category}</span> : null}</p> : null}
