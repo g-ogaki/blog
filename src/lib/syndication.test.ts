@@ -7,6 +7,7 @@ function post(overrides: Partial<Post["metadata"]> = {}): Post {
 		content: "Synthetic content.",
 		description: "Types < scripts > notes",
 		directoryName: "20260503-learning-typescript",
+		locale: "ja",
 		metadata: {
 			title: "TypeScript & XML",
 			date: "2026-05-03",
@@ -37,6 +38,19 @@ describe("buildRssFeed", () => {
 
 		expect(feed).not.toContain("Hidden draft");
 	});
+
+	it("emits only the requested locale in each feed", () => {
+		const englishPost = {
+			...post(),
+			locale: "en" as const,
+			url: "/en/blog/2026/20260503-learning-typescript",
+			metadata: { ...post().metadata, title: "Getting Started with TypeScript" },
+		};
+		const feed = buildRssFeed([post(), englishPost], "en");
+		expect(feed).toContain("<language>en</language>");
+		expect(feed).toContain("https://monipy.org/en/blog/2026/20260503-learning-typescript");
+		expect(feed).not.toContain("TypeScript &amp; XML");
+	});
 });
 
 describe("buildSitemap", () => {
@@ -45,8 +59,11 @@ describe("buildSitemap", () => {
 
 		expect(entries.map((entry) => entry.url)).toEqual([
 			"https://monipy.org",
+			"https://monipy.org/en",
 			"https://monipy.org/blog",
+			"https://monipy.org/en/blog",
 			"https://monipy.org/blog/2026/20260503-learning-typescript",
 		]);
+		expect(entries[0].alternates).toContainEqual({ hreflang: "en", href: "https://monipy.org/en" });
 	});
 });

@@ -6,6 +6,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
+import { postPath, type Locale } from "@/lib/i18n";
 import { ArticleHtmlPolicyError, validateArticleHtml } from "./article-html-policy";
 import { derivePostDescription } from "./post-description";
 
@@ -31,6 +32,7 @@ export interface Post {
 	description: string;
 	directoryName: string;
 	metadata: PostMetadata;
+	locale: Locale;
 	slug: string;
 	sourcePath: string;
 	url: string;
@@ -40,6 +42,7 @@ export interface Post {
 export interface LoadPostsOptions {
 	contentDirectory?: string;
 	includeDrafts?: boolean;
+	locale?: Locale | "all";
 }
 
 export class ContentValidationError extends Error {
@@ -98,12 +101,17 @@ function parseMetadata(frontmatter: string, sourcePath: string) {
 	return result.data;
 }
 
+interface PostSource {
+	locale: Locale;
+	sourcePath: string;
+}
+
 function discoverPostFiles(contentDirectory: string) {
 	if (!existsSync(contentDirectory)) {
 		return [];
 	}
 
-	const sourcePaths: string[] = [];
+	const sources: PostSource[] = [];
 	for (const yearEntry of readdirSync(contentDirectory, { withFileTypes: true })) {
 		if (!yearEntry.isDirectory()) {
 			continue;
@@ -121,18 +129,26 @@ function discoverPostFiles(contentDirectory: string) {
 				fail(path.join(yearDirectory, postEntry.name), "post directory must use YYYYMMDD-slug format");
 			}
 
-			const sourcePath = path.join(yearDirectory, postEntry.name, "index.md");
+			const postDirectory = path.join(yearDirectory, postEntry.name);
+			const sourcePath = path.join(postDirectory, "index.md");
 			if (!existsSync(sourcePath)) {
 				fail(sourcePath, "post directory must contain index.md");
 			}
-			sourcePaths.push(sourcePath);
+			sources.push({ locale: "ja", sourcePath });
+			const englishSourcePath = path.join(postDirectory, "index.en.md");
+			if (existsSync(englishSourcePath)) sources.push({ locale: "en", sourcePath: englishSourcePath });
+			for (const entry of readdirSync(postDirectory, { withFileTypes: true })) {
+				if (entry.isFile() && /^index\..+\.md$/u.test(entry.name) && entry.name !== "index.en.md") {
+					fail(path.join(postDirectory, entry.name), "translation filename must be index.en.md");
+				}
+			}
 		}
 	}
 
-	return sourcePaths;
+	return sources;
 }
 
-function loadPost(sourcePath: string, contentDirectory: string): Post {
+function loadPost(sourcePath: string, contentDirectory: string, locale: Locale): Post {
 	const postDirectory = path.dirname(sourcePath);
 	const directoryName = path.basename(postDirectory);
 	const year = path.basename(path.dirname(postDirectory));
@@ -156,12 +172,13 @@ function loadPost(sourcePath: string, contentDirectory: string): Post {
 	const slug = path.relative(contentDirectory, postDirectory).split(path.sep).join("/");
 	return {
 		content,
-		description: derivePostDescription(content, metadata.title),
+		description: derivePostDescription(content, metadata.title, locale),
 		directoryName,
 		metadata,
+		locale,
 		slug,
 		sourcePath,
-		url: `/blog/${slug}`,
+		url: postPath(locale, slug),
 		year,
 	};
 }
@@ -212,7 +229,7 @@ function validateMarkdownReferences(post: Post, availablePostUrls: ReadonlySet<s
 		}
 
 		const cleanedReference = cleanReference(reference, post.sourcePath).replace(/\/$/, "");
-		if (cleanedReference.startsWith("/blog/")) {
+		if (cleanedReference.startsWith("/blog/") || cleanedReference.startsWith("/en/blog/")) {
 			if (!availablePostUrls.has(cleanedReference)) {
 				fail(post.sourcePath, `internal link "${reference}" does not identify a post`);
 			}
@@ -257,7 +274,8 @@ export function loadPosts(options: LoadPostsOptions = {}) {
 		? path.resolve(/*turbopackIgnore: true*/ options.contentDirectory)
 		: path.join(/*turbopackIgnore: true*/ process.cwd(), "content", "posts");
 	const includeDrafts = options.includeDrafts ?? process.env.NODE_ENV !== "production";
-	const posts = discoverPostFiles(contentDirectory).map((sourcePath) => loadPost(sourcePath, contentDirectory));
+	const requestedLocale = options.locale ?? "ja";
+	const posts = discoverPostFiles(contentDirectory).map(({ locale, sourcePath }) => loadPost(sourcePath, contentDirectory, locale));
 	validateUniquePostUrls(posts);
 
 	const visiblePosts = posts.filter((post) => includeDrafts || !post.metadata.draft);
@@ -268,5 +286,7 @@ export function loadPosts(options: LoadPostsOptions = {}) {
 		validateMarkdownReferences(post, availablePostUrls);
 	}
 
-	return visiblePosts.sort((left, right) => right.metadata.date.localeCompare(left.metadata.date));
+	return visiblePosts
+		.filter((post) => requestedLocale === "all" || post.locale === requestedLocale)
+		.sort((left, right) => right.metadata.date.localeCompare(left.metadata.date));
 }

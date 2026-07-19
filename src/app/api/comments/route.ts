@@ -7,6 +7,7 @@ import {
 	type CommentReadDependencies,
 } from "@/lib/comments/api";
 import { absoluteUrl } from "@/lib/site";
+import type { Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,9 @@ type CommentEnvironment = CloudflareEnv & {
 
 const publishedPosts = new Map(publishedPostManifest.map((post) => [post.slug, post]));
 
-function findPublishedPost(slug: string) {
-	const post = publishedPosts.get(slug);
-	return post ? { ...post, url: absoluteUrl(post.url) } : undefined;
+function findPublishedPost(slug: string, locale: Locale) {
+	const translation = publishedPosts.get(slug)?.translations[locale];
+	return translation ? { slug, ...translation, url: absoluteUrl(translation.url) } : undefined;
 }
 
 async function getReadDependencies(): Promise<CommentReadDependencies> {

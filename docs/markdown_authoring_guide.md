@@ -19,6 +19,18 @@ canonical `/blog/YYYY/YYYYMMDD-slug` URLs when linking between posts. Relative
 images and files must remain inside the post directory and exist before a build
 can succeed.
 
+`index.md` is the required Japanese article. To add an English translation,
+create `index.en.md` in the same directory. It contains complete frontmatter,
+may remain a draft independently, shares colocated assets, and publishes at the
+same slug under `/en/blog/`. Use the exact localized URL when authoring an
+internal link.
+
+Every English article is currently treated as an AI translation. Its published
+page automatically displays a disclosure linking to the original Japanese
+article; authors must not duplicate that notice in Markdown. Introduce an
+explicit translation-method field before publishing human translations without
+the disclosure.
+
 ---
 
 ## Frontmatter

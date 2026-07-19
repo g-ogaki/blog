@@ -1,12 +1,12 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import Home from "./page";
+import { HomePage } from "@/components/home-page";
 
 afterEach(cleanup);
 
 describe("Home", () => {
 	it("renders the profile, terminal introduction, and latest published posts", () => {
-		render(<Home />);
+		render(<HomePage locale="ja" />);
 
 		expect(screen.getByRole("main")).toBeInTheDocument();
 		expect(screen.getByRole("heading", { level: 1, name: "moni" })).toBeInTheDocument();
@@ -31,7 +31,7 @@ describe("Home", () => {
 	});
 
 	it("uses the configured social destinations", () => {
-		render(<Home />);
+		render(<HomePage locale="ja" />);
 
 		const x = screen.getByRole("link", { name: "X (Twitter)" });
 		const github = screen.getByRole("link", { name: "GitHub" });
@@ -44,7 +44,7 @@ describe("Home", () => {
 	});
 
 	it("includes a link to the full archive", () => {
-		render(<Home />);
+		render(<HomePage locale="ja" />);
 
 		expect(screen.getByRole("link", { name: "すべての記事を見る" })).toHaveAttribute("href", "/blog");
 	});

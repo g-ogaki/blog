@@ -12,6 +12,7 @@ function post(title: string, draft: boolean): Post {
 		content: "Synthetic content.",
 		description: "Synthetic description.",
 		directoryName: "20260503-synthetic",
+		locale: "ja",
 		metadata: {
 			title,
 			date: "2026-05-03",
@@ -40,9 +41,11 @@ describe("writeStaticMetadata", () => {
 		writeStaticMetadata([post("Published post", false), post("Hidden draft", true)], outputDirectory);
 
 		const rss = readFileSync(path.join(outputDirectory, "rss.xml"), "utf8");
+		const englishRss = readFileSync(path.join(outputDirectory, "en", "rss.xml"), "utf8");
 		const sitemap = readFileSync(path.join(outputDirectory, "sitemap.xml"), "utf8");
 		const robots = readFileSync(path.join(outputDirectory, "robots.txt"), "utf8");
 		expect(rss).toContain("Published post");
+		expect(englishRss).toContain("<language>en</language>");
 		expect(rss).not.toContain("Hidden draft");
 		expect(sitemap).toContain("https://monipy.org/blog/2026/20260503-synthetic");
 		expect(robots).toContain("Sitemap: https://monipy.org/sitemap.xml");
@@ -56,7 +59,10 @@ describe("writeStaticMetadata", () => {
 		writePublishedPostManifest([post("Published post", false), post("Hidden draft", true)], outputPath);
 
 		expect(JSON.parse(readFileSync(outputPath, "utf8"))).toEqual([
-			{ slug: "2026/20260503-synthetic", title: "Published post", url: "/blog/2026/20260503-synthetic" },
+			{
+				slug: "2026/20260503-synthetic",
+				translations: { ja: { title: "Published post", url: "/blog/2026/20260503-synthetic" } },
+			},
 		]);
 	});
 });

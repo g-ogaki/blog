@@ -7,7 +7,8 @@ journey and ideas in technology, programming, mathematics, investing, personal
 growth, and daily life.
 
 The site title is **moni's page**, the displayed author is **moni**, and the
-primary language is Japanese (`ja`). Dates are interpreted and displayed in
+supported languages are Japanese (`ja`) and English (`en`). Japanese keeps
+the existing unprefixed URLs and English uses `/en`. Dates are interpreted and displayed in
 Japan Standard Time (`Asia/Tokyo`). Until final copy is supplied, use concise
 synthetic Japanese text for the homepage introduction and default description.
 
@@ -59,6 +60,11 @@ Posts may combine Markdown with the validated HTML profile documented in
 `markdown_authoring_guide.md`. Unsupported elements, attributes, URL protocols,
 and embed providers fail content validation rather than being published.
 
+`index.md` is the required Japanese source. An optional `index.en.md` beside it
+is the English translation and shares the directory slug and assets. Each file
+contains complete frontmatter and has an independent draft state. Locale and
+translation relationships are derived from filenames and directory structure.
+
 ## Search and comments
 
 Pagefind indexes title, derived description, category, tags, and full article
@@ -80,3 +86,10 @@ Support light, dark, and system themes; Cloudflare Web Analytics; RSS;
 * Search covers the stated fields and filters without a database.
 * Submitted comments are invisible until approved; rejected comments never appear publicly.
 * Reading posts remains usable without client-side JavaScript.
+* Localized pages emit correct document language, canonical, language alternate,
+  Open Graph locale, feed, sitemap, and search metadata.
+* Language switching reaches the corresponding published translation when it
+  exists. When English is unavailable, selecting English keeps the Japanese
+  article visible and shows an English availability notice without an archive link.
+* Every English article identifies itself as an AI translation, links to its
+  Japanese original, and excludes the disclosure from Pagefind indexing.

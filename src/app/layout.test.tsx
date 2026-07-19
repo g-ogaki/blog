@@ -1,10 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import RootLayout from "./layout";
+import { SiteDocument } from "@/components/site-document";
 
 const captured = vi.hoisted(() => ({ props: null as Record<string, unknown> | null }));
-
-vi.mock("./globals.css", () => ({}));
 
 vi.mock("next/script", () => ({
 	default: (props: Record<string, unknown>) => {
@@ -19,7 +17,7 @@ beforeEach(() => {
 
 describe("RootLayout", () => {
 	it("loads the pre-paint theme initializer through next/script", () => {
-		renderToStaticMarkup(<RootLayout><main>Content</main></RootLayout>);
+		renderToStaticMarkup(<SiteDocument locale="ja"><main>Content</main></SiteDocument>);
 
 		expect(captured.props).toMatchObject({
 			id: "theme-initializer",

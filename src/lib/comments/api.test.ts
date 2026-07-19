@@ -4,6 +4,7 @@ import { CommentRateLimitError } from "./repository";
 
 const validBody = {
 	comment: "First line\nSecond line",
+	locale: "ja" as const,
 	name: " Ada ",
 	post_slug: "2026/20260503-learning-typescript",
 	turnstile_token: "challenge-token",
@@ -24,7 +25,7 @@ function dependencies(overrides: Partial<CommentApiDependencies> = {}): CommentA
 		createToken: vi.fn().mockReturnValueOnce("approve-token").mockReturnValueOnce("reject-token"),
 		db: {} as D1Database,
 		discordWebhookUrl: "https://discord.com/api/webhooks/id/token",
-		findPublishedPost: (slug) => slug === validBody.post_slug
+		findPublishedPost: (slug, locale) => slug === validBody.post_slug && locale === validBody.locale
 			? { slug, title: "TypeScript", url: `https://monipy.org/blog/${slug}` }
 			: undefined,
 		ipHashSecret: "ip-secret",
@@ -82,6 +83,7 @@ describe("comment API contract", () => {
 	it("rejects invalid, unpublished, and failed-challenge submissions before writing", async () => {
 		const cases = [
 			{ body: { ...validBody, comment: " ".repeat(2_001) }, expected: 400 },
+			{ body: { ...validBody, locale: "fr" }, expected: 400 },
 			{ body: { ...validBody, post_slug: "2026/20260504-draft" }, expected: 400 },
 			{ body: validBody, expected: 403, verifyChallenge: vi.fn().mockResolvedValue(false) },
 		];
@@ -134,7 +136,7 @@ describe("comment API contract", () => {
 		const comments = [{ id: 1, name: "Ada", comment: "Hello", created_at: "2026-05-03T10:00:00.000Z" }];
 		const deps = dependencies({ listComments: vi.fn().mockResolvedValue(comments) });
 		const response = await handleGetComments(
-			new Request(`https://monipy.org/api/comments?post=${validBody.post_slug}`),
+			new Request(`https://monipy.org/api/comments?post=${validBody.post_slug}&locale=${validBody.locale}`),
 			deps,
 		);
 		expect(response.status).toBe(200);

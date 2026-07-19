@@ -124,3 +124,48 @@ Reason:
 * Avoid a manual cleanup burden
 
 ---
+
+## ADR-011
+
+Japanese keeps the existing unprefixed routes and English uses the `/en`
+prefix. Translations use separate static URLs and advertise one another with
+language alternates; query parameters are not used to select content language.
+
+Reason:
+
+* Preserve existing Japanese links
+* Keep canonical and language metadata unambiguous
+* Allow Pagefind to build native per-language indexes
+
+---
+
+## ADR-012
+
+An article directory is the language-independent article identity. `index.md`
+is the required Japanese source and `index.en.md` is its optional English
+translation. Files in the directory are shared by both translations, and both
+URLs use the same date and slug.
+
+Each translation has its own frontmatter and draft state. Content language is
+derived from the source filename rather than duplicated in frontmatter.
+
+---
+
+## ADR-013
+
+Language preference never changes the content returned by a canonical article
+or archive URL. Browser language is used only when entering at `/`; explicit
+pages offer a progressive suggestion and a static language link.
+
+When a visitor selects English from a Japanese-only article, the preference is
+saved but the visitor returns to that Japanese article. The progressive notice
+states in English that no English translation exists and offers no substitute
+archive link. Available translations still navigate directly to one another.
+
+Reason:
+
+* Preserve crawlability and shared-link intent
+* Prevent untranslated article links from silently becoming archive links
+* Keep localized pages static and readable without JavaScript
+
+---

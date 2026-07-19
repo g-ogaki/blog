@@ -11,14 +11,16 @@ limit before writing to D1.
 ```json
 {
   "post_slug": "2026/20260503-learning-typescript",
+  "locale": "en",
   "name": "Ada",
   "comment": "Helpful explanation.",
   "turnstile_token": "…"
 }
 ```
 
-All fields are required. `post_slug` is the path after `/blog/` and must identify
-a published post. `name` contains 1-80 characters and `comment` contains
+All fields are required. `post_slug` is the language-independent article slug
+after `/blog/` or `/en/blog/`, and `locale` is `ja` or `en`; together
+they must identify a published translation. `name` contains 1-80 characters and `comment` contains
 1-2,000 characters. Comments are stored and returned as plain text; clients
 preserve line breaks and never interpret comment content as markup.
 
@@ -43,8 +45,10 @@ quota increment so a retry does not leave an unreviewable record.
 
 ## GET /api/comments
 
-Returns approved comments for `post=2026/20260503-learning-typescript` (the
-path after `/blog/`).
+Returns approved shared comments for
+`post=2026/20260503-learning-typescript&locale=en`. Both localized pages read
+the same thread while locale validation proves that the requesting translation
+is published.
 
 ```json
 {

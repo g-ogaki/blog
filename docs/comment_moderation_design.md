@@ -21,6 +21,10 @@ and separate approve/reject review URLs. User-controlled mentions are disabled.
 Each review URL opens a confirmation page; a `GET` request must never approve or
 reject a comment. See `api_design.md` for the HTTP contract.
 
+Translated pages share one comment thread keyed by the article directory slug.
+The submission locale selects the localized title and public URL included in
+Discord. Comments are displayed as submitted and are not translated.
+
 D1 creation happens before Discord delivery so every delivered review link
 identifies a stored token. If delivery fails, an atomic compensation batch
 removes the still-pending comment, its tokens, and its quota increment. The API

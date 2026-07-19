@@ -49,7 +49,8 @@ npm run build:worker  # .open-next/worker.js deployment artifact
 ```
 
 `npm run build` validates content, publishes colocated post assets, writes
-`public/rss.xml`, `public/sitemap.xml`, and `public/robots.txt`, invokes Next.js,
+`public/rss.xml`, `public/en/rss.xml`, `public/sitemap.xml`, and
+`public/robots.txt`, invokes Next.js,
 then generates `public/pagefind/` from the prerendered HTML. Keeping these
 content-derived outputs as public files prevents the filesystem Markdown loader,
 parser, and Pagefind dependencies from entering the Worker runtime bundle.
@@ -63,8 +64,9 @@ verify that the complete compressed upload remains below the Workers Free limit.
 After OpenNext finishes, `npm run build:worker` runs `verify:release`. The
 verification fails unless the output contains a non-empty Worker entry point,
 RSS, sitemap, robots file, default Open Graph image, required static headers,
-Pagefind browser files and index, the home/blog caches, and one cache entry for
-every published post in the build-generated manifest. This is an artifact
+Pagefind browser files and Japanese and English indexes, both localized
+home/blog caches, and one cache entry for every published translation in the
+build-generated manifest. This is an artifact
 check, not a source-tree check, so it detects files lost between Next.js and the
 deployable `.open-next` output.
 
@@ -168,6 +170,12 @@ from the repository only during the build and is not available through the
 Worker runtime filesystem. Both `upload` preview versions and production
 deployments must serve the populated build-time `/blog` cache entries rather
 than attempting runtime regeneration.
+
+The custom Worker checks only requests for `/` before handing them to OpenNext.
+It sends a temporary redirect to `/en` when the `site_locale` cookie, or in its
+absence `Accept-Language`, prefers English. The response varies on both headers
+and is not cached. All explicit Japanese and English paths continue through the
+normal static cache without language negotiation.
 
 ## Release checks
 

@@ -22,6 +22,7 @@ import {
 import type { Post } from "@/lib/content/posts";
 import { articleHtmlSanitizeSchema, rehypeArticleHtmlPolicy } from "@/lib/content/article-html-policy";
 import { rehypeTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
+import { getDictionary } from "@/lib/i18n";
 
 interface PostMarkdownProps {
 	loadLinkPreview?: LinkPreviewLoader;
@@ -90,10 +91,10 @@ function TableOfContentsList({ entries, nested = false }: { entries: readonly Ta
 	);
 }
 
-function TableOfContents({ entries }: { entries: readonly TableOfContentsEntry[] }) {
+function TableOfContents({ entries, label }: { entries: readonly TableOfContentsEntry[]; label: string }) {
 	return (
 		<nav aria-labelledby="table-of-contents-heading" className="mt-12 border-y border-site-border py-6" data-pagefind-ignore="">
-			<h2 className="text-lg leading-7 font-semibold" id="table-of-contents-heading">目次</h2>
+			<h2 className="text-lg leading-7 font-semibold" id="table-of-contents-heading">{label}</h2>
 			<TableOfContentsList entries={entries} />
 		</nav>
 	);
@@ -134,6 +135,7 @@ function rehypeNormalizeArticleBlocks() {
 }
 
 export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
+	const dictionary = getDictionary(post.locale);
 	const highlighter = await highlighterPromise;
 	const tableOfContents: TableOfContentsEntry[] = [];
 	const previewEntries = await Promise.all(
@@ -201,7 +203,7 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 
 	return (
 		<>
-			{tableOfContents.length > 0 ? <TableOfContents entries={tableOfContents} /> : null}
+			{tableOfContents.length > 0 ? <TableOfContents entries={tableOfContents} label={dictionary.post.toc} /> : null}
 			<div className="article-body pt-12 text-base leading-8 md:text-lg md:leading-9">{content}</div>
 		</>
 	);
