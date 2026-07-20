@@ -4,7 +4,7 @@ import { HomeTerminal } from "./home-terminal";
 
 const encoder = new TextEncoder();
 
-function chatResponse(answer = "サイトの記事を案内します。", sources = [{ title: "記事", url: "https://monipy.org/blog/2026/post" }]) {
+function chatResponse(answer = "サイトの記事を案内します。", sources = [{ locale: "ja", title: "記事", url: "https://monipy.org/blog/2026/post" }]) {
 	const body = [
 		`event: sources\ndata: ${JSON.stringify({ sources })}\n\n`,
 		`event: delta\ndata: ${JSON.stringify({ text: answer })}\n\n`,
@@ -35,6 +35,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	cleanup();
+	vi.restoreAllMocks();
 	vi.unstubAllGlobals();
 	vi.useRealTimers();
 });
@@ -136,18 +137,12 @@ describe("HomeTerminal", () => {
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(600); });
 		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
-		await act(async () => { await vi.advanceTimersByTimeAsync(528); });
-		expect(animatedTranscript).toHaveTextContent("こんにちは！何かお手伝いできることはありますか？");
-		expect(input).toHaveValue("");
-
-		await act(async () => { await vi.advanceTimersByTimeAsync(629); });
-		expect(input).toHaveValue("");
+		const firstAnswer = animatedTranscript?.querySelector(".terminal-stream");
+		expect(firstAnswer).toBeEmptyDOMElement();
+		await act(async () => { await vi.advanceTimersByTimeAsync(21); });
+		expect(firstAnswer).toBeEmptyDOMElement();
 		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
-		expect(input).toHaveValue("");
-		await act(async () => { await vi.advanceTimersByTimeAsync(41); });
-		expect(input).toHaveValue("");
-		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
-		expect(input).toHaveValue("あ");
+		expect(firstAnswer).not.toHaveTextContent("");
 
 		await act(async () => { await vi.runAllTimersAsync(); });
 
@@ -192,6 +187,46 @@ describe("HomeTerminal", () => {
 		expect(screen.getByRole("status")).toHaveTextContent("サイトの記事を案内します。");
 	});
 
+	it("streams answer deltas before revealing citations at completion", async () => {
+		vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+			addEventListener: vi.fn(), addListener: vi.fn(), dispatchEvent: vi.fn(), matches: query.includes("prefers-reduced-motion"), media: query, onchange: null, removeEventListener: vi.fn(), removeListener: vi.fn(),
+		}));
+		let streamController!: ReadableStreamDefaultController<Uint8Array>;
+		const response = new Response(new ReadableStream<Uint8Array>({
+			start(controller) {
+				streamController = controller;
+			},
+		}), { headers: { "content-type": "text/event-stream" } });
+		vi.mocked(fetch).mockResolvedValue(response);
+
+		render(<HomeTerminal />);
+		await act(async () => { await vi.runAllTimersAsync(); });
+		const input = screen.getByRole("textbox", { name: "メッセージを入力" });
+		fireEvent.change(input, { target: { value: "質問" } });
+		fireEvent.submit(input.closest("form")!);
+		const submittedTurn = screen.getByText("質問").closest(".terminal-turn");
+
+		await act(async () => {
+			streamController.enqueue(encoder.encode('event: sources\ndata: {"sources":[{"locale":"en","title":"Article","url":"https://monipy.org/en/blog/2026/post"}]}\n\n'));
+			streamController.enqueue(encoder.encode('event: delta\ndata: {"text":"途中"}\n\n'));
+			await Promise.resolve();
+		});
+		expect(submittedTurn?.querySelector(".terminal-stream")).toHaveTextContent("途中");
+		expect(screen.queryByRole("link", { name: "[1] Article（英語）" })).not.toBeInTheDocument();
+
+		await act(async () => {
+			streamController.enqueue(encoder.encode('event: delta\ndata: {"text":"回答"}\n\n'));
+			streamController.enqueue(encoder.encode("event: done\ndata: {}\n\n"));
+			streamController.close();
+			await Promise.resolve();
+		});
+		expect(submittedTurn?.querySelector(".terminal-stream")).toHaveTextContent("途中回答");
+		const citation = screen.getByRole("link", { name: "[1] Article（英語）" });
+		expect(citation).toHaveAttribute("href", "https://monipy.org/en/blog/2026/post");
+		expect(citation).toHaveAttribute("rel", "noopener noreferrer");
+		expect(citation).toHaveAttribute("target", "_blank");
+	});
+
 	it("sends only the latest three completed free-form exchanges", async () => {
 		vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
 			addEventListener: vi.fn(), addListener: vi.fn(), dispatchEvent: vi.fn(), matches: query.includes("prefers-reduced-motion"), media: query, onchange: null, removeEventListener: vi.fn(), removeListener: vi.fn(),
@@ -230,5 +265,34 @@ describe("HomeTerminal", () => {
 		expect(input).toBeEnabled();
 		await act(async () => { await vi.runAllTimersAsync(); });
 		expect(input).toHaveFocus();
+	});
+
+	it("logs development diagnostics without rendering them to visitors", async () => {
+		vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+			addEventListener: vi.fn(), addListener: vi.fn(), dispatchEvent: vi.fn(), matches: query.includes("prefers-reduced-motion"), media: query, onchange: null, removeEventListener: vi.fn(), removeListener: vi.fn(),
+		}));
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		vi.mocked(fetch).mockResolvedValue(Response.json({
+			detail: { message: "remote binding rejected the request", name: "Error" },
+			error: "unavailable",
+			stage: "provider_startup",
+			success: false,
+		}, { status: 503 }));
+
+		render(<HomeTerminal locale="en" />);
+		await act(async () => { await vi.runAllTimersAsync(); });
+		const input = screen.getByRole("textbox", { name: "Enter a message" });
+		fireEvent.change(input, { target: { value: "Help" } });
+		fireEvent.submit(input.closest("form")!);
+		await act(async () => { await vi.runAllTimersAsync(); });
+
+		expect(screen.getByRole("status")).toHaveTextContent("The site guide is currently unavailable.");
+		expect(screen.queryByText(/remote binding rejected/)).not.toBeInTheDocument();
+		expect(consoleError).toHaveBeenCalledWith("Chat request failed", {
+			code: "unavailable",
+			detail: { message: "remote binding rejected the request", name: "Error" },
+			stage: "provider_startup",
+		});
+		consoleError.mockRestore();
 	});
 });

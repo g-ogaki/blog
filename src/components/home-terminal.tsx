@@ -9,32 +9,32 @@ const terminalCopy = {
 		label: "moniの自己紹介インタビュー",
 		inputLabel: "メッセージを入力",
 		javascriptRequired: "自由入力には JavaScript が必要です",
-		placeholder: "質問する",
+		placeholder: "質問する(本当にAIに質問できます)",
+		foreignSourceLabel: "（英語）",
 		sourcesLabel: "参照したページ",
 		errors: {
 			rate_limited: "質問が集中しています。少し待ってからもう一度お試しください。",
 			unavailable: "現在、案内機能を利用できません。しばらくしてからもう一度お試しください。",
 		},
 		turns: [
-			{ question: "こんにちは。", answer: "こんにちは！何かお手伝いできることはありますか？" },
-			{ question: "あなたについて教えて。", answer: "人間よりも AI とばかり会話しているおじさんです。好きな音楽は Janne Da Arc とショパン、好きな数学の定理はヒルベルト空間の射影定理です。" },
-			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけどよく知らないので、私じゃなく ChatGPT に聞いてね。" },
+			{ question: "こんにちは。", answer: "こんにちは！当サイトのナビゲーター AI です。何かお手伝いできることはありますか？" },
+			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけど、そういうのは ChatGPT にでも聞いて私には著者や記事について質問してね。" },
 		],
 	},
 	en: {
 		label: "Introduction interview with moni",
 		inputLabel: "Enter a message",
 		javascriptRequired: "JavaScript is required for free-form questions",
-		placeholder: "Ask a question",
+		placeholder: "Ask a question (you can really ask questions to AI)",
+		foreignSourceLabel: " (Japanese)",
 		sourcesLabel: "Sources",
 		errors: {
 			rate_limited: "Too many questions are being asked. Please wait a moment and try again.",
 			unavailable: "The site guide is currently unavailable. Please try again later.",
 		},
 		turns: [
-			{ question: "Hello.", answer: "Hello! How can I help you?" },
-			{ question: "Tell me about yourself.", answer: "I am a middle-aged man who talks to AI more than humans. My favorite music is Janne Da Arc and Chopin, and my favorite mathematical theorem is the Hilbert projection theorem." },
-			{ question: "Why is the sky blue?", answer: "I would like to say it is because of Rayleigh scattering, but I do not know it well enough — please ask ChatGPT instead of me." },
+			{ question: "Hello.", answer: "Hello! I'm the navigator AI for this site. How can I help you?" },
+			{ question: "Why is the sky blue?", answer: "I would like to say it is because of Rayleigh scattering, but general questions should be directed to ChatGPT instead! Ask me about the author or articles." },
 		],
 	},
 } as const;
@@ -77,13 +77,18 @@ function Banner({ popping = false }: { popping?: boolean }) {
 	);
 }
 
-function Transcript({ sourcesLabel = "Sources", turns }: { sourcesLabel?: string; turns: readonly VisibleTurn[] }) {
+function Transcript({ foreignSourceLabel = "", locale = "ja", sourcesLabel = "Sources", turns }: {
+	foreignSourceLabel?: string;
+	locale?: Locale;
+	sourcesLabel?: string;
+	turns: readonly VisibleTurn[];
+}) {
 	return (
 		<ol className="terminal-transcript mt-6 grid list-none gap-3 p-0">
 			{turns.map((turn, index) => (
 				<li aria-hidden={turn.assistiveHidden || undefined} className="terminal-turn grid gap-3" key={`${index}-${turn.question}`}>
 					<div className="terminal-submission flex items-start gap-3 font-mono"><span aria-hidden="true" className="terminal-prompt grid h-7 w-4 flex-none place-items-center font-mono font-semibold text-terminal-accent">&gt;</span><p className="terminal-question m-0 leading-7 [overflow-wrap:anywhere]">{turn.question}</p></div>
-					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className={`block size-4 text-center leading-4${turn.phase === "working" ? " animate-spin" : ""}`}>{turn.phase === "working" ? "◒" : "●"}</span></span><span className="terminal-output-copy min-w-0 font-sans leading-7">{turn.phase === "working" ? <span aria-hidden="true" className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">Working…</span> : <><span className="terminal-stream">{turn.answer}</span>{turn.sources?.length ? <ol aria-label={sourcesLabel} className="terminal-sources mt-2 grid list-none gap-1 p-0 font-mono text-sm text-terminal-text-muted">{turn.sources.map((source, sourceIndex) => <li key={source.url}><a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={source.url}>{`[${sourceIndex + 1}] ${source.title}`}</a></li>)}</ol> : null}</>}</span></div>}
+					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className={`block size-4 text-center leading-4${turn.phase === "working" ? " animate-spin" : ""}`}>{turn.phase === "working" ? "◒" : "●"}</span></span><span className="terminal-output-copy min-w-0 font-mono leading-7">{turn.phase === "working" ? <span aria-hidden="true" className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">Working…</span> : <><span className="terminal-stream">{turn.answer}</span>{turn.sources?.length ? <ol aria-label={sourcesLabel} className="terminal-sources mt-2 grid list-none gap-1 p-0 font-mono text-sm text-terminal-text-muted">{turn.sources.map((source, sourceIndex) => <li key={source.url}><a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={source.url} rel="noopener noreferrer" target="_blank">{`[${sourceIndex + 1}] ${source.title}${source.locale === locale ? "" : foreignSourceLabel}`}</a></li>)}</ol> : null}</>}</span></div>}
 				</li>
 			))}
 		</ol>
@@ -110,7 +115,10 @@ async function typeText(value: string, speed: number, signal: AbortSignal, updat
 }
 
 class ChatResponseError extends Error {
-	constructor(readonly code: string) {
+	constructor(
+		readonly code: string,
+		readonly diagnostic?: { detail?: unknown; stage?: unknown },
+	) {
 		super(code);
 	}
 }
@@ -257,7 +265,7 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 		const reveal = () => {
 			if (revealed || !minimumWorkingFinished || !answer) return;
 			revealed = true;
-			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer, phase: undefined, sources } : item));
+			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer, phase: undefined } : item));
 		};
 
 		try {
@@ -279,13 +287,15 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 			});
 			if (!response.ok || !response.body) {
 				let code = response.status === 429 ? "rate_limited" : "unavailable";
+				let diagnostic: { detail?: unknown; stage?: unknown } | undefined;
 				try {
-					const body = await response.json() as { error?: string };
+					const body = await response.json() as { detail?: unknown; error?: string; stage?: unknown };
 					if (body.error === "rate_limited") code = body.error;
+					diagnostic = { detail: body.detail, stage: body.stage };
 				} catch {
 					// Use the bounded status-derived fallback.
 				}
-				throw new ChatResponseError(code);
+				throw new ChatResponseError(code, diagnostic);
 			}
 
 			let completed = false;
@@ -293,7 +303,6 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 				if (eventName === "sources") {
 					const value = (data as { sources?: unknown }).sources;
 					if (Array.isArray(value)) sources = value as ChatSource[];
-					if (revealed) setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, sources } : item));
 				}
 				if (eventName === "delta") {
 					const text = (data as { text?: unknown }).text;
@@ -302,7 +311,10 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 					if (revealed) setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer } : item));
 				}
 				if (eventName === "done") completed = true;
-				if (eventName === "error") throw new ChatResponseError((data as { code?: string }).code ?? "unavailable");
+				if (eventName === "error") {
+					const failure = data as { code?: string; detail?: unknown; stage?: unknown };
+					throw new ChatResponseError(failure.code ?? "unavailable", failure);
+				}
 			});
 			if (!completed || !answer) throw new ChatResponseError("unavailable");
 			await minimumWorkingPromise;
@@ -313,6 +325,13 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 		} catch (error) {
 			if (controller.signal.aborted) return;
 			await minimumWorkingPromise;
+			if (error instanceof ChatResponseError && (error.diagnostic?.stage || error.diagnostic?.detail)) {
+				console.error("Chat request failed", {
+					code: error.code,
+					detail: error.diagnostic.detail,
+					stage: error.diagnostic.stage,
+				});
+			}
 			const code = error instanceof ChatResponseError && error.code === "rate_limited" ? "rate_limited" : "unavailable";
 			const message = copy.errors[code];
 			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer: message, phase: undefined, sources: undefined } : item));
@@ -337,9 +356,9 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 			<div className="chat-stage min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--terminal-border)_var(--terminal-surface)] [scrollbar-gutter:stable] sm:p-6" ref={stageRef}>
 				<div className={`terminal-launch mb-6 flex flex-wrap gap-2 font-mono text-terminal-text${animated && launchCommand !== "moni" ? " is-typing" : ""}`}><span>guest@notebook:~/about$</span><span className="terminal-command inline-flex items-center"><code className="font-mono font-semibold">{launchCommand}</code>{animated && launchCommand !== "moni" ? <span aria-hidden="true" className="terminal-cursor" /> : null}</span></div>
 				{bannerVisible ? <Banner popping={animated} /> : null}
-				<div className={animated ? "sr-only" : "static-transcript"}><Transcript sourcesLabel={copy.sourcesLabel} turns={staticTurns} /></div>
-				{!animated && visibleTurns.length ? <div className="animated-transcript"><Transcript sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
-				{animated ? <div className="animated-transcript"><Transcript sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
+				<div className={animated ? "sr-only" : "static-transcript"}><Transcript foreignSourceLabel={copy.foreignSourceLabel} locale={locale} sourcesLabel={copy.sourcesLabel} turns={staticTurns} /></div>
+				{!animated && visibleTurns.length ? <div className="animated-transcript"><Transcript foreignSourceLabel={copy.foreignSourceLabel} locale={locale} sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
+				{animated ? <div className="animated-transcript"><Transcript foreignSourceLabel={copy.foreignSourceLabel} locale={locale} sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
 			</div>
 			<form className="terminal-input flex min-h-13 items-center gap-3 border-t border-terminal-border px-4 py-3.5 font-mono text-terminal-accent focus-within:-outline-offset-2 focus-within:outline-2 focus-within:outline-terminal-accent sm:px-6" onSubmit={submit}>
 				<label className="sr-only" htmlFor="terminal-free-input">{copy.inputLabel}</label>

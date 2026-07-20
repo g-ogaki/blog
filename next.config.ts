@@ -1,12 +1,13 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-	/* config options here */
-};
-
-export default nextConfig;
-
-// Enable calling `getCloudflareContext()` in `next dev`.
-// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-initOpenNextCloudflareForDev({ remoteBindings: false });
+import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
+
+export default async function nextConfig(phase: string): Promise<NextConfig> {
+	if (phase === PHASE_DEVELOPMENT_SERVER) {
+		// AI Search is remote-only, while bindings without `remote: true` stay local.
+		// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
+		await initOpenNextCloudflareForDev({ remoteBindings: true });
+	}
+
+	return {};
+}

@@ -103,10 +103,15 @@ exhaustion and other upstream failures produce the same bounded unavailable UI.
 No AI credential or new secret is required. Application logs contain only
 failure classifications, never prompts, responses, or raw client IPs. Keep AI
 Search or AI Gateway prompt/response retention at the minimum available account
-setting. `next dev` explicitly disables remote bindings so routine development,
-type generation, and CI need no Cloudflare login. `npm run preview` is the
-supported live local test because it runs the built Worker with remote bindings;
-unit tests mock both bindings and never consume inference.
+setting. `npm run dev` enables remote bindings only for the Next.js development
+server, so the `BLOG_HELPER` binding calls the deployed AI Search instance while
+the rate limiter remains locally simulated. Authenticate with `npx wrangler
+login` when necessary, then submit a homepage question; inference quota is used
+only when a question is submitted. Local requests use the fixed
+`local-development` limiter identity and expose bounded diagnostics in the
+Network panel and browser console without changing visitor-facing copy. Type
+generation, automated tests, builds, and CI do not initialize remote bindings,
+and tests never consume inference.
 
 ---
 
