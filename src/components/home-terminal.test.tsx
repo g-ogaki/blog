@@ -70,7 +70,7 @@ describe("HomeTerminal", () => {
 		fireEvent.submit(input.closest("form")!);
 		await act(async () => { await vi.runAllTimersAsync(); });
 
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).not.toBeInTheDocument();
 		expect(screen.getByText("<img src=x onerror=alert(1)>")).toBeInTheDocument();
 		expect(screen.getByText("こんにちは。")).toBeInTheDocument();
 		expect(document.querySelector(".terminal-transcript img")).toBeNull();
@@ -127,16 +127,16 @@ describe("HomeTerminal", () => {
 		expect(input).toHaveValue("");
 		expect(animatedTranscript).toHaveTextContent("こんにちは。");
 		expect(animatedTranscript?.querySelector(".terminal-output")).toBeNull();
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).not.toBeInTheDocument();
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(299); });
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).not.toBeInTheDocument();
 		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
 		expect(document.querySelector(".terminal-measure")).toBeNull();
-		expect(screen.getByText("Working…")).toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).toBeInTheDocument();
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(600); });
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).not.toBeInTheDocument();
 		const firstAnswer = animatedTranscript?.querySelector(".terminal-stream");
 		expect(firstAnswer).toBeEmptyDOMElement();
 		await act(async () => { await vi.advanceTimersByTimeAsync(21); });
@@ -147,7 +147,7 @@ describe("HomeTerminal", () => {
 		await act(async () => { await vi.runAllTimersAsync(); });
 
 		expect(input).toBeEnabled();
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(document.querySelector(".terminal-working")).not.toBeInTheDocument();
 		expect(document.querySelector(".animated-transcript .terminal-transcript")).toHaveTextContent("空はなぜ青いの？");
 		expect(screen.getByText("about — moni", { selector: ".window-title-text" })).toBeInTheDocument();
 	});
@@ -164,21 +164,24 @@ describe("HomeTerminal", () => {
 		const submittedTurn = screen.getByText("こんにちは").closest(".terminal-turn");
 		expect(submittedTurn).not.toBeNull();
 		expect(submittedTurn?.querySelector(".terminal-output")).toBeNull();
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(submittedTurn?.querySelector(".terminal-working")).not.toBeInTheDocument();
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(299); });
 		expect(submittedTurn?.querySelector(".terminal-output")).toBeNull();
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(submittedTurn?.querySelector(".terminal-working")).not.toBeInTheDocument();
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
-		expect(screen.getByText("Working…")).toBeInTheDocument();
-		expect(submittedTurn?.querySelector(".terminal-output-marker .animate-spin")).toHaveTextContent("◒");
+		expect(submittedTurn?.querySelector(".terminal-working")).toBeInTheDocument();
+		expect(submittedTurn?.querySelector(".terminal-output-marker")).toHaveTextContent("●");
+		expect(submittedTurn?.querySelector(".terminal-output-marker .animate-spin")).not.toBeInTheDocument();
+		expect(submittedTurn?.querySelector('[role="status"]')).toHaveTextContent("Processing");
+		expect(submittedTurn?.querySelector(".terminal-processing-dots")).toHaveTextContent("...");
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(599); });
-		expect(screen.getByText("Working…")).toBeInTheDocument();
+		expect(submittedTurn?.querySelector(".terminal-working")).toBeInTheDocument();
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
-		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
+		expect(submittedTurn?.querySelector(".terminal-working")).not.toBeInTheDocument();
 		expect(submittedTurn?.querySelector(".terminal-stream")).toHaveTextContent("サイトの記事を案内します。");
 		expect(submittedTurn?.querySelector(".terminal-sources")).toHaveTextContent("[1] 記事");
 
@@ -205,6 +208,9 @@ describe("HomeTerminal", () => {
 		fireEvent.change(input, { target: { value: "質問" } });
 		fireEvent.submit(input.closest("form")!);
 		const submittedTurn = screen.getByText("質問").closest(".terminal-turn");
+		expect(submittedTurn?.querySelector(".terminal-output-marker")).toHaveTextContent("●");
+		expect(submittedTurn?.querySelector('[role="status"]')).toHaveTextContent("Processing");
+		expect(submittedTurn?.querySelector(".terminal-processing-dots")).toHaveTextContent("...");
 
 		await act(async () => {
 			streamController.enqueue(encoder.encode('event: sources\ndata: {"sources":[{"locale":"en","title":"Article","url":"https://monipy.org/en/blog/2026/post"}]}\n\n'));

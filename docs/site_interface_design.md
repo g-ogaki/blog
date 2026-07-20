@@ -71,19 +71,19 @@ contains a small seated-cat SVG with a Tailwind Yellow 600 body and Yellow 700
 outline/details, the program version, and the site domain without a professional
 title. Each prepared question is subsequently typed into the fixed input row,
 held there for 300ms after its final character, and then submitted as a `>`
-prompt. The question remains on its own for another 300ms before a `Working…`
-state appears for at least 600ms. That state uses a rotating `◒` marker before
-changing to the streamed `●` response. No response row is rendered during the
-question-only pause. Once working begins, the response row starts at its natural
+prompt. The question remains on its own for another 300ms before a processing
+state appears for at least 600ms. That state keeps the `●` response marker intact
+and cycles its label every 400ms through `Processing`, `Processing.`,
+`Processing..`, and `Processing...`. No response row is rendered during the
+question-only pause. Once processing begins, the response row starts at its natural
 single-line height and grows only when the visible streamed text wraps; no hidden
 copy of the completed answer reserves future lines. Transcript rows use a uniform
 Tailwind `gap-3` rhythm: the space from guest text to its AI response and from that
-response to the next guest text is `0.75rem` in both cases.
-chrome, banner metadata, prompts, typed questions, and the launch-command cursor
-use the system monospace stack; Japanese responses
-retain the system sans-serif stack. The transcript scrolls internally and follows
-the newest output with an immediate, non-smooth scroll, while the input remains
-fixed. After the prepared sequence, that row becomes a real single-line form
+response to the next guest text is `0.75rem` in both cases. Window chrome,
+banner metadata, prompts, typed questions, responses, and the launch-command
+cursor use the system monospace stack. The transcript scrolls internally and
+follows the newest output with an immediate, non-smooth scroll, while the input
+remains fixed. After the prepared sequence, that row becomes a real single-line form
 control. It accepts repeated nonempty submissions of up to 200 characters and
 sends them to the same-origin AI site-guide API. The assistant presents itself
 as an AI navigator rather than moni, prioritizes indexed site knowledge, and
@@ -91,10 +91,10 @@ matches the latest question's language. It may add clearly distinguished
 general knowledge, but answers remain at most two short sentences and 600
 characters. Up to three deduplicated source links from the exact
 `https://monipy.org` origin appear as a numbered list below the answer.
-Free-text responses use the same question-only pause and working state before
-the application stream is shown. Early provider tokens are buffered until `Working…` has
-been visible for at least 600ms. The control is disabled while the prepared
-sequence or a response is playing;
+Free-text responses use the same question-only pause and processing state before
+the application stream is shown. Early provider tokens are buffered until the
+processing state has been visible for at least 600ms. The control is disabled
+while the prepared sequence or a response is playing;
 visitor submissions are appended with DOM text rather than interpreted as markup. The
 terminal has no status footer. Its high-fidelity treatment uses the same dark
 neutral-grey surface in both site themes. Primary reading text uses a soft green,
@@ -107,11 +107,12 @@ so that the panel remains dark and monochrome without reading as pure black
 against the light site surface.
 The illustrated cat remains decorative and local to this banner; it is not a site mascot.
 Reduced-motion visitors see the completed transcript, receive an enabled input
-immediately, and see provider deltas without the pending or working delays or
-decorative typing animation. The complete visible free-form transcript remains
-in React state until reload, while only the latest three completed exchanges are
-sent as model context. Rate-limit and provider failures appear as localized
-terminal responses and re-enable the input.
+immediately, and see the same animated `● Processing` dot sequence while waiting
+for a free-form response. Provider deltas replace it immediately without the
+pending or minimum processing delays or decorative typing animation. The complete
+visible free-form transcript remains in React state until reload, while only the
+latest three completed exchanges are sent as model context. Rate-limit and
+provider failures appear as localized terminal responses and re-enable the input.
 No-JavaScript visitors
 see the completed prepared transcript and an explicitly disabled input. Assistive
 technology receives the complete prepared conversation without incremental live

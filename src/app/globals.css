@@ -118,8 +118,16 @@ summary:focus-visible {
 .terminal-cat__detail { fill: none; stroke: var(--terminal-cat-line); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.5; }
 .terminal-input-field:focus-visible { outline: 0; }
 .terminal-cursor { display: inline-block; width: 1px; height: 1.1em; margin-left: .2rem; vertical-align: -.15em; background: currentColor; animation: none; }
+.terminal-processing-dots { display: inline-block; width: 3ch; }
+.terminal-processing-dots span { opacity: 0; }
+.terminal-processing-dots span:nth-child(1) { animation: terminal-processing-dot-1 1.6s linear infinite; }
+.terminal-processing-dots span:nth-child(2) { animation: terminal-processing-dot-2 1.6s linear infinite; }
+.terminal-processing-dots span:nth-child(3) { animation: terminal-processing-dot-3 1.6s linear infinite; }
 @keyframes cursor-blink { 50% { opacity: 0; } }
 @keyframes terminal-banner-pop { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
+@keyframes terminal-processing-dot-1 { 0%, 24.999% { opacity: 0; } 25%, 100% { opacity: 1; } }
+@keyframes terminal-processing-dot-2 { 0%, 49.999% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes terminal-processing-dot-3 { 0%, 74.999% { opacity: 0; } 75%, 100% { opacity: 1; } }
 
 /* Generated Markdown content keeps relational selectors that JSX utilities cannot address. */
 .article-body > * { @apply my-0; }
@@ -177,4 +185,5 @@ body:has(.entry-main) .footer-legal a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
 	*, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+	.terminal-processing-dots span { animation-duration: 1.6s !important; animation-iteration-count: infinite !important; }
 }

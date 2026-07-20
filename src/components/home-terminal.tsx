@@ -9,7 +9,7 @@ const terminalCopy = {
 		label: "moniの自己紹介インタビュー",
 		inputLabel: "メッセージを入力",
 		javascriptRequired: "自由入力には JavaScript が必要です",
-		placeholder: "質問する(本当にAIに質問できます)",
+		placeholder: "質問する(本当にAIへ質問できます)",
 		foreignSourceLabel: "（英語）",
 		sourcesLabel: "参照したページ",
 		errors: {
@@ -17,8 +17,8 @@ const terminalCopy = {
 			unavailable: "現在、案内機能を利用できません。しばらくしてからもう一度お試しください。",
 		},
 		turns: [
-			{ question: "こんにちは。", answer: "こんにちは！当サイトのナビゲーター AI です。何かお手伝いできることはありますか？" },
-			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけど、そういうのは ChatGPT にでも聞いて私には著者や記事について質問してね。" },
+			{ question: "こんにちは。", answer: "こんにちは！私は当サイトの AI ナビゲーターです。何かお手伝いできることはありますか？" },
+			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけど、そういうのは ChatGPT にでも聞いて、私には著者や記事について質問してね。" },
 		],
 	},
 	en: {
@@ -33,7 +33,7 @@ const terminalCopy = {
 			unavailable: "The site guide is currently unavailable. Please try again later.",
 		},
 		turns: [
-			{ question: "Hello.", answer: "Hello! I'm the navigator AI for this site. How can I help you?" },
+			{ question: "Hello.", answer: "Hello! I'm the AI navigator of this site. How can I help you?" },
 			{ question: "Why is the sky blue?", answer: "I would like to say it is because of Rayleigh scattering, but general questions should be directed to ChatGPT instead! Ask me about the author or articles." },
 		],
 	},
@@ -77,6 +77,15 @@ function Banner({ popping = false }: { popping?: boolean }) {
 	);
 }
 
+function ProcessingIndicator() {
+	return (
+		<span className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">
+			<span className="sr-only" role="status">Processing</span>
+			<span aria-hidden="true">Processing<span className="terminal-processing-dots"><span>.</span><span>.</span><span>.</span></span></span>
+		</span>
+	);
+}
+
 function Transcript({ foreignSourceLabel = "", locale = "ja", sourcesLabel = "Sources", turns }: {
 	foreignSourceLabel?: string;
 	locale?: Locale;
@@ -88,7 +97,7 @@ function Transcript({ foreignSourceLabel = "", locale = "ja", sourcesLabel = "So
 			{turns.map((turn, index) => (
 				<li aria-hidden={turn.assistiveHidden || undefined} className="terminal-turn grid gap-3" key={`${index}-${turn.question}`}>
 					<div className="terminal-submission flex items-start gap-3 font-mono"><span aria-hidden="true" className="terminal-prompt grid h-7 w-4 flex-none place-items-center font-mono font-semibold text-terminal-accent">&gt;</span><p className="terminal-question m-0 leading-7 [overflow-wrap:anywhere]">{turn.question}</p></div>
-					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className={`block size-4 text-center leading-4${turn.phase === "working" ? " animate-spin" : ""}`}>{turn.phase === "working" ? "◒" : "●"}</span></span><span className="terminal-output-copy min-w-0 font-mono leading-7">{turn.phase === "working" ? <span aria-hidden="true" className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">Working…</span> : <><span className="terminal-stream">{turn.answer}</span>{turn.sources?.length ? <ol aria-label={sourcesLabel} className="terminal-sources mt-2 grid list-none gap-1 p-0 font-mono text-sm text-terminal-text-muted">{turn.sources.map((source, sourceIndex) => <li key={source.url}><a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={source.url} rel="noopener noreferrer" target="_blank">{`[${sourceIndex + 1}] ${source.title}${source.locale === locale ? "" : foreignSourceLabel}`}</a></li>)}</ol> : null}</>}</span></div>}
+					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className="block size-4 text-center leading-4">●</span></span><span className="terminal-output-copy min-w-0 font-mono leading-7">{turn.phase === "working" ? <ProcessingIndicator /> : <><span className="terminal-stream">{turn.answer}</span>{turn.sources?.length ? <ol aria-label={sourcesLabel} className="terminal-sources mt-2 grid list-none gap-1 p-0 font-mono text-sm text-terminal-text-muted">{turn.sources.map((source, sourceIndex) => <li key={source.url}><a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={source.url} rel="noopener noreferrer" target="_blank">{`[${sourceIndex + 1}] ${source.title}${source.locale === locale ? "" : foreignSourceLabel}`}</a></li>)}</ol> : null}</>}</span></div>}
 				</li>
 			))}
 		</ol>
@@ -269,7 +278,9 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 		};
 
 		try {
-			if (!reducedMotion) {
+			if (reducedMotion) {
+				setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, phase: "working" } : item));
+			} else {
 				await sleep(PENDING_DURATION_MS, controller.signal);
 				setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, phase: "working" } : item));
 				minimumWorkingPromise = sleep(WORKING_DURATION_MS, controller.signal).then(() => {
