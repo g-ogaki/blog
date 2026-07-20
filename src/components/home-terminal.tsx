@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/i18n";
+import type { ChatMessage, ChatSource } from "@/lib/chat/api";
 
 const terminalCopy = {
 	ja: {
@@ -9,35 +10,34 @@ const terminalCopy = {
 		inputLabel: "メッセージを入力",
 		javascriptRequired: "自由入力には JavaScript が必要です",
 		placeholder: "質問する",
+		sourcesLabel: "参照したページ",
+		errors: {
+			rate_limited: "質問が集中しています。少し待ってからもう一度お試しください。",
+			unavailable: "現在、案内機能を利用できません。しばらくしてからもう一度お試しください。",
+		},
 		turns: [
 			{ question: "こんにちは。", answer: "こんにちは！何かお手伝いできることはありますか？" },
 			{ question: "あなたについて教えて。", answer: "人間よりも AI とばかり会話しているおじさんです。好きな音楽は Janne Da Arc とショパン、好きな数学の定理はヒルベルト空間の射影定理です。" },
 			{ question: "空はなぜ青いの？", answer: "レイリー散乱という現象だよって言いたいけどよく知らないので、私じゃなく ChatGPT に聞いてね。" },
 		],
-		freeReply: "自由回答機能を実装したいのですが、Cloudflare の有料プランが必要であり、無職なのでお金がありません助けて",
 	},
 	en: {
 		label: "Introduction interview with moni",
 		inputLabel: "Enter a message",
 		javascriptRequired: "JavaScript is required for free-form questions",
 		placeholder: "Ask a question",
+		sourcesLabel: "Sources",
+		errors: {
+			rate_limited: "Too many questions are being asked. Please wait a moment and try again.",
+			unavailable: "The site guide is currently unavailable. Please try again later.",
+		},
 		turns: [
 			{ question: "Hello.", answer: "Hello! How can I help you?" },
 			{ question: "Tell me about yourself.", answer: "I am a middle-aged man who talks to AI more than humans. My favorite music is Janne Da Arc and Chopin, and my favorite mathematical theorem is the Hilbert projection theorem." },
 			{ question: "Why is the sky blue?", answer: "I would like to say it is because of Rayleigh scattering, but I do not know it well enough — please ask ChatGPT instead of me." },
 		],
-		freeReply: "I would like to implement free-form answers, but that needs a paid Cloudflare plan, and I am unemployed, so please help.",
 	},
 } as const;
-
-interface ReplySegment {
-	href?: string;
-	text: string;
-}
-
-interface ConfiguredReply {
-	segments: readonly ReplySegment[];
-}
 
 const STARTUP_DELAY_MS = 1000;
 const FIRST_QUESTION_DELAY_MS = 420;
@@ -54,26 +54,7 @@ interface VisibleTurn {
 	assistiveHidden?: boolean;
 	phase?: TurnPhase;
 	question: string;
-	reply?: ConfiguredReply;
-}
-
-function getReplyText(reply: ConfiguredReply) {
-	return reply.segments.map((segment) => segment.text).join("");
-}
-
-function pickFreeReply(replies: readonly [ConfiguredReply, ...ConfiguredReply[]]) {
-	return replies[Math.floor(Math.random() * replies.length)];
-}
-
-function ReplyText({ reply, text }: { reply: ConfiguredReply; text: string }) {
-	let remaining = Array.from(text).length;
-	return reply.segments.map((segment, index) => {
-		const characters = Array.from(segment.text);
-		const visible = characters.slice(0, remaining).join("");
-		remaining = Math.max(0, remaining - characters.length);
-		if (!visible) return null;
-		return segment.href ? <a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={segment.href} key={index} rel="noopener noreferrer" target="_blank">{visible}</a> : <span key={index}>{visible}</span>;
-	});
+	sources?: ChatSource[];
 }
 
 function TerminalCat() {
@@ -96,13 +77,13 @@ function Banner({ popping = false }: { popping?: boolean }) {
 	);
 }
 
-function Transcript({ turns }: { turns: readonly VisibleTurn[] }) {
+function Transcript({ sourcesLabel = "Sources", turns }: { sourcesLabel?: string; turns: readonly VisibleTurn[] }) {
 	return (
 		<ol className="terminal-transcript mt-6 grid list-none gap-3 p-0">
 			{turns.map((turn, index) => (
 				<li aria-hidden={turn.assistiveHidden || undefined} className="terminal-turn grid gap-3" key={`${index}-${turn.question}`}>
 					<div className="terminal-submission flex items-start gap-3 font-mono"><span aria-hidden="true" className="terminal-prompt grid h-7 w-4 flex-none place-items-center font-mono font-semibold text-terminal-accent">&gt;</span><p className="terminal-question m-0 leading-7 [overflow-wrap:anywhere]">{turn.question}</p></div>
-					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className={`block size-4 text-center leading-4${turn.phase === "working" ? " animate-spin" : ""}`}>{turn.phase === "working" ? "◒" : "●"}</span></span><span className="terminal-output-copy min-w-0 font-sans leading-7">{turn.phase === "working" ? <span aria-hidden="true" className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">Working…</span> : <span className="terminal-stream">{turn.reply ? <ReplyText reply={turn.reply} text={turn.answer} /> : turn.answer}</span>}</span></div>}
+					{turn.phase === "waiting" ? null : <div className="terminal-output grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span aria-hidden="true" className="terminal-output-marker grid h-7 w-4 place-items-center self-start font-mono font-semibold text-terminal-accent"><span className={`block size-4 text-center leading-4${turn.phase === "working" ? " animate-spin" : ""}`}>{turn.phase === "working" ? "◒" : "●"}</span></span><span className="terminal-output-copy min-w-0 font-sans leading-7">{turn.phase === "working" ? <span aria-hidden="true" className="terminal-working font-mono text-sm leading-7 text-terminal-text-muted">Working…</span> : <><span className="terminal-stream">{turn.answer}</span>{turn.sources?.length ? <ol aria-label={sourcesLabel} className="terminal-sources mt-2 grid list-none gap-1 p-0 font-mono text-sm text-terminal-text-muted">{turn.sources.map((source, sourceIndex) => <li key={source.url}><a className="text-terminal-accent underline decoration-1 underline-offset-4 hover:text-terminal-text" href={source.url}>{`[${sourceIndex + 1}] ${source.title}`}</a></li>)}</ol> : null}</>}</span></div>}
 				</li>
 			))}
 		</ol>
@@ -128,10 +109,60 @@ async function typeText(value: string, speed: number, signal: AbortSignal, updat
 	}
 }
 
+class ChatResponseError extends Error {
+	constructor(readonly code: string) {
+		super(code);
+	}
+}
+
+function parseSseBlock(block: string) {
+	let event = "message";
+	const data: string[] = [];
+	for (const line of block.split("\n")) {
+		if (line.startsWith("event:")) event = line.slice(6).trim();
+		if (line.startsWith("data:")) data.push(line.slice(5).trimStart());
+	}
+	return { data: data.join("\n"), event };
+}
+
+async function consumeChatStream(
+	stream: ReadableStream<Uint8Array>,
+	signal: AbortSignal,
+	onEvent: (event: string, data: unknown) => void,
+) {
+	const reader = stream.getReader();
+	const decoder = new TextDecoder();
+	let buffer = "";
+	try {
+		while (true) {
+			if (signal.aborted) throw signal.reason;
+			const { done, value } = await reader.read();
+			if (done) break;
+			buffer = (buffer + decoder.decode(value, { stream: true })).replace(/\r\n/g, "\n");
+			let boundary = buffer.indexOf("\n\n");
+			while (boundary >= 0) {
+				const block = parseSseBlock(buffer.slice(0, boundary));
+				buffer = buffer.slice(boundary + 2);
+				if (block.data) {
+					let data: unknown;
+					try {
+						data = JSON.parse(block.data);
+					} catch {
+						throw new ChatResponseError("unavailable");
+					}
+					onEvent(block.event, data);
+				}
+				boundary = buffer.indexOf("\n\n");
+			}
+		}
+	} finally {
+		reader.releaseLock();
+	}
+}
+
 export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 	const copy = terminalCopy[locale];
 	const preparedTurns = copy.turns;
-	const freeReplies: readonly [ConfiguredReply, ...ConfiguredReply[]] = [{ segments: [{ text: copy.freeReply }] }];
 	const [animated, setAnimated] = useState(false);
 	const [bannerVisible, setBannerVisible] = useState(true);
 	const [busy, setBusy] = useState(true);
@@ -141,6 +172,10 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 	const [status, setStatus] = useState("");
 	const [title, setTitle] = useState("about — moni");
 	const [visibleTurns, setVisibleTurns] = useState<VisibleTurn[]>([]);
+	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+	const inputRef = useRef<HTMLInputElement>(null);
+	const requestControllerRef = useRef<AbortController>(null);
+	const restoreFocusRef = useRef(false);
 	const stageRef = useRef<HTMLDivElement>(null);
 	const reducedMotionRef = useRef(false);
 
@@ -186,6 +221,7 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 		return () => {
 			window.clearTimeout(start);
 			controller.abort();
+			requestControllerRef.current?.abort();
 		};
 	}, [preparedTurns]);
 
@@ -193,33 +229,101 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 		if (animated && typeof stageRef.current?.scrollTo === "function") stageRef.current.scrollTo({ top: stageRef.current.scrollHeight });
 	}, [animated, bannerVisible, launchCommand, visibleTurns]);
 
+	useEffect(() => {
+		if (!busy && restoreFocusRef.current) {
+			restoreFocusRef.current = false;
+			inputRef.current?.focus();
+		}
+	}, [busy]);
+
 	async function submit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const question = input.trim();
 		if (!question || busy) return;
-		const reply = pickFreeReply(freeReplies);
-		const replyText = getReplyText(reply);
 		setInput("");
 		setBusy(true);
-		if (reducedMotionRef.current) {
-			setVisibleTurns((current) => [...current, { question, answer: replyText, reply }]);
-			setBusy(false);
-			setStatus(replyText);
-			return;
-		}
-		setAnimated(true);
 		const index = visibleTurns.length;
-		setVisibleTurns((current) => [...current, { question, answer: "", phase: "waiting", reply }]);
 		const controller = new AbortController();
-		await sleep(PENDING_DURATION_MS, controller.signal);
-		setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, phase: "working" } : item));
-		await sleep(WORKING_DURATION_MS, controller.signal);
-		setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, phase: undefined } : item));
-		await typeText(replyText, 22, controller.signal, (answer) => {
-			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer } : item));
-		});
-		setBusy(false);
-		setStatus(replyText);
+		requestControllerRef.current = controller;
+		const reducedMotion = reducedMotionRef.current;
+		if (!reducedMotion) setAnimated(true);
+		setVisibleTurns((current) => [...current, { question, answer: "", phase: "waiting" }]);
+
+		let answer = "";
+		let sources: ChatSource[] = [];
+		let minimumWorkingFinished = reducedMotion;
+		let minimumWorkingPromise = Promise.resolve();
+		let revealed = false;
+		const reveal = () => {
+			if (revealed || !minimumWorkingFinished || !answer) return;
+			revealed = true;
+			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer, phase: undefined, sources } : item));
+		};
+
+		try {
+			if (!reducedMotion) {
+				await sleep(PENDING_DURATION_MS, controller.signal);
+				setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, phase: "working" } : item));
+				minimumWorkingPromise = sleep(WORKING_DURATION_MS, controller.signal).then(() => {
+					minimumWorkingFinished = true;
+					reveal();
+				});
+			}
+
+			const messages = [...chatHistory.slice(-6), { content: question, role: "user" as const }];
+			const response = await fetch("/api/chat", {
+				body: JSON.stringify({ locale, messages }),
+				headers: { "content-type": "application/json" },
+				method: "POST",
+				signal: controller.signal,
+			});
+			if (!response.ok || !response.body) {
+				let code = response.status === 429 ? "rate_limited" : "unavailable";
+				try {
+					const body = await response.json() as { error?: string };
+					if (body.error === "rate_limited") code = body.error;
+				} catch {
+					// Use the bounded status-derived fallback.
+				}
+				throw new ChatResponseError(code);
+			}
+
+			let completed = false;
+			await consumeChatStream(response.body, controller.signal, (eventName, data) => {
+				if (eventName === "sources") {
+					const value = (data as { sources?: unknown }).sources;
+					if (Array.isArray(value)) sources = value as ChatSource[];
+					if (revealed) setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, sources } : item));
+				}
+				if (eventName === "delta") {
+					const text = (data as { text?: unknown }).text;
+					if (typeof text === "string") answer += text;
+					reveal();
+					if (revealed) setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer } : item));
+				}
+				if (eventName === "done") completed = true;
+				if (eventName === "error") throw new ChatResponseError((data as { code?: string }).code ?? "unavailable");
+			});
+			if (!completed || !answer) throw new ChatResponseError("unavailable");
+			await minimumWorkingPromise;
+			reveal();
+			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer, phase: undefined, sources } : item));
+			setChatHistory((current) => [...current, { content: question, role: "user" }, { content: answer, role: "assistant" }]);
+			setStatus(answer);
+		} catch (error) {
+			if (controller.signal.aborted) return;
+			await minimumWorkingPromise;
+			const code = error instanceof ChatResponseError && error.code === "rate_limited" ? "rate_limited" : "unavailable";
+			const message = copy.errors[code];
+			setVisibleTurns((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, answer: message, phase: undefined, sources: undefined } : item));
+			setStatus(message);
+		} finally {
+			if (!controller.signal.aborted) {
+				restoreFocusRef.current = true;
+				setBusy(false);
+			}
+			if (requestControllerRef.current === controller) requestControllerRef.current = null;
+		}
 	}
 
 	const staticTurns = preparedTurns.map((turn) => ({ ...turn }));
@@ -233,14 +337,14 @@ export function HomeTerminal({ locale = "ja" }: { locale?: Locale }) {
 			<div className="chat-stage min-h-0 flex-1 overflow-y-auto p-4 [scrollbar-color:var(--terminal-border)_var(--terminal-surface)] [scrollbar-gutter:stable] sm:p-6" ref={stageRef}>
 				<div className={`terminal-launch mb-6 flex flex-wrap gap-2 font-mono text-terminal-text${animated && launchCommand !== "moni" ? " is-typing" : ""}`}><span>guest@notebook:~/about$</span><span className="terminal-command inline-flex items-center"><code className="font-mono font-semibold">{launchCommand}</code>{animated && launchCommand !== "moni" ? <span aria-hidden="true" className="terminal-cursor" /> : null}</span></div>
 				{bannerVisible ? <Banner popping={animated} /> : null}
-				<div className={animated ? "sr-only" : "static-transcript"}><Transcript turns={staticTurns} /></div>
-				{!animated && visibleTurns.length ? <div className="animated-transcript"><Transcript turns={visibleTurns} /></div> : null}
-				{animated ? <div className="animated-transcript"><Transcript turns={visibleTurns} /></div> : null}
+				<div className={animated ? "sr-only" : "static-transcript"}><Transcript sourcesLabel={copy.sourcesLabel} turns={staticTurns} /></div>
+				{!animated && visibleTurns.length ? <div className="animated-transcript"><Transcript sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
+				{animated ? <div className="animated-transcript"><Transcript sourcesLabel={copy.sourcesLabel} turns={visibleTurns} /></div> : null}
 			</div>
 			<form className="terminal-input flex min-h-13 items-center gap-3 border-t border-terminal-border px-4 py-3.5 font-mono text-terminal-accent focus-within:-outline-offset-2 focus-within:outline-2 focus-within:outline-terminal-accent sm:px-6" onSubmit={submit}>
 				<label className="sr-only" htmlFor="terminal-free-input">{copy.inputLabel}</label>
 				<span aria-hidden="true" className="terminal-prompt grid h-7 w-4 flex-none place-items-center font-mono font-semibold text-terminal-accent">&gt;</span>
-				<input autoComplete="off" className="terminal-input-field min-w-0 flex-1 border-0 bg-transparent p-0 font-[inherit] text-terminal-text opacity-100 outline-0 placeholder:text-terminal-text-muted disabled:cursor-default" disabled={busy} id="terminal-free-input" maxLength={200} onChange={(event) => setInput(event.target.value)} placeholder={!hydrated ? copy.javascriptRequired : busy ? undefined : copy.placeholder} type="text" value={input} />
+				<input autoComplete="off" className="terminal-input-field min-w-0 flex-1 border-0 bg-transparent p-0 font-[inherit] text-terminal-text opacity-100 outline-0 placeholder:text-terminal-text-muted disabled:cursor-default" disabled={busy} id="terminal-free-input" maxLength={200} onChange={(event) => setInput(event.target.value)} placeholder={!hydrated ? copy.javascriptRequired : busy ? undefined : copy.placeholder} ref={inputRef} type="text" value={input} />
 			</form>
 			<p aria-live="polite" className="sr-only" role="status">{status}</p>
 		</div>

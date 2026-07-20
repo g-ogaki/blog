@@ -1,7 +1,41 @@
 # API design
 
-All API responses are JSON, except the moderation confirmation page. Error
-responses use `{ "success": false, "error": "…" }`.
+API responses are JSON except the moderation confirmation page and successful
+chat SSE streams. Error responses use `{ "success": false, "error": "…" }`.
+
+## POST /api/chat
+
+Streams a homepage site-guide response. The JSON request contains `locale`
+(`ja` or `en`) and an alternating `messages` array that starts and ends with a
+user message. It contains at most three completed user/assistant exchanges plus
+the current user message. User messages contain 1-200 trimmed Unicode
+characters; assistant messages contain 1-600. System, developer, and tool roles
+are rejected because the route injects its own system prompt.
+
+The route requires an exact same-origin `Origin`, `application/json`, and
+Cloudflare's `CF-Connecting-IP`. It reads at most 12,000 request bytes, applies
+the `CHAT_RATE_LIMITER` result before inference, requests at most 256 generation
+tokens, and enforces a 20-second total deadline and 600-character output limit.
+
+Success uses `text/event-stream` with application-owned events:
+
+```text
+event: sources
+data: {"sources":[{"title":"Article","url":"https://monipy.org/blog/…"}]}
+
+event: delta
+data: {"text":"…"}
+
+event: done
+data: {}
+```
+
+Sources are deduplicated, limited to three, and restricted to the exact
+`https://monipy.org` origin. Mid-stream failures use an `error` event with a
+stable `provider_unavailable` or `timeout` code. Pre-stream failures use bounded
+JSON errors: `400` invalid input, `403` cross-origin, `429` rate limited, `503`
+unavailable or quota exhausted, and `504` timeout. Provider details are never
+returned.
 
 ## POST /api/comments
 

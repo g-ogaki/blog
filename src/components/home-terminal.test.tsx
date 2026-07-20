@@ -2,6 +2,22 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HomeTerminal } from "./home-terminal";
 
+const encoder = new TextEncoder();
+
+function chatResponse(answer = "サイトの記事を案内します。", sources = [{ title: "記事", url: "https://monipy.org/blog/2026/post" }]) {
+	const body = [
+		`event: sources\ndata: ${JSON.stringify({ sources })}\n\n`,
+		`event: delta\ndata: ${JSON.stringify({ text: answer })}\n\n`,
+		"event: done\ndata: {}\n\n",
+	];
+	return new Response(new ReadableStream({
+		start(controller) {
+			for (const part of body) controller.enqueue(encoder.encode(part));
+			controller.close();
+		},
+	}), { headers: { "content-type": "text/event-stream" } });
+}
+
 beforeEach(() => {
 	vi.useFakeTimers();
 	vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
@@ -14,10 +30,12 @@ beforeEach(() => {
 		removeEventListener: vi.fn(),
 		removeListener: vi.fn(),
 	}));
+	vi.stubGlobal("fetch", vi.fn().mockResolvedValue(chatResponse()));
 });
 
 afterEach(() => {
 	cleanup();
+	vi.unstubAllGlobals();
 	vi.useRealTimers();
 });
 
@@ -55,7 +73,10 @@ describe("HomeTerminal", () => {
 		expect(screen.getByText("<img src=x onerror=alert(1)>")).toBeInTheDocument();
 		expect(screen.getByText("こんにちは。")).toBeInTheDocument();
 		expect(document.querySelector(".terminal-transcript img")).toBeNull();
-		expect(screen.getByRole("status")).toHaveTextContent("自由回答機能を実装したいのですが");
+		expect(screen.getByRole("status")).toHaveTextContent("サイトの記事を案内します。");
+		expect(screen.getByRole("link", { name: "[1] 記事" })).toHaveAttribute("href", "https://monipy.org/blog/2026/post");
+		await act(async () => { await vi.runAllTimersAsync(); });
+		expect(input).toHaveFocus();
 	});
 
 	it("plays the prepared sequence before enabling ordinary-motion input", async () => {
@@ -163,13 +184,51 @@ describe("HomeTerminal", () => {
 
 		await act(async () => { await vi.advanceTimersByTimeAsync(1); });
 		expect(screen.queryByText("Working…")).not.toBeInTheDocument();
-		expect(input).toBeDisabled();
-		await act(async () => { await vi.advanceTimersByTimeAsync(880); });
-		expect(submittedTurn?.querySelector(".terminal-stream")).toHaveTextContent("自由回答機能を実装したい");
-		expect(submittedTurn?.querySelector(".terminal-stream")).not.toHaveTextContent("助けて");
+		expect(submittedTurn?.querySelector(".terminal-stream")).toHaveTextContent("サイトの記事を案内します。");
+		expect(submittedTurn?.querySelector(".terminal-sources")).toHaveTextContent("[1] 記事");
 
 		await act(async () => { await vi.runAllTimersAsync(); });
 		expect(input).toBeEnabled();
-		expect(screen.getByRole("status")).toHaveTextContent("自由回答機能を実装したいのですが");
+		expect(screen.getByRole("status")).toHaveTextContent("サイトの記事を案内します。");
+	});
+
+	it("sends only the latest three completed free-form exchanges", async () => {
+		vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+			addEventListener: vi.fn(), addListener: vi.fn(), dispatchEvent: vi.fn(), matches: query.includes("prefers-reduced-motion"), media: query, onchange: null, removeEventListener: vi.fn(), removeListener: vi.fn(),
+		}));
+		const fetchMock = vi.mocked(fetch);
+		fetchMock.mockImplementation(async () => chatResponse(`回答${fetchMock.mock.calls.length}`));
+		render(<HomeTerminal />);
+		await act(async () => { await vi.runAllTimersAsync(); });
+
+		const input = screen.getByRole("textbox", { name: "メッセージを入力" });
+		for (const question of ["質問1", "質問2", "質問3", "質問4", "質問5"]) {
+			fireEvent.change(input, { target: { value: question } });
+			fireEvent.submit(input.closest("form")!);
+			await act(async () => { await vi.runAllTimersAsync(); });
+		}
+
+		const body = JSON.parse(fetchMock.mock.calls[4][1]?.body as string) as { messages: Array<{ content: string }> };
+		expect(body.messages).toHaveLength(7);
+		expect(body.messages[0].content).toBe("質問2");
+		expect(body.messages.at(-1)?.content).toBe("質問5");
+	});
+
+	it("renders a localized bounded error and re-enables input", async () => {
+		vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+			addEventListener: vi.fn(), addListener: vi.fn(), dispatchEvent: vi.fn(), matches: query.includes("prefers-reduced-motion"), media: query, onchange: null, removeEventListener: vi.fn(), removeListener: vi.fn(),
+		}));
+		vi.mocked(fetch).mockResolvedValue(Response.json({ error: "rate_limited", success: false }, { status: 429 }));
+		render(<HomeTerminal />);
+		await act(async () => { await vi.runAllTimersAsync(); });
+		const input = screen.getByRole("textbox", { name: "メッセージを入力" });
+		fireEvent.change(input, { target: { value: "質問" } });
+		fireEvent.submit(input.closest("form")!);
+		await act(async () => { await vi.runAllTimersAsync(); });
+
+		expect(screen.getByRole("status")).toHaveTextContent("質問が集中しています。少し待ってからもう一度お試しください。");
+		expect(input).toBeEnabled();
+		await act(async () => { await vi.runAllTimersAsync(); });
+		expect(input).toHaveFocus();
 	});
 });
