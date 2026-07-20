@@ -1,7 +1,49 @@
 # API design
 
-All API responses are JSON, except the moderation confirmation page. Error
-responses use `{ "success": false, "error": "…" }`.
+API responses are JSON except the moderation confirmation page and successful
+chat SSE streams. Error responses use `{ "success": false, "error": "…" }`.
+
+## POST /api/chat
+
+Streams a homepage site-guide response. The JSON request contains `locale`
+(`ja` or `en`) and an alternating `messages` array that starts and ends with a
+user message. It contains at most three completed user/assistant exchanges plus
+the current user message. User messages contain 1-200 trimmed Unicode
+characters; assistant messages contain 1-600. System, developer, and tool roles
+are rejected because the route injects its own system prompt.
+
+The route requires an exact same-origin `Origin`, `application/json`, and
+Cloudflare's `CF-Connecting-IP`. During `next dev` only, a fixed
+`local-development` identity replaces the unavailable Cloudflare header. It
+reads at most 12,000 request bytes, applies the `CHAT_RATE_LIMITER` result before
+inference, and enforces a 20-second total deadline and 600-character output
+limit.
+
+Success uses `text/event-stream` with application-owned events:
+
+```text
+event: sources
+data: {"sources":[{"locale":"en","title":"Article","url":"https://monipy.org/en/blog/…"}]}
+
+event: delta
+data: {"text":"…"}
+
+event: done
+data: {}
+```
+
+Sources are deduplicated, limited to three, and restricted to the exact
+`https://monipy.org` origin. Japanese and English routes with the same path
+after removing `/en` count as one logical source; the request locale wins when
+both translations exist, while the other locale remains available as fallback.
+Titles omit the repeated ` | moni's page` suffix. Mid-stream failures use an `error` event with a
+stable `provider_unavailable` or `timeout` code. Operational JSON and SSE errors
+also include a safe `stage`: `binding_initialization`, `client_identity`,
+`rate_limiter`, `provider_startup`, `provider_stream`, or `timeout`. Pre-stream
+failures use bounded JSON errors: `400` invalid input, `403` cross-origin, `429`
+rate limited, `503` unavailable or quota exhausted, and `504` timeout. Only
+`next dev` responses add a bounded error name and message under `detail`; stacks,
+requests, prompts, retrieved content, and credentials are never returned.
 
 ## POST /api/comments
 

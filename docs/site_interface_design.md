@@ -85,15 +85,16 @@ retain the system sans-serif stack. The transcript scrolls internally and follow
 the newest output with an immediate, non-smooth scroll, while the input remains
 fixed. After the prepared sequence, that row becomes a real single-line form
 control. It accepts repeated nonempty submissions of up to 200 characters and
-selects each response independently and uniformly from a trusted, preconfigured
-reply pool. The initial pool contains one response about moni's tendency to leave
-jobs and links the streamed text 「こちら」 to the related note.com article. The
-external link becomes interactive as its text appears, opens in a new tab, and
-uses `noopener noreferrer`. Replies are represented as structured text and link
-segments rather than raw HTML.
+sends them to the same-origin AI site-guide API. The assistant presents itself
+as an AI navigator rather than moni, prioritizes indexed site knowledge, and
+matches the latest question's language. It may add clearly distinguished
+general knowledge, but answers remain at most two short sentences and 600
+characters. Up to three deduplicated source links from the exact
+`https://monipy.org` origin appear as a numbered list below the answer.
 Free-text responses use the same question-only pause and working state before
-streaming. The control is disabled while the prepared sequence or a response is
-playing;
+the application stream is shown. Early provider tokens are buffered until `Working…` has
+been visible for at least 600ms. The control is disabled while the prepared
+sequence or a response is playing;
 visitor submissions are appended with DOM text rather than interpreted as markup. The
 terminal has no status footer. Its high-fidelity treatment uses the same dark
 neutral-grey surface in both site themes. Primary reading text uses a soft green,
@@ -106,8 +107,11 @@ so that the panel remains dark and monochrome without reading as pure black
 against the light site surface.
 The illustrated cat remains decorative and local to this banner; it is not a site mascot.
 Reduced-motion visitors see the completed transcript, receive an enabled input
-immediately, and get the selected response without the pending or working delays or
-streaming.
+immediately, and see provider deltas without the pending or working delays or
+decorative typing animation. The complete visible free-form transcript remains
+in React state until reload, while only the latest three completed exchanges are
+sent as model context. Rate-limit and provider failures appear as localized
+terminal responses and re-enable the input.
 No-JavaScript visitors
 see the completed prepared transcript and an explicitly disabled input. Assistive
 technology receives the complete prepared conversation without incremental live

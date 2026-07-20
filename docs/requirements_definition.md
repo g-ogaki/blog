@@ -74,6 +74,20 @@ Comments are plain text with line breaks preserved, require moderation before
 display, and have no email, website, login, or avatar. See their respective
 design documents for behavior.
 
+## Homepage AI guide
+
+The prepared homepage interview remains static. After it completes, free-form
+questions are sent to a same-origin Worker route backed by the `blog-helper`
+Cloudflare AI Search instance. Answers stream as plain text, prioritize indexed
+site content, and may use clearly distinguished general knowledge when the site
+does not contain enough information. Up to three validated source links appear
+below an answer.
+
+Conversation state is browser-memory only and is forgotten on reload. The full
+transcript remains visible, while only the latest three completed free-form
+exchanges are sent as context. The application does not store or log questions
+or answers.
+
 ## Platform requirements
 
 Support light, dark, and system themes; Cloudflare Web Analytics; RSS;
@@ -93,3 +107,5 @@ Support light, dark, and system themes; Cloudflare Web Analytics; RSS;
   article visible and shows an English availability notice without an archive link.
 * Every English article identifies itself as an AI translation, links to its
   Japanese original, and excludes the disclosure from Pagefind indexing.
+* Valid homepage questions receive a localized, streamed AI response or a
+  bounded localized failure without exposing provider access to the browser.

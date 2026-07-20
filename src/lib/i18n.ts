@@ -139,7 +139,7 @@ export const dictionaries = {
 		headerSearch: { label: "Search the blog", placeholder: "Search" },
 		footerNavigation: "Footer navigation",
 		home: {
-			purpose: "want to spend time only on mathematics and music",
+			purpose: "wanna spare time only for math and music",
 			socials: "Social links",
 			recent: "Recent posts",
 			allPosts: "View all posts",

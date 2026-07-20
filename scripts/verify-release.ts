@@ -11,7 +11,13 @@ type PublishedPost = {
 type WranglerConfig = {
 	main?: string;
 	assets?: { binding?: string; directory?: string };
+	ai_search?: Array<{ binding?: string; instance_name?: string; remote?: boolean }>;
 	images?: { binding?: string };
+	ratelimits?: Array<{
+		name?: string;
+		namespace_id?: string;
+		simple?: { limit?: number; period?: number };
+	}>;
 	services?: Array<{ binding?: string; service?: string }>;
 	triggers?: { crons?: string[] };
 	secrets?: { required?: string[] };
@@ -49,6 +55,18 @@ function verifyWranglerConfig(rootDirectory: string) {
 		[config.main === "custom-worker.ts", "custom Worker entry point"],
 		[config.assets?.binding === "ASSETS" && config.assets.directory === ".open-next/assets", "ASSETS binding"],
 		[config.images?.binding === "IMAGES", "IMAGES binding"],
+		[
+			config.ai_search?.some(
+				(binding) => binding.binding === "BLOG_HELPER" && binding.instance_name === "blog-helper" && binding.remote === true,
+			) === true,
+			"BLOG_HELPER AI Search binding",
+		],
+		[
+			config.ratelimits?.some(
+				(binding) => binding.name === "CHAT_RATE_LIMITER" && binding.namespace_id === "49001" && binding.simple?.limit === 5 && binding.simple.period === 60,
+			) === true,
+			"CHAT_RATE_LIMITER binding",
+		],
 		[
 			config.services?.some(
 				(service) => service.binding === "WORKER_SELF_REFERENCE" && service.service === "blog",

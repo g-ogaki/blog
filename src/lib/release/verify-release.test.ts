@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -40,7 +40,9 @@ function createReleaseFixture() {
 		"wrangler.jsonc": JSON.stringify({
 			main: "custom-worker.ts",
 			assets: { binding: "ASSETS", directory: ".open-next/assets" },
+			ai_search: [{ binding: "BLOG_HELPER", instance_name: "blog-helper", remote: true }],
 			images: { binding: "IMAGES" },
+			ratelimits: [{ name: "CHAT_RATE_LIMITER", namespace_id: "49001", simple: { limit: 5, period: 60 } }],
 			services: [{ binding: "WORKER_SELF_REFERENCE", service: "blog" }],
 			triggers: { crons: ["0 3 * * *"] },
 			secrets: { required: ["DISCORD_WEBHOOK_URL", "TURNSTILE_SECRET_KEY", "IP_HASH_SECRET"] },
@@ -87,5 +89,16 @@ describe("verifyRelease", () => {
 		writeFileSync(path.join(root, "wrangler.jsonc"), "{}");
 
 		expect(() => verifyRelease(root)).toThrow("DB binding");
+	});
+
+	it("rejects a release missing the homepage AI bindings", () => {
+		const root = createReleaseFixture();
+		const configPath = path.join(root, "wrangler.jsonc");
+		const config = JSON.parse(readFileSync(configPath, "utf8")) as Record<string, unknown>;
+		delete config.ai_search;
+		delete config.ratelimits;
+		writeFileSync(configPath, JSON.stringify(config));
+
+		expect(() => verifyRelease(root)).toThrow("BLOG_HELPER AI Search binding");
 	});
 });

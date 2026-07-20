@@ -86,6 +86,35 @@ entry point required by Wrangler.
 
 ---
 
+## Homepage AI bindings
+
+`wrangler.jsonc` binds `BLOG_HELPER` directly to the existing `blog-helper` AI
+Search instance in the default namespace. `remote: true` lets Worker previews
+use that deployed instance; the AI Search public endpoint is unnecessary and
+remains disabled. The instance's configured model and retrieval settings remain
+the operational source of truth.
+
+`CHAT_RATE_LIMITER` uses namespace ID `49001` and permits five calls per trusted
+client IP per 60 seconds. Cloudflare's limiter is approximate and local to a
+Cloudflare location; it protects against bursts rather than providing billing
+accounting. The Workers AI free allocation is the daily cost backstop. Quota
+exhaustion and other upstream failures produce the same bounded unavailable UI.
+
+No AI credential or new secret is required. Application logs contain only
+failure classifications, never prompts, responses, or raw client IPs. Keep AI
+Search or AI Gateway prompt/response retention at the minimum available account
+setting. `npm run dev` enables remote bindings only for the Next.js development
+server, so the `BLOG_HELPER` binding calls the deployed AI Search instance while
+the rate limiter remains locally simulated. Authenticate with `npx wrangler
+login` when necessary, then submit a homepage question; inference quota is used
+only when a question is submitted. Local requests use the fixed
+`local-development` limiter identity and expose bounded diagnostics in the
+Network panel and browser console without changing visitor-facing copy. Type
+generation, automated tests, builds, and CI do not initialize remote bindings,
+and tests never consume inference.
+
+---
+
 ## Environment Variables
 
 ```text
@@ -131,6 +160,10 @@ webhook. Turnstile must allow the exact preview hostname before the widget can
 be exercised. Prefer read-only content/UI review on previews; when an end-to-end
 comment test is necessary, use clearly synthetic text and reject it after the
 test.
+
+The preview also shares the production `blog-helper` AI Search instance and its
+free-plan usage. Use short synthetic questions for necessary live review; CI
+and automated tests must never call the remote instance.
 
 `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is embedded at build time and must be available
 to branch builds as well as production builds. Cloudflare dashboard variables
@@ -215,11 +248,14 @@ D1.
    depends on them; builds never run migrations.
 3. Confirm Cloudflare has the three required runtime secrets and the public
    Turnstile build variable.
-4. Confirm the `DB`, `ASSETS`, `IMAGES`, and `WORKER_SELF_REFERENCE` bindings and
-   the `0 3 * * *` Cron Trigger in the uploaded version.
-5. After deployment, smoke-test the canonical domain, a post, Pagefind, RSS,
-   sitemap, robots, and the comment list. Confirm Web Analytics remains enabled
-   at the Cloudflare edge.
+4. Confirm the `DB`, `ASSETS`, `IMAGES`, `WORKER_SELF_REFERENCE`, `BLOG_HELPER`,
+   and `CHAT_RATE_LIMITER` bindings and the `0 3 * * *` Cron Trigger in the
+   uploaded version.
+5. Confirm provider-side prompt/response retention is minimized and the
+   `blog-helper` crawl is healthy and synchronized.
+6. After deployment, smoke-test the canonical domain, the homepage AI guide, a
+   post, Pagefind, RSS, sitemap, robots, and the comment list. Confirm Web
+   Analytics remains enabled at the Cloudflare edge.
 
 ## Scheduled cleanup
 

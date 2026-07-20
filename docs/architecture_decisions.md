@@ -169,3 +169,28 @@ Reason:
 * Keep localized pages static and readable without JavaScript
 
 ---
+
+## ADR-014
+
+The homepage remains statically rendered, but its post-hydration free-form site
+guide is a narrow runtime exception backed by Cloudflare AI Search. The browser
+calls a same-origin Next.js route, which uses a direct Worker binding and
+transforms provider SSE into a bounded application protocol.
+
+The prepared interview is never generated. Chat state lives only in React
+memory, no chat data enters D1, and generated output is rendered only as text.
+Source links come from validated `https://monipy.org` retrieval metadata. The
+public AI Search endpoint remains disabled.
+
+Reason:
+
+* Keep provider capability and prompt policy server-side
+* Preserve the static-first reading path and no-JavaScript experience
+* Bound cost, abuse, history, output, and generated-content risk
+
+The anonymous endpoint uses Cloudflare's approximate per-location rate-limit
+binding at five requests per trusted client IP per minute. It relies on the
+Workers AI free-plan daily allocation as its hard cost backstop; no durable
+application quota or Turnstile challenge is added initially.
+
+---

@@ -52,11 +52,17 @@ is used for preview metadata.
 Pagefind runs after the Next.js build and ships only its generated static index
 and browser API. It is not imported into the Worker runtime and uses no database.
 
+Cloudflare AI Search is used separately for the homepage's runtime site guide.
+The Worker accesses the existing `blog-helper` instance through an instance
+binding and proxies a bounded SSE contract; the AI Search public endpoint stays
+disabled. The instance owns model and retrieval configuration.
+
 ## Hosting
 
 * Cloudflare Workers
 * `@opennextjs/cloudflare` (OpenNext adapter and deployment CLI)
 * Wrangler (Cloudflare bindings and local Worker support)
+* Cloudflare Workers Rate Limiting binding
 
 Use the Next.js Node.js runtime with OpenNext; do not use the Next.js Edge
 runtime. OpenNext is the approved deployment integration for this project.

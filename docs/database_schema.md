@@ -3,6 +3,10 @@
 D1 stores comment-system data only; posts and metadata remain Markdown files.
 All timestamps are ISO 8601 UTC strings.
 
+Homepage AI conversations remain ephemeral React state and are not stored in
+D1. AI throttling uses the Cloudflare Workers Rate Limiting binding, so issue
+#49 requires no database table or migration.
+
 Localized versions of an article share the same `post_slug`. Locale is used to
 validate and render the requested article at the API boundary, but is not stored
 on comment rows. Approved comments therefore appear on every published
