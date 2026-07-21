@@ -248,7 +248,10 @@ $$
 (7) について $${\varepsilon^1}$$ の係数を考えると
 
 $$
-\dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) + A_0 \dfrac{d^2 P_n^{(1)}}{dx^2} \\+ \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 A_0P_n^{(1)} + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \delta A(x) P_n^{(0)} + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0P_n^{(0)} =0
+\begin{aligned}
+& \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) + A_0 \dfrac{d^2 P_n^{(1)}}{dx^2} \\
+& \quad + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 A_0P_n^{(1)} + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \delta A(x) P_n^{(0)} + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0P_n^{(0)} =0
+\end{aligned}
 $$
 
 が得られます。辺々に $${P_n^{(0)}}$$ を掛けて $${\left[0, L\right]}$$ で定積分することを考えます。上記の 5 つの項のうち、 $${P_n^{(1)}}$$ を含む 2 項が打ち消し合うことを確認します。
@@ -260,7 +263,10 @@ $$
 従って残りの 3 項について
 
 $$
-\int_0^L P_n^{(0)} \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) dx \\+ \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \int_0^L \delta A(x) \left\lbrace P_n^{(0)}\right\rbrace^2dx + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0 \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx = 0
+\begin{aligned}
+& \int_0^L P_n^{(0)} \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) dx \\
+& \quad + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \int_0^L \delta A(x) \left\lbrace P_n^{(0)}\right\rbrace^2dx + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0 \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx = 0
+\end{aligned}
 $$
 
 となります。第 1 項を部分積分することで
@@ -272,7 +278,7 @@ $$
 となるので、これを代入して $${\omega_n^{(1)}}$$ について解くことで
 
 $$
-\omega_n^{(1)} = \dfrac{c^2}{2\omega_n^{(0)}A_0} \dfrac{\displaystyle \int_0^L \delta A(x) \left[ \left( \dfrac{dP_n^{(0)}}{dx}\right)^2 - \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \left\lbrace P_n^{(0)}\right\rbrace^2 \right]dx  }{\displaystyle \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx }
+\omega_n^{(1)} = \dfrac{c^2}{2\omega_n^{(0)}A_0} \dfrac{\displaystyle \int_0^L \delta A(x) \left[ \left( \dfrac{dP_n^{(0)}}{dx}\right)^2 - \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \left\lbrace P_n^{(0)}\right\rbrace^2 \right]dx }{\displaystyle \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx }
 $$
 
 が得られます。最後に $${P_n^{(0)}(x) = \cos(k_n^{(0)}x), \, k_n^{(0)}=\dfrac{\omega_n^{(0)}}{c}}$$ を代入することで

@@ -72,7 +72,10 @@ One physical model of the vocal folds is the Cover–Body Model, proposed by Min
 The equations of motion for the cover and body are
 
 $$
-m_c\ddot{x}_c = -r_c\dot{x}_c-k_cx_c-k_{cb}(x_c - x_b) = F_c(t) \\m_b\ddot{x}_b = -r_b\dot{x}_b-k_bx_b-k_{cb}(x_b - x_c) = F_b(t).
+\begin{aligned}
+m_c\ddot{x}_c &= -r_c\dot{x}_c-k_cx_c-k_{cb}(x_c - x_b) = F_c(t) \\
+m_b\ddot{x}_b &= -r_b\dot{x}_b-k_bx_b-k_{cb}(x_b - x_c) = F_b(t).
+\end{aligned}
 $$
 
 Most of the notation should be self-explanatory, but $${k_{cb}}$$ is the spring constant of the spring connecting the cover and body. Setting $${x=\begin{pmatrix} x_c \\ x_b \end{pmatrix}}$$ and rewriting the equations using vectors and matrices gives the standard form

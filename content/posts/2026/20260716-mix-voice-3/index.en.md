@@ -244,7 +244,10 @@ We have already seen this boundary-value problem.
 The coefficient of $${\varepsilon^1}$$ in (7) gives
 
 $$
-\dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) + A_0 \dfrac{d^2 P_n^{(1)}}{dx^2} \\+ \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 A_0P_n^{(1)} + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \delta A(x) P_n^{(0)} + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0P_n^{(0)} =0.
+\begin{aligned}
+& \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) + A_0 \dfrac{d^2 P_n^{(1)}}{dx^2} \\
+& \quad + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 A_0P_n^{(1)} + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \delta A(x) P_n^{(0)} + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0P_n^{(0)} =0.
+\end{aligned}
 $$
 
 Multiply both sides by $${P_n^{(0)}}$$ and integrate over $${\left[0, L\right]}$$. Of the five terms above, the two containing $${P_n^{(1)}}$$ cancel. To verify this,
@@ -256,7 +259,10 @@ $$
 The remaining three terms therefore give
 
 $$
-\int_0^L P_n^{(0)} \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) dx \\+ \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \int_0^L \delta A(x) \left\lbrace P_n^{(0)}\right\rbrace^2dx + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0 \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx = 0.
+\begin{aligned}
+& \int_0^L P_n^{(0)} \dfrac{d}{dx} \left( \delta A(x) \dfrac{dP_n^{(0)}}{dx} \right) dx \\
+& \quad + \left( \dfrac{\omega_n^{(0)}}{c} \right)^2 \int_0^L \delta A(x) \left\lbrace P_n^{(0)}\right\rbrace^2dx + \dfrac{2\omega_n^{(0)} \omega_n^{(1)}}{c^2} A_0 \int_0^L \left\lbrace P_n^{(0)}\right\rbrace^2 dx = 0.
+\end{aligned}
 $$
 
 Integrating the first term by parts yields

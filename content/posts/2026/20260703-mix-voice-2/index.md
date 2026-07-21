@@ -72,7 +72,10 @@ $$
 カバー、ボディそれぞれの運動方程式は以下のようになります:
 
 $$
-m_c\ddot{x}_c = -r_c\dot{x}_c-k_cx_c-k_{cb}(x_c - x_b) = F_c(t) \\m_b\ddot{x}_b = -r_b\dot{x}_b-k_bx_b-k_{cb}(x_b - x_c) = F_b(t)
+\begin{aligned}
+m_c\ddot{x}_c &= -r_c\dot{x}_c-k_cx_c-k_{cb}(x_c - x_b) = F_c(t) \\
+m_b\ddot{x}_b &= -r_b\dot{x}_b-k_bx_b-k_{cb}(x_b - x_c) = F_b(t)
+\end{aligned}
 $$
 
 記法のほとんどは説明しなくても伝わると思いますが、$${k_{cb}}$$ はカバーとボディを接合するばねのばね定数です。$${x=\begin{pmatrix} x_c \\ x_b \end{pmatrix}}$$ としてベクトル・行列を用いて表現して式変形することで標準形
@@ -107,7 +110,7 @@ $$
 となり、$${\omega^2, v}$$ はそれぞれ $${M^{-1}K}$$ の固有値と固有ベクトルであることがわかります。$${\lambda = \omega^2}$$ とすると、これが非自明な解を持つのは $${\det(K - \lambda M) = 0}$$ のときなので、
 
 $$
-\begin{align*}& \det \begin{pmatrix} k_c + k_{cb} - \lambda m_c & -k_{cb} \\ -k_{cb} & k_{b} + k_{cb} - \lambda m_b  \end{pmatrix} = 0 \\\iff & \lambda^2 - (\omega_c^2 + \omega_b^2) \lambda + \omega_c^2 \omega_b^2 - \kappa^2 = 0 \\\iff & \lambda_\pm = \omega_\pm^2 = \dfrac{\omega_c^2 + \omega_b^2 \pm \sqrt{(\omega_c^2-\omega_b^2)^2 + 4 \kappa^2}}{2}\end{align*}
+\begin{align*}& \det \begin{pmatrix} k_c + k_{cb} - \lambda m_c & -k_{cb} \\ -k_{cb} & k_{b} + k_{cb} - \lambda m_b \end{pmatrix} = 0 \\\iff & \lambda^2 - (\omega_c^2 + \omega_b^2) \lambda + \omega_c^2 \omega_b^2 - \kappa^2 = 0 \\\iff & \lambda_\pm = \omega_\pm^2 = \dfrac{\omega_c^2 + \omega_b^2 \pm \sqrt{(\omega_c^2-\omega_b^2)^2 + 4 \kappa^2}}{2}\end{align*}
 $$
 
 となります。ただし
