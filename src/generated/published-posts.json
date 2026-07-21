@@ -24,5 +24,27 @@
 				"url": "/en/blog/2026/20260710-include-exclude-principle"
 			}
 		}
+	},
+	{
+		"slug": "2026/20260616-mix-voice-1",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 1. 解剖生理学",
+				"url": "/blog/2026/20260616-mix-voice-1"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260530-le-gall",
+		"translations": {
+			"ja": {
+				"title": "数学書「Brownian Motion, Martingales, and Stochastic Calculus (Le Gall)」を読んで",
+				"url": "/blog/2026/20260530-le-gall"
+			},
+			"en": {
+				"title": "Thoughts on Brownian Motion, Martingales, and Stochastic Calculus by Le Gall",
+				"url": "/en/blog/2026/20260530-le-gall"
+			}
+		}
 	}
 ]

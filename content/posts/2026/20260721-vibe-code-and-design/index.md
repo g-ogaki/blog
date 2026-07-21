@@ -5,7 +5,7 @@ category: Programming
 tags:
   - Codex
   - AI
-  - Design system
+  - Design System
 draft: false
 image: awtf2026.jpeg
 ---

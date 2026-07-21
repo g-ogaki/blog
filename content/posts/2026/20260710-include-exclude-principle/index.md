@@ -4,7 +4,7 @@ date: 2026-07-10
 category: Mathematics
 tags:
   - AtCoder
-  - Competitive programming
+  - Competitive Programming
 draft: false
 ---
 
