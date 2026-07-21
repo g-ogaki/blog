@@ -6,7 +6,7 @@ tags:
   - design-system
   - css
   - writing
-draft: false
+draft: true
 image: cat.jpg
 ---
 
