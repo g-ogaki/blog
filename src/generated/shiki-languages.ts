@@ -2,9 +2,6 @@
 import type { LanguageInput } from "shiki/core";
 
 export const productionLanguages = {
-	"javascript": () => import("@shikijs/langs/javascript"),
-	"py": () => import("@shikijs/langs/python"),
-	"python": () => import("@shikijs/langs/python"),
 	"ts": () => import("@shikijs/langs/typescript"),
 	"typescript": () => import("@shikijs/langs/typescript"),
 } satisfies Record<string, LanguageInput>;
