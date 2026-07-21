@@ -61,13 +61,17 @@ Reason:
 
 ## ADR-006
 
-Link previews are generated at build time.
+External link-preview metadata is refreshed explicitly into a tracked generated
+manifest. Production builds consume the validated manifest without contacting
+third-party sites. Previously generated metadata is retained when a refresh
+fails, and published standalone URLs require a manifest entry.
 
 Reason:
 
-* Avoid runtime fetching
-* Avoid CORS issues
-* Faster page rendering
+* Keep static output deterministic across deployments
+* Avoid runtime fetching and CORS issues
+* Prevent transient provider failures from removing existing cards
+* Keep metadata changes visible in code review
 
 ---
 

@@ -1,0 +1,88 @@
+{
+  "https://blog.tsubotax.com/n/n184dd6925592": {
+    "title": "Claude Codeで「バイブデザイン」を始めよう — AIとの壁打ちでUIの品質を上げる｜坪田 朋",
+    "description": "こんにちは、坪田です。 今回は、Claude Codeだけで記事詳細ページを1時間でデザインした工程を書いてみました。  前回「デザイナーがFigmaを閉じて、AIエージェントでデザインする日はいつ来るのか」を書いたのですが、「概念はわかった、で、実際どうやるの？」という声を多くもらったので、試行錯誤中だけど実践編として工程を詳しく記載。   環境：なぜClaude Codeなのか  作業環境は Visual Studio Code(VSCode) + Claude Code(CLI版)  ClaudeのWebアプリやMacアプリにもアーティファクトやCoWork機能があるが、効率的な",
+    "image": "https://assets.st-note.com/production/uploads/images/253963423/rectangle_large_type_2_8a49e75d147a54fd1040ef231e0dacd0.png?fit=bounds&quality=85&width=1280",
+    "siteName": "坪田 朋",
+    "provider": "坪田 朋"
+  },
+  "https://github.com/g-ogaki/blog": {
+    "title": "GitHub - g-ogaki/blog",
+    "description": "Contribute to g-ogaki/blog development by creating an account on GitHub.",
+    "image": "https://opengraph.githubassets.com/020c32a096975515ed1fc57805ecc7ea55433b3558fda1113bb3ef47e5f7bd33/g-ogaki/blog",
+    "siteName": "GitHub",
+    "provider": "GitHub"
+  },
+  "https://github.com/google-labs-code/design.md": {
+    "title": "GitHub - google-labs-code/design.md: A format specification for describing a visual identity to coding agents. DESIGN.md gives agents a persistent, structured understanding of a design system.",
+    "description": "A format specification for describing a visual identity to coding agents. DESIGN.md gives agents a persistent, structured understanding of a design system. - google-labs-code/design.md",
+    "image": "https://opengraph.githubassets.com/a09e9caa4fcbdf839ae6f5d4a7dca648c97d7a120f107af61cb6413ca15202a0/google-labs-code/design.md",
+    "siteName": "GitHub",
+    "provider": "GitHub"
+  },
+  "https://hashout.jp/ai/3053/": {
+    "title": "OpenAIのAIがAtCoder世界一決定戦で全問正解、人類王者を「E問題」で封じる – shiritomo | Xで話題のテックカルチャーメディア by Hashout",
+    "description": "AからEまで5問、持ち時間420分。 7月9日に東京で開かれた競技プログラミング(プログラムを書く速さと正確さを競う競技)の世界一決定戦「AtCoder World Tour Finals 2026 Algorithm」 […]",
+    "image": "https://hashout.jp/wp-content/uploads/2026/07/2075097616392892893-img-1200x675.png",
+    "siteName": "shiritomo",
+    "provider": "shiritomo"
+  },
+  "https://link.springer.com/book/10.1007/978-3-319-31089-3": {
+    "title": "Brownian Motion, Martingales, and Stochastic Calculus",
+    "description": "This book offers a rigorous and self-contained presentation of stochastic integration and stochastic calculus within the general framework of continuous semimartingales. The main tools of stochastic calculus, including Itô’s formula, the optional stopping theorem and Girsanov’s theorem, are treated in detail alongside many illustrative examples. The book also contains an introduction to Markov processes, with applications to solutions of stochastic differential equations and to connections between Brownian motion and partial differential equations. The theory of local times of semimartingales is discussed in the last chapter.\nSince its invention by Itô, stochastic calculus has proven to be one of the most important techniques of modern probability theory, and has been used in the most recent theoretical advances as well as in applications to other fields such as mathematical finance. Brownian Motion, Martingales, and Stochastic Calculus provides astrong theoretical background to the reader interested in such developments.\nBeginning graduate or advanced undergraduate students will benefit from this detailed approach to an essential area of probability theory. The emphasis is on concise and efficient presentation, without any concession to mathematical rigor. The material has been taught by the author for several years in graduate courses at two of the most prestigious French universities. The fact that proofs are given with full details makes the book particularly suitable for self-study. The numerous exercises help the reader to get acquainted with the tools of stochastic calculus.",
+    "image": "https://media.springernature.com/w153/springer-static/cover/book/978-3-319-31089-3.jpg",
+    "siteName": "SpringerLink",
+    "provider": "SpringerLink"
+  },
+  "https://note.com/moni0627/n/n175f0ea41638": {
+    "title": "数学書「Brownian Motion, Martingales, and Stochastic Calculus (Le Gall)」を読んで｜moni",
+    "description": "掲題の本のレビューです。これに感化されてこの本を手に取る人間が存在するのかという話は一旦さておき、備忘録の意味も込めて書き残したいと思います。あと数学書に限らず、専門書は必ず複数回読むべき(オチを知った状態で読み返すことで目的意識がクリアになる)という信条に基づき、このレビューが 2 周目の役割を果たすことを期待しています。  \n\n\nBrownian Motion, Martingales, and Stochastic Calculus\n\n\nThis book offers a rigorous and self-contained presentation o\n\n\nlink.spr",
+    "image": "https://assets.st-note.com/production/uploads/images/279479417/rectangle_large_type_2_25d032ddd0db27cd8454b7862ab9e614.png?fit=bounds&quality=85&width=1280",
+    "siteName": "note（ノート）",
+    "provider": "note（ノート）"
+  },
+  "https://note.com/moni0627/n/n793a80a717b4": {
+    "title": "科学するミックスボイス 2: TA筋とCT筋｜moni",
+    "description": "はじめに  第 2 章では TA 筋と CT 筋が及ぼす声の周波数および声質について論じます。第 1 章を読んでいない方は先にご覧ください。 \n この章では大学 1 年程度の数学を扱います。使うのは常微分方程式と行列計算くらいなので、数学や物理が得意な高校生であれば読めるくらいの内容かと思います。   1. 質量-ばね-ダンパー系 (Mass-spring-damper model)  まずは下準備として質量-ばね-ダンパー系について簡単に触れます。ばねはフックの法則に従い$${-kx}$$の力が質量に作用します。ダンパーは質量の速度に比例する抵抗力が生じ$${-c\\dot{x}}$$",
+    "image": "https://assets.st-note.com/production/uploads/images/266697100/rectangle_large_type_2_456aaecb469ac1250dd2d5376e92a40c.png?fit=bounds&quality=85&width=1280",
+    "siteName": "note（ノート）",
+    "provider": "note（ノート）"
+  },
+  "https://note.com/moni0627/n/na759440c793a": {
+    "title": "科学するミックスボイス 3: フォーマントチューニング｜moni",
+    "description": "はじめに  最終章である本章では、フォーマントと声の周波数がどのように歌いやすさに影響するのか、および声道の変化がどのようにフォーマントを変化させるかを数理的に解釈していきます。第 2 章とは独立していますが、第 1 章を読んでいない方は先にご覧ください。 \n この章では大学 2-3 年程度の数学および物理学を扱います。偏微分方程式や摂動法 (perturbation theory)、また交流回路におけるインピーダンス (impedance) と同等な概念が登場するため、未学習の場合は必要に応じて調べてみてください。   1. 波動方程式  1-1. 導出  第 1 章の「はじめに」で",
+    "image": "https://assets.st-note.com/production/uploads/images/266794011/rectangle_large_type_2_32fada1528c6e9e924af302d13a36b6b.png?fit=bounds&quality=85&width=1280",
+    "siteName": "note（ノート）",
+    "provider": "note（ノート）"
+  },
+  "https://note.com/moni0627/n/ndd664c8e73e8": {
+    "title": "科学するミックスボイス 1: 解剖生理学｜moni",
+    "description": "はじめに  「ミックスボイス (mixed voice) ってどうやったら習得できるの？」と AI に聞くと、「TA 筋と CT 筋のバランス」と「フォーマントチューニング」が必要と返答されました。しかし筆者はド理系のため、何故これらが必要なのかという理論が確立されないとボイストレーニングに身が入らないのです。そこでこれらがどのように作用するのかを調べてみると想像以上に奥が深く、自分の中で一貫した理論を築いた頃には執筆できる程度の調査量となっていました。従ってこの記事には「自分で自分を納得させる」というモチベーションが背景にあります。  第 1 章では声を出す原理や仕組みを解剖学および",
+    "image": "https://assets.st-note.com/production/uploads/images/266615521/rectangle_large_type_2_d83e39c466922636a757834984c49db9.png?fit=bounds&quality=85&width=1280",
+    "siteName": "note（ノート）",
+    "provider": "note（ノート）"
+  },
+  "https://qiita.com/monipy/items/fe44cd8d7c172c6a1a50": {
+    "title": "【競技プログラミング】包除原理の簡単な証明(+包除原理もメビウスの反転公式も累積和の逆だと見えるようになるまで) - Qiita",
+    "description": "はじめに 何番煎じだよという話ですが、確率論の問題を解いていたときに(私は)絶対に忘れない包除原理の証明を思いついたので供養します。これまでも隣接代数を通して幾度となく勉強した分野ですが、公式を覚えては頭から抜け落ちるのを繰り返していました。 いくつか諸注意です: At...",
+    "image": "https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-user-contents.imgix.net%2Fhttps%253A%252F%252Fcdn.qiita.com%252Fassets%252Fpublic%252Ftech-festa-ogp-background-4b5015b2c518c7e6b9062a7c9f5f5e90.png%3Fixlib%3Drb-4.1.1%26w%3D1200%26blend64%3DaHR0cHM6Ly9xaWl0YS11c2VyLXByb2ZpbGUtaW1hZ2VzLmltZ2l4Lm5ldC9odHRwcyUzQSUyRiUyRmF2YXRhcnMyLmdpdGh1YnVzZXJjb250ZW50LmNvbSUyRnUlMkY1NDA2NDgyMCUzRnYlM0Q0P2l4bGliPXJiLTQuMS4xJmFyPTElM0ExJmZpdD1jcm9wJm1hc2s9ZWxsaXBzZSZiZz1GRkZGRkYmZm09cG5nMzImcz02NTcyYjQxYmU3MTY2MmVmZjQzMjkyMGRlZjcwNzcxMA%26blend-x%3D120%26blend-y%3D467%26blend-w%3D82%26blend-h%3D82%26blend-mode%3Dnormal%26s%3D0c004d2dd124651387c7e26787518c4e?ixlib=rb-4.1.1&w=1200&fm=jpg&mark64=aHR0cHM6Ly9xaWl0YS11c2VyLWNvbnRlbnRzLmltZ2l4Lm5ldC9-dGV4dD9peGxpYj1yYi00LjEuMSZ3PTk2MCZoPTMyNCZ0eHQ9JUUzJTgwJTkwJUU3JUFCJUI2JUU2JThBJTgwJUUzJTgzJTk3JUUzJTgzJUFEJUUzJTgyJUIwJUUzJTgzJUE5JUUzJTgzJTlGJUUzJTgzJUIzJUUzJTgyJUIwJUUzJTgwJTkxJUU1JThDJTg1JUU5JTk5JUE0JUU1JThFJTlGJUU3JTkwJTg2JUUzJTgxJUFFJUU3JUIwJUExJUU1JThEJTk4JUUzJTgxJUFBJUU4JUE4JUJDJUU2JTk4JThFJTI4JTJCJUU1JThDJTg1JUU5JTk5JUE0JUU1JThFJTlGJUU3JTkwJTg2JUUzJTgyJTgyJUUzJTgzJUExJUUzJTgzJTkzJUUzJTgyJUE2JUUzJTgyJUI5JUUzJTgxJUFFJUU1JThGJThEJUU4JUJCJUEyJUU1JTg1JUFDJUU1JUJDJThGJUUzJTgyJTgyJUU3JUI0JUFGJUU3JUE5JThEJUU1JTkyJThDJUUzJTgxJUFFJUU5JTgwJTg2JUUzJTgxJUEwJUUzJTgxJUE4JUU4JUE2JThCJUUzJTgxJTg4JUUzJTgyJThCJUUzJTgyJTg4JUUzJTgxJTg2JUUyJTgwJUE2JnR4dC1hbGlnbj1sZWZ0JTJDdG9wJnR4dC1jb2xvcj0lMjNGRkZGRkYmdHh0LWZvbnQ9SGlyYWdpbm8lMjBTYW5zJTIwVzYmdHh0LXNpemU9NTYmdHh0LXBhZD0wJnM9N2YyY2ZjMzVmZWViNDljYjY3ZTgxMzc4YjcyNjRmYjM&mark-x=120&mark-y=112&blend64=aHR0cHM6Ly9xaWl0YS11c2VyLWNvbnRlbnRzLmltZ2l4Lm5ldC9-dGV4dD9peGxpYj1yYi00LjEuMSZ3PTgzOCZoPTU4JnR4dD0lNDBtb25pcHkmdHh0LWNvbG9yPSUyM0ZGRkZGRiZ0eHQtZm9udD1IaXJhZ2lubyUyMFNhbnMlMjBXNiZ0eHQtc2l6ZT0zNiZ0eHQtcGFkPTAmcz02YzcyZGFiNGIyNDY0ZTQzYTgzMDg3MTYwZTM1N2NiMQ&blend-x=242&blend-y=480&blend-w=838&blend-h=46&blend-fit=crop&blend-crop=left%2Cbottom&blend-mode=normal&s=d2b93745598e7003271bd78f4b94ce72",
+    "siteName": "Qiita",
+    "provider": "Qiita"
+  },
+  "https://www.amazon.co.jp/dp/013717893X": {
+    "title": "Amazon | Principles of Voice Production | Titze, Ingo R. | Otolaryngology",
+    "description": "Amazon配送商品ならPrinciples of Voice Productionが通常配送無料。更にAmazonならポイント還元本が多数。Titze, Ingo R.作品ほか、お急ぎ便対象商品は当日お届けも可能。",
+    "provider": "amazon.co.jp"
+  },
+  "https://www.amazon.co.jp/dp/B09J54LLDF": {
+    "title": "Amazon.co.jp: Slinky JPL03171 : おもちゃ",
+    "description": "Amazon.co.jp: Slinky JPL03171 : おもちゃ",
+    "provider": "amazon.co.jp"
+  },
+  "https://zenn.dev/yoshiko/articles/my-vibe-coding": {
+    "title": "個人的 Vibe Coding のやりかた",
+    "image": "https://res.cloudinary.com/zenn/image/upload/s--YaYXQN8_--/c_fit%2Cg_north_west%2Cl_text:notosansjp-medium.otf_55:%25E5%2580%258B%25E4%25BA%25BA%25E7%259A%2584%2520Vibe%2520Coding%2520%25E3%2581%25AE%25E3%2582%2584%25E3%2582%258A%25E3%2581%258B%25E3%2581%259F%2Cw_1010%2Cx_90%2Cy_100/g_south_west%2Cl_text:notosansjp-medium.otf_37:%25E3%2582%2588%25E3%2581%2597%25E3%2581%2593%2Cx_203%2Cy_121/g_south_west%2Ch_90%2Cl_fetch:aHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2kwU3JDUjBpVERyUHpqWnF4YjJLZ0tueHgtamE0N253SEE0NGE4RDhrPXMyNTAtYw==%2Cr_max%2Cw_90%2Cx_87%2Cy_95/v1627283836/default/og-base-w1200-v2.png?_a=BACMTiAE",
+    "siteName": "Zenn",
+    "provider": "Zenn"
+  }
+}
