@@ -31,22 +31,22 @@ describe("SiteHeader", () => {
 		expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
 	});
 
-	it("localizes English navigation and links translated and untranslated articles correctly", () => {
-		route.pathname = "/en/blog/2026/20260503-learning-typescript";
+	it("localizes English navigation and links translated articles in both directions", () => {
+		route.pathname = "/en/blog/2026/20260721-vibe-code-and-design";
 		render(<SiteHeader locale="en" />);
 		expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/en");
 		fireEvent.click(screen.getByRole("button", { name: "Change display language" }));
 		expect(screen.getByRole("menuitemradio", { name: /日本語/ })).toHaveAttribute(
 			"href",
-			"/language/ja?redirect=%2Fblog%2F2026%2F20260503-learning-typescript",
+			"/language/ja?redirect=%2Fblog%2F2026%2F20260721-vibe-code-and-design",
 		);
 		cleanup();
-		route.pathname = "/blog/2026/20260702-math-as-prose";
+		route.pathname = "/blog/2026/20260616-mix-voice-1";
 		render(<SiteHeader locale="ja" />);
 		fireEvent.click(screen.getByRole("button", { name: "表示言語を変更" }));
 		expect(screen.getByRole("menuitemradio", { name: /English/ })).toHaveAttribute(
 			"href",
-			"/language/en?redirect=%2Fblog%2F2026%2F20260702-math-as-prose",
+			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260616-mix-voice-1",
 		);
 	});
 
@@ -61,13 +61,13 @@ describe("SiteHeader", () => {
 	});
 
 	it("offers an English counterpart in English when the translation exists", () => {
-		route.pathname = "/blog/2026/20260503-learning-typescript";
+		route.pathname = "/blog/2026/20260721-vibe-code-and-design";
 		document.cookie = "site_locale=en; Path=/";
 		render(<LanguageSuggestion locale="ja" />);
 
 		expect(screen.getByRole("link", { name: "Read this page in English" })).toHaveAttribute(
 			"href",
-			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260503-learning-typescript",
+			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260721-vibe-code-and-design",
 		);
 	});
 
