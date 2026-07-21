@@ -5,6 +5,10 @@
 			"ja": {
 				"title": "このサイトは Vibe code と Vibe design で作られています",
 				"url": "/blog/2026/20260721-vibe-code-and-design"
+			},
+			"en": {
+				"title": "This Site Was Built with Vibe Coding and Vibe Design",
+				"url": "/en/blog/2026/20260721-vibe-code-and-design"
 			}
 		}
 	},
