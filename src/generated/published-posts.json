@@ -13,6 +13,19 @@
 		}
 	},
 	{
+		"slug": "2026/20260716-mix-voice-3",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 3. フォーマントチューニング",
+				"url": "/blog/2026/20260716-mix-voice-3"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 3. Formant Tuning",
+				"url": "/en/blog/2026/20260716-mix-voice-3"
+			}
+		}
+	},
+	{
 		"slug": "2026/20260710-include-exclude-principle",
 		"translations": {
 			"ja": {
@@ -31,6 +44,10 @@
 			"ja": {
 				"title": "科学するミックスボイス 2. TA筋とCT筋",
 				"url": "/blog/2026/20260703-mix-voice-2"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 2. TA and CT Muscles",
+				"url": "/en/blog/2026/20260703-mix-voice-2"
 			}
 		}
 	},

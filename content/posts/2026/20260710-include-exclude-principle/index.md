@@ -409,25 +409,25 @@ $$
 
 ここで $P$ に束の構造を導入し、上記の等式に指示関数の議論を適用すると
 
-```math
+$$
 \begin{aligned}
 \mathbf 1_{[y,z]} &= \mathbf 1_{L_z} \prod_{x \in P_{[y,z]}} \mathbf (1 - \mathbf 1_{L_x}) \\
 &= \mathbf 1_{L_z} + \sum_{S: S \subset P_{[y,z]}, S \neq \emptyset} (-1)^{|S|} \prod_{x \in S} \mathbf 1_{L_x} \\
 &= \mathbf 1_{L_z} + \sum_{S: S \subset P_{[y,z]}, S \neq \emptyset} (-1)^{|S|} \mathbf 1_{L_{\wedge S}}
 \end{aligned}
 
-```
+$$
 
 となり、辺々を $f$ の重みをつけた数え上げ測度で積分することで
 
-```math
+$$
 \begin{aligned}
 
 \sum_{x \in [y,z]}f(x) &= F(z) + \sum_{S: S\subset P_{[y,z]}, S\neq \emptyset} (-1)^{|S|} F(\wedge S) \\
 &= F(z) + \sum_{x \in [\wedge P_{[y,z]}, z)} \left( \sum_{S: S\subset P_{[y,z]}, S\neq \emptyset, \wedge S = x} (-1)^{|S|} \right) F(x)
 
 \end{aligned}
-```
+$$
 
 が得られます。特に $y=z$ のとき
 
@@ -437,7 +437,7 @@ $$ f(y) = F(y) + \sum_{x \in [\wedge P_y, y)} \left( \sum_{S: S \subset P_y, S \
 
 一方でメビウス関数が畳み込みにおけるゼータ関数の逆元であることから
 
-```math
+$$
 \mu(x,y) = \begin{cases}
 
 1 \quad & \text{if } x=y \\
@@ -445,6 +445,6 @@ $$ f(y) = F(y) + \sum_{x \in [\wedge P_y, y)} \left( \sum_{S: S \subset P_y, S \
 0 \quad & \text{otherwise}
 
 \end{cases}
-```
+$$
 
 を用いると、固定した $y \in P$ に対して全ての $\mu(x,y)$ の値を求める計算量は一般に $O(|P|^2)$ なので、少なくとも $|P_y| = O(\log |P|)$ 程度まで小さくないと何の計算量改善にもなっていないことがわかります。ここまでで確認した包除原理、累積和の差分、および約数包除はこれを用いることで計算量が改善されていますが、そもそもそれ以外の束を全然知らないので、少なくとも競技プログラミングの文脈においては観賞用の式なのでしょう。

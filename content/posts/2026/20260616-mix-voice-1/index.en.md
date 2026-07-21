@@ -21,6 +21,10 @@ When I asked an AI, “How can I learn to sing in mixed voice?”, it replied th
 
 Part 1 aims to explain the principles and mechanisms of voice production from anatomical and physiological perspectives. Parts 2 and 3 will then interpret phonation mathematically using physical models.
 
+[A Scientific Approach to Mixed Voice 2. TA and CT Muscles](/en/blog/2026/20260703-mix-voice-2)
+
+[A Scientific Approach to Mixed Voice 3. Formant Tuning](/blog/2026/20260716-mix-voice-3)
+
 ### Disclaimer
 
 This series—and especially its approach using physical models—is based almost entirely on output from LLMs, mainly Gemini 3.1 Pro and Claude Opus 4.6. I checked the logical consistency of their arguments and organized the results. This field, known as vocology, was pioneered by the researcher Ingo Titze. His 1994 book *Principles of Voice Production* appears to be out of print, however, and its price has risen to an absurd level, putting it beyond my reach.

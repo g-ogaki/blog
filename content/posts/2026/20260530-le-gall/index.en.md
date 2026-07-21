@@ -329,7 +329,7 @@ and then grinds through the calculations using Grönwall's inequality and Picard
 
 In relation to the Markov property, under the Lipschitz conditions the solution to $${(\ast \ast)}$$ is a Markov process with a Feller semigroup and therefore satisfies the strong Markov property. Its generator can also be written explicitly. The book does not develop the subject much further, however, so perhaps this is intended as an invitation to pursue the area if it interests you.
 
-Chapter 9: Local Time
+### Chapter 9: Local Time
 
 This is a rather mysterious chapter—or perhaps I should say that considering a mysterious stochastic process called local time somehow produces all sorts of properties, which means I did not understand it very well. At first I thought local time had been introduced to generalize Itô's formula. Then, in the final section on the Kallianpur–Robbins law, local time suddenly appears in the study of the asymptotic behavior of two-dimensional Brownian motion and makes it possible to calculate a limiting distribution. Perhaps it has many applications. Since this is the only example the book presents, I cannot really tell.
 
