@@ -13,15 +13,15 @@
 		}
 	},
 	{
-		"slug": "2026/20260503-learning-typescript",
+		"slug": "2026/20260710-include-exclude-principle",
 		"translations": {
 			"ja": {
-				"title": "TypeScriptを学び始めました",
-				"url": "/blog/2026/20260503-learning-typescript"
+				"title": "包除原理の簡単な証明",
+				"url": "/blog/2026/20260710-include-exclude-principle"
 			},
 			"en": {
-				"title": "Getting Started with TypeScript",
-				"url": "/en/blog/2026/20260503-learning-typescript"
+				"title": "A Simple Proof of the Inclusion–Exclusion Principle",
+				"url": "/en/blog/2026/20260710-include-exclude-principle"
 			}
 		}
 	}
