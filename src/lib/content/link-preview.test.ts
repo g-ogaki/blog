@@ -101,8 +101,33 @@ describe("loadLinkPreview", () => {
 		const preview = await loadLinkPreview("https://source.example", { resolveHostname, request });
 
 		expect(request.mock.calls.map((call) => call[1])).toEqual(["93.184.216.34", "142.250.1.1"]);
-		expect(preview?.url).toBe("https://target.example/post");
+		expect(preview?.url).toBe("https://source.example");
 		expect(preview?.title).toBe("Redirected");
+	});
+
+	it("parses a bounded document head without downloading an oversized body", async () => {
+		let released = false;
+		const request = vi.fn(async (): Promise<PreviewResponse> => ({
+			statusCode: 200,
+			headers: { "content-length": "1000000", "content-type": "text/html" },
+			body: (async function* () {
+				try {
+					yield new TextEncoder().encode('<html><head><title>Large page</title></head>');
+					yield new TextEncoder().encode("x".repeat(1_000_000));
+				} finally {
+					released = true;
+				}
+			})(),
+		}));
+
+		const preview = await loadLinkPreview("https://example.com/large", {
+			maxBytes: 100,
+			request,
+			resolveHostname: async () => ["93.184.216.34"],
+		});
+
+		expect(preview?.title).toBe("Large page");
+		expect(released).toBe(true);
 	});
 
 	it("rejects redirects that resolve to private addresses", async () => {

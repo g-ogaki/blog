@@ -221,6 +221,15 @@ describe("PostMarkdown", () => {
 		expect(loadLinkPreview).toHaveBeenCalledTimes(1);
 	});
 
+	it("renders generated external preview metadata without an injected network loader", async () => {
+		await renderMarkdown("https://www.amazon.co.jp/dp/013717893X");
+
+		const card = screen.getByRole("link", { name: /Principles of Voice Production/ });
+		expect(card).toHaveClass("link-card");
+		expect(card).toHaveAttribute("href", "https://www.amazon.co.jp/dp/013717893X");
+		expect(screen.getByText("amazon.co.jp")).toBeInTheDocument();
+	});
+
 	it("falls back to a normal link when preview metadata is unavailable", async () => {
 		await renderMarkdown("https://example.com/unavailable", async () => null);
 

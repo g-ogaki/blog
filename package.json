@@ -19,6 +19,7 @@
     "publish:assets": "node --import tsx scripts/publish-post-assets.ts",
     "generate:metadata": "node --import tsx scripts/generate-static-metadata.ts",
     "generate:shiki-languages": "node --import tsx scripts/generate-shiki-languages.ts",
+    "refresh:link-previews": "node --import tsx scripts/refresh-link-previews.ts",
     "build:search": "node -e \"require('node:fs').rmSync('public/pagefind', { recursive: true, force: true })\" && pagefind --site .next/server/app --output-path public/pagefind",
     "verify:release": "node --import tsx scripts/verify-release.ts",
     "verify:deployment": "npm run verify:release && wrangler deploy --dry-run",

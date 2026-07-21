@@ -21,6 +21,8 @@ Write Markdown
 ↓
 Add images
 ↓
+Refresh external link previews
+↓
 Preview locally
 ↓
 Commit

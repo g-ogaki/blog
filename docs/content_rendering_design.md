@@ -97,23 +97,33 @@ avoid duplicate presentation. An untitled image remains an ordinary image.
 ## Link cards
 
 A standalone URL paragraph becomes a link card; inline links stay hyperlinks.
-Metadata is fetched only at build time from Open Graph or Twitter Card tags.
-Support YouTube, X, GitHub, and generic Open Graph pages; fall back to a normal
-link when metadata is absent or unavailable. Fetch only `https` URLs, enforce
-short time and response-size limits, and never fetch private, loopback, or
-link-local network addresses.
+Metadata is refreshed explicitly into the tracked
+`src/generated/link-previews.json` manifest from Open Graph or Twitter Card
+tags. Production rendering reads only that manifest, so a deployment neither
+contacts third-party sites nor loses an existing card during a transient
+outage. Support YouTube, X, GitHub, and generic Open Graph pages. Fetch only
+`https` URLs, enforce short time and response-size limits, and never fetch
+private, loopback, or link-local network addresses.
 
 Only a paragraph containing exactly one absolute `https` URL is a candidate.
-Candidates are discovered from the Markdown syntax tree, deduplicated per post,
-and cached by URL for the lifetime of the build process. Inline URLs, explicit
-Markdown links, `http` URLs, and URLs with credentials are never fetched.
+Candidates are discovered from the Markdown syntax tree and deduplicated across
+all published translations. Inline URLs, explicit Markdown links, `http` URLs,
+and URLs with credentials are never fetched. Run `npm run
+refresh:link-previews` after adding or changing a standalone URL. Content
+validation rejects a published URL without generated metadata.
 
-The loader applies these limits to each preview operation:
+The refresh loader applies these limits to each preview attempt:
 
-* 3-second total deadline, including DNS and response streaming
-* 512 KiB maximum response body, with `Content-Length` preflight when present
+* 10-second total deadline, including DNS and response streaming
+* 512 KiB maximum HTML head, with reading stopped after `</head>`
 * 3 redirects, with full URL and network validation repeated for every hop
 * successful `text/html` responses only
+
+Refresh uses at most four concurrent requests and makes two attempts per URL.
+If refresh fails for a URL already in the manifest, the previous metadata is
+retained. A new uncached failure aborts the refresh without partially rewriting
+the manifest. Entries that are no longer referenced are removed after a
+successful refresh.
 
 DNS resolution is conservative: every returned address must be globally
 routable. Private, loopback, link-local, carrier-grade NAT, multicast, reserved,
@@ -126,9 +136,10 @@ next hop.
 Metadata precedence is Open Graph, then Twitter Card, then the HTML `title` and
 description tag. Relative preview images resolve against the final URL and must
 use HTTPS. YouTube, X, and GitHub hosts receive stable provider labels; generic
-pages use `og:site_name` or the hostname. Missing metadata, network errors, limit
-violations, and security rejections all produce a normal HTTPS hyperlink so a
-third-party failure cannot fail the site build.
+pages use `og:site_name` or the hostname. The rendered card always links to the
+URL authored in Markdown rather than a temporary redirect destination. Missing
+metadata, network errors, limit violations, and security rejections prevent a
+new cache entry; they cannot remove a previously generated card.
 
 A paragraph containing only an internal Markdown link such as
 `[Related post](/blog/YYYY/YYYYMMDD-slug)` also becomes a card. Its title,

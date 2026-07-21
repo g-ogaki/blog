@@ -213,9 +213,17 @@ https://nextjs.org
 
 creates a link card.
 
-The paragraph must contain only one absolute `https` URL. Metadata is fetched
-during the static build; if the remote page is unavailable or has no usable
-metadata, the URL is rendered as a normal link.
+The paragraph must contain only one absolute `https` URL. After adding or
+changing one, refresh its generated metadata before committing:
+
+```sh
+npm run refresh:link-previews
+```
+
+The tracked manifest keeps production builds independent of third-party
+availability. Published content validation fails when a standalone URL has no
+generated preview, while a failed refresh retains previously generated
+metadata.
 
 Inline URL:
 

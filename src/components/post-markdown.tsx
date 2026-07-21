@@ -14,11 +14,11 @@ import { productionLanguages } from "@/generated/shiki-languages";
 import {
 	extractStandaloneLinkUrls,
 	extractStandaloneInternalLinkUrls,
-	loadCachedLinkPreview,
 	remarkMarkInternalLinkCards,
 	type LinkPreview,
 	type LinkPreviewLoader,
 } from "@/lib/content/link-preview";
+import { loadGeneratedLinkPreview } from "@/lib/content/link-preview-manifest";
 import type { Post } from "@/lib/content/posts";
 import { articleHtmlSanitizeSchema, rehypeArticleHtmlPolicy } from "@/lib/content/article-html-policy";
 import { rehypeTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
@@ -134,7 +134,7 @@ function rehypeNormalizeArticleBlocks() {
 	};
 }
 
-export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
+export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadGeneratedLinkPreview }: PostMarkdownProps) {
 	const dictionary = getDictionary(post.locale);
 	const highlighter = await highlighterPromise;
 	const tableOfContents: TableOfContentsEntry[] = [];
