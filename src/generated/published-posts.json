@@ -26,11 +26,24 @@
 		}
 	},
 	{
+		"slug": "2026/20260703-mix-voice-2",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 2. TA筋とCT筋",
+				"url": "/blog/2026/20260703-mix-voice-2"
+			}
+		}
+	},
+	{
 		"slug": "2026/20260616-mix-voice-1",
 		"translations": {
 			"ja": {
 				"title": "科学するミックスボイス 1. 解剖生理学",
 				"url": "/blog/2026/20260616-mix-voice-1"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 1. Anatomy and Physiology",
+				"url": "/en/blog/2026/20260616-mix-voice-1"
 			}
 		}
 	},
