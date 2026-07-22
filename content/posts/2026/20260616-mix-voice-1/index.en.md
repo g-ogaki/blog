@@ -23,7 +23,7 @@ Part 1 aims to explain the principles and mechanisms of voice production from an
 
 [A Scientific Approach to Mixed Voice 2. TA and CT Muscles](/en/blog/2026/20260703-mix-voice-2)
 
-[A Scientific Approach to Mixed Voice 3. Formant Tuning](/blog/2026/20260716-mix-voice-3)
+[A Scientific Approach to Mixed Voice 3. Formant Tuning](/en/blog/2026/20260716-mix-voice-3)
 
 ### Disclaimer
 

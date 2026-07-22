@@ -43,15 +43,15 @@ Since this was my first attempt at vibe coding, the actual process involved plen
 5. Implement the functionality through vibe coding
 6. Perform user acceptance testing
 
-You can find the various Markdown files mentioned here in the root and `docs` directories of the following repository. You are, of course, welcome to read them. One important caveat, however, is that I have barely read any of them apart from `AGENTS.md` and `DESIGN.md`.In addition, as instructed in `AGENTS.md`, these files are continuously updated by the AI. They may also be intended to serve as an interface between humans and AI, but in this project, at least, there was almost no direct intervention from me on the human side.
+You can find the various Markdown files mentioned here in the root and `docs` directories of the following repository. You are, of course, welcome to read them. One important caveat, however, is that I have barely read any of them apart from `AGENTS.md` and `DESIGN.md`. In addition, as instructed in `AGENTS.md`, these files are continuously updated by the AI. They may also be intended to serve as an interface between humans and AI, but in this project, at least, there was almost no direct intervention from me on the human side.
 
 https://github.com/g-ogaki/blog
 
 ### 1. `requirements.md` and Everything Else
 
-At this point, I was still using the Free plan of ChatGPT. Like the author of the [vibe coding article](https://zenn.dev/yoshiko/articles/my-vibe-coding) mentioned earlier, I used a lower-tier GPT model. The article separated the requirements-definition phase from the technology-selection phase. When I tried that approach, however, the technology stack and implementation policies I selected did not align with the requirements I had decided on immediately beforehand, resulting in rework.In hindsight, I think it would have been better to discuss the functional requirements, deployment environment, and everything else together, and then have the AI output all the Markdown files at the end.
+At this point, I was still using the Free plan of ChatGPT. Like the author of the [vibe coding article](https://zenn.dev/yoshiko/articles/my-vibe-coding) mentioned earlier, I used a lower-tier GPT model. The article separated the requirements-definition phase from the technology-selection phase. When I tried that approach, however, the technology stack and implementation policies I selected did not align with the requirements I had decided on immediately beforehand, resulting in rework. In hindsight, I think it would have been better to discuss the functional requirements, deployment environment, and everything else together, and then have the AI output all the Markdown files at the end.
 
-As the article also explains, the AI basically leads the process, while the human merely answers interview questions. This was an area where I already had some knowledge—I could have done it myself if I were willing to spend the time—so the discussion became fairly detailed. That is probably why the amount of functional rework remained minimal.Naturally, though, that level of discussion takes time. My entire first day of vibe coding ended with this phase alone.
+As the article also explains, the AI basically leads the process, while the human merely answers interview questions. This was an area where I already had some knowledge—I could have done it myself if I were willing to spend the time—so the discussion became fairly detailed. That is probably why the amount of functional rework remained minimal. Naturally, though, that level of discussion takes time. My entire first day of vibe coding ended with this phase alone.
 
 ### 2. `AGENTS.md` and `DESIGN.md`
 

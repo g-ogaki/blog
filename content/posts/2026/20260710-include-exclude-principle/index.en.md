@@ -181,7 +181,7 @@ print(ans)
 
 ### 2.1 The Möbius Inversion Formula
 
-Let $\mathbb N$ denote the set of positive integers, and let $\mathbb N_0 = \mathbb N \cup \lbrace 0 \rbrace$. Consider the partially ordered set obtained by defining the order on $\mathbb N$ as $m \le n \overset{\mathrm{def}}{\iff} m \mid n$. This poset is isomorphic to $\ell_c := \lbrace (e_1, e_2, \dots) \in \mathbb N_0^{\mathbb N} : \exists i_0, \forall i \ge i_0, \, e_i = 0 \rbrace$, ordered by $e \le f \overset{\mathrm{def}}{\iff} \forall i \in \mathbb N, \, e_i \le f_i$. Prime factorization gives the correspondence $n = \displaystyle \prod_{i \in \mathbb N} p_i^{e_i} \in \mathbb N \leftrightarrow (e_i)_{i \in \mathbb N} \in \ell_c$.
+Let $\mathbb N$ denote the set of positive integers, and let $\mathbb N_0 = \mathbb N \cup \lbrace 0 \rbrace$. Consider the partially ordered set obtained by defining the order on $\mathbb N$ as $m \le n \overset{\mathrm{def}}{\iff} m \mid n$. This poset is isomorphic to $\ell_c := \lbrace (e_1, e_2, \dots) \in \mathbb N_0^{\mathbb N} : \exists i_0 \le \forall \, e_i = 0 \rbrace$, ordered by $e \le f \overset{\mathrm{def}}{\iff} \forall i \in \mathbb N, \, e_i \le f_i$. Prime factorization gives the correspondence $n = \displaystyle \prod_{i \in \mathbb N} p_i^{e_i} \in \mathbb N \leftrightarrow (e_i)_{i \in \mathbb N} \in \ell_c$.
 
 Consider a function $f(n)$ on $\mathbb N$. For $n \in \mathbb N$ and a prime $p$, let $\operatorname*{ord}_p(n)$ be the multiplicity of the prime factor $p$ in $n$, and write $I_n = \lbrace i \in \mathbb N : p_i \mid n \rbrace$ (a finite set). Using the lower set $L_n := \lbrace d \in \mathbb N : d \mid n \rbrace$, we obtain the following identity of indicator functions:
 

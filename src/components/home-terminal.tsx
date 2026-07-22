@@ -9,7 +9,7 @@ const terminalCopy = {
 		label: "moniの自己紹介インタビュー",
 		inputLabel: "メッセージを入力",
 		javascriptRequired: "自由入力には JavaScript が必要です",
-		placeholder: "質問する(本当にAIへ質問できます)",
+		placeholder: "AIに質問する",
 		foreignSourceLabel: "（英語）",
 		sourcesLabel: "参照したページ",
 		errors: {
@@ -25,7 +25,7 @@ const terminalCopy = {
 		label: "Introduction interview with moni",
 		inputLabel: "Enter a message",
 		javascriptRequired: "JavaScript is required for free-form questions",
-		placeholder: "Ask a question (you can really ask questions to AI)",
+		placeholder: "Ask AI a question",
 		foreignSourceLabel: " (Japanese)",
 		sourcesLabel: "Sources",
 		errors: {

@@ -65,7 +65,13 @@ Let $${\pi_t: C(\mathbb R_+, \mathbb R) \ni w \mapsto w(t) \in \mathbb R}$$ be t
 
 A map $${F: \Omega \to C(\mathbb R_+, \mathbb R)}$$ is measurable if and only if $${\pi_t \circ F}$$ is measurable for every $${t \ge 0}$$. (Proof omitted.) This makes Brownian motion measurable, so Wiener measure can be defined as the pushforward measure $${W = P \circ B^{-1}}$$.
 
-Let $${\mathscr D = \left\{ \displaystyle \bigcap_{i=0}^n \pi_{t_i}^{-1}(A_i) : 0 = t_0 < t_1 < \cdots < t_n, \, A_i \in \mathscr B(\mathbb R) \right\}}$$ be the collection of all cylinder sets. It is a $${\pi}$$-system and satisfies $${\sigma(\mathscr D) = \mathscr C}$$. By Dynkin's $${\pi}$$-$${\lambda}$$ theorem, a measure is uniquely determined once it is defined on $${\mathscr D}$$. (The rest is omitted.) Consequently, defining Wiener measure using a different Brownian motion $${B'}$$ on a different probability space produces the same measure.
+Let 
+
+$$
+\mathscr D = \left\{ \displaystyle \bigcap_{i=0}^n \pi_{t_i}^{-1}(A_i) : 0 = t_0 < t_1 < \cdots < t_n, \, A_i \in \mathscr B(\mathbb R) \right\}
+$$
+
+be the collection of all cylinder sets. It is a $${\pi}$$-system and satisfies $${\sigma(\mathscr D) = \mathscr C}$$. By Dynkin's $${\pi}$$-$${\lambda}$$ theorem, a measure is uniquely determined once it is defined on $${\mathscr D}$$. (The rest is omitted.) Consequently, defining Wiener measure using a different Brownian motion $${B'}$$ on a different probability space produces the same measure.
 
 ### Prerequisites
 
@@ -109,7 +115,7 @@ $$
 \int_s^t f(r) \, dB_r := G(f \mathbf 1_{(s, t]}).
 $$
 
-Even if Brownian motion were defined first, the Wiener integral could still be obtained by noting that step functions are dense in $${L^2(\mathbb R_+)}$$, that $${\mathbf 1_{(s, t]} \to B_t - B_s}$$ is an $${L^2}$$-isometry, and that linearity and the closedness of Gaussian spaces allow an extension to $${L^2(\mathbb R_+)}$$. Thus, which one comes first is a minor question.
+Even if Brownian motion were defined first, the Wiener integral could still be obtained by noting that step functions are dense in $${L^2(\mathbb R_+)}$$, that $${\mathbf 1_{(s, t]} \mapsto B_t - B_s}$$ is an $${L^2}$$-isometry, and that linearity and the closedness of Gaussian spaces allow an extension to $${L^2(\mathbb R_+)}$$. Thus, which one comes first is a minor question.
 
 We have already established the existence of $${G}$$, but Brownian motion requires continuous sample paths. Another important concept from this point onward is a modification $${(\tilde X_t)_ {t \in T}}$$ of a stochastic process $${(X_t)_{t \in T}}$$, meaning that $${X_t = \tilde X_t}$$ almost surely for every $${t \in T}$$. Kolmogorov's continuity theorem (Kolmogorov's lemma) gives the following sufficient condition for a process to have a modification with continuous sample paths:
 
