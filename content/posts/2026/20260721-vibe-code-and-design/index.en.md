@@ -7,14 +7,14 @@ tags:
   - AI
   - Design System
 draft: false
-image: awtf2026.jpeg
+image: old-blog.png
 ---
 
 This is a record of my first attempt at AI-assisted coding with Codex CLI—a journey in which I made a catastrophic mess of things, sank into despair, and somehow managed to drag the project across the finish line.
 
 ## Background
 
-I used to be skeptical of AI-assisted coding. That changed after OpenAI completely dominated some of the world’s best competitive programmers at the AtCoder World Tour Final 2026, shown in the thumbnail. I revised my position and concluded that programmers at my level, at least, probably shouldn’t be writing code anymore:
+I used to be skeptical of AI-assisted coding. That changed after OpenAI completely dominated some of the world’s best competitive programmers at the AtCoder World Tour Final 2026. I revised my position and concluded that programmers at my level, at least, probably shouldn’t be writing code anymore:
 
 https://hashout.jp/ai/3053/
 

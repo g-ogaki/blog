@@ -7,14 +7,14 @@ tags:
   - AI
   - Design System
 draft: false
-image: awtf2026.jpeg
+image: old-blog.png
 ---
 
 Codex CLI を使った初めての AI コーディングにて、大失敗で絶望に打ちひしがれながらどうにか完成まで辿り着いた記録です。
 
 ## 事前知識
 
-AI コーディングには否定的だった私ですが、サムネイルにある AtCoder World Tour Final 2026 にて OpenAI が世界最高峰の競技プログラマーを圧倒したことを機に、少なくとも私程度のプログラマーはもはやコードを書くべきではないと認識を改めます:
+AI コーディングには否定的だった私ですが、AtCoder World Tour Final 2026 にて OpenAI が世界最高峰の競技プログラマーを圧倒したことを機に、少なくとも私程度のプログラマーはもはやコードを書くべきではないと認識を改めます:
 
 https://hashout.jp/ai/3053/
 
