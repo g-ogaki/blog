@@ -14,6 +14,12 @@ describe("article HTML policy", () => {
 	].join("\n"))).not.toThrow();
 	});
 
+	it("allows color-only font markup", () => {
+		expect(() => validateArticleHtml('<font color="#c00">Red</font> and <font color="blue">blue</font>.')).not.toThrow();
+		expect(() => validateArticleHtml('<font face="serif">Text</font>')).toThrow(/does not allow the "face" attribute/);
+		expect(() => validateArticleHtml('<font color="rgb(255, 0, 0)">Text</font>')).toThrow(/named or hexadecimal color/);
+	});
+
 	it.each([
 		["scripts", '<script src="https://example.com/x.js"></script>', /<script> is not allowed/],
 		["styles", "<style>body { display: none }</style>", /<style> is not allowed/],

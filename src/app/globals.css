@@ -135,19 +135,27 @@ summary:focus-visible {
 .article-body > * + :where(.code-block, figure, .link-card),
 .article-body > :where(.code-block, figure, .link-card) + * { @apply mt-12; }
 .article-body > h2 + *, .article-body > h3 + * { @apply mt-6; }
+.article-body > h4 + *, .article-body > h5 + *, .article-body > h6 + * { @apply mt-4; }
 .article-body h2 { @apply mt-16 scroll-mt-6 text-2xl/8 font-semibold tracking-tight; }
 .article-body h3 { @apply mt-12 scroll-mt-6 text-xl/7 font-semibold; }
+.article-body h4 { @apply mt-9 scroll-mt-6 text-lg/7 font-semibold; }
+.article-body h5 { @apply mt-9 scroll-mt-6 text-base/6 font-semibold; }
+.article-body h6 { @apply mt-9 scroll-mt-6 text-sm/6 font-semibold; }
+.article-body > :first-child { margin-top: 0; }
 .article-body p { line-break: strict; }
 .article-body a:not(.link-card) { @apply text-action underline hover:text-action-hover; text-decoration-thickness: 1px; text-underline-offset: .2em; }
 .article-body ul { @apply list-disc pl-6; }
 .article-body ol { @apply list-decimal pl-6; }
 .article-body li + li { @apply mt-3; }
-.article-body blockquote { @apply mx-10 border-l-3 border-site-border pl-6 text-text-muted; }
+.article-body blockquote { @apply mx-10 overflow-x-auto border-l-3 border-site-border pl-6 text-text-muted; }
+.article-body blockquote > * + * { @apply mt-4; }
+.article-quotation { @apply mx-10; }
+.article-quotation blockquote { @apply mx-0; }
 .article-body details { @apply rounded-md border border-site-border bg-surface-raised p-4; }
 .article-body details > summary { @apply cursor-pointer font-medium; }
 .article-body details[open] > summary { @apply mb-4; }
 .article-body details > * + * { @apply mt-4; }
-.article-body details h2, .article-body details h3 { @apply mt-6; }
+.article-body details h2, .article-body details h3, .article-body details h4, .article-body details h5, .article-body details h6 { @apply mt-6; }
 .article-body table { @apply block w-full overflow-x-auto border-collapse text-left text-sm; }
 .article-body th, .article-body td { @apply border border-site-border px-3 py-2; }
 .article-body th { @apply bg-surface-subtle font-semibold; }
@@ -165,7 +173,7 @@ summary:focus-visible {
 .math-block .katex { font-size: 1.35rem; }
 .article-figure { @apply mx-10; }
 .article-figure img, .article-body > p > img { @apply block aspect-4/3 h-auto w-full rounded-lg object-cover; }
-.article-figure figcaption { @apply mt-2 text-right text-xs text-text-muted; }
+.article-figure figcaption, .article-quotation figcaption { @apply mt-2 text-right text-xs text-text-muted; }
 /* Comments and moderation */
 .comment-list-status:has(+ .comment-list) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 .filter-disclosure > summary::-webkit-details-marker { display: none; }
