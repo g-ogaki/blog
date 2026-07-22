@@ -62,6 +62,21 @@ describe("blog routes", () => {
 		});
 	});
 
+	it("uses the stable draft fixture for article and Open Graph thumbnail metadata", async () => {
+		vi.stubEnv("NODE_ENV", "development");
+		const params = Promise.resolve({ year: "2026", post: "20260716-article-spacing" });
+		render(await LocalizedPostPage({ locale: "ja", params }));
+
+		expect(screen.getByRole("article")).toHaveAttribute(
+			"data-image",
+			"/post-assets/2026/20260716-article-spacing/cat.jpg",
+		);
+		const metadata = await generatePostMetadata("ja", params);
+		expect(metadata.openGraph).toMatchObject({
+			images: ["/post-assets/2026/20260716-article-spacing/cat.jpg"],
+		});
+	});
+
 	it("renders a published post as an article", async () => {
 		const element = await LocalizedPostPage({ locale: "ja", params: Promise.resolve({ year: "2026", post: "20260721-vibe-code-and-design" }) });
 		render(element);
@@ -81,7 +96,6 @@ describe("blog routes", () => {
 			"data-pagefind-meta",
 			"category[data-category], tags[data-tags], date[data-date], url[data-url], description[data-description], image[data-image]",
 		);
-		expect(screen.getByRole("article")).toHaveAttribute("data-image", "/post-assets/2026/20260721-vibe-code-and-design/awtf2026.jpeg");
 		expect(screen.getByRole("heading", { level: 1 })).toHaveAttribute("data-pagefind-meta", "title");
 		expect(document.querySelector('[data-pagefind-filter="tag"]')).toHaveTextContent("Codex");
 		expect(screen.queryByRole("complementary", { name: "Translation notice" })).not.toBeInTheDocument();
@@ -95,7 +109,6 @@ describe("blog routes", () => {
 		expect(metadata.openGraph).toMatchObject({
 			type: "article",
 			description: metadata.description,
-			images: ["/post-assets/2026/20260721-vibe-code-and-design/awtf2026.jpeg"],
 		});
 		expect(metadata.alternates?.languages).toMatchObject({
 			ja: "/blog/2026/20260721-vibe-code-and-design",

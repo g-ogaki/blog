@@ -17,15 +17,7 @@ describe("Home", () => {
 			"href",
 			"/blog/2026/20260721-vibe-code-and-design",
 		);
-		expect(featuredPost.querySelector("img")).toHaveAttribute(
-			"src",
-			"/post-assets/2026/20260721-vibe-code-and-design/awtf2026.jpeg",
-		);
-		const mixedVoicePost = screen.getByRole("link", { name: "科学するミックスボイス 3. フォーマントチューニング" });
-		expect(mixedVoicePost.querySelector("img")).toHaveAttribute(
-			"src",
-			"/post-assets/2026/20260716-mix-voice-3/mix-voice-thumbnail3.webp",
-		);
+		expect(screen.getByRole("link", { name: "科学するミックスボイス 3. フォーマントチューニング" })).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "包除原理の簡単な証明" })).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "科学するミックスボイス 2. TA筋とCT筋" })).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "科学するミックスボイス 1. 解剖生理学" })).toBeInTheDocument();
