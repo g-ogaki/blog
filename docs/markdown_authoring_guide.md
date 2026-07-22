@@ -83,13 +83,18 @@ To add a visible caption to an article image, provide a Markdown image title:
 
 When the titled image is the only content in its paragraph, the title is
 rendered as a visible caption. Images without a title do not render a caption.
-Images keep their original aspect ratio, including tall images.
+Standalone images fill a centered article figure up to the documented reading
+measure while keeping their original aspect ratio, including tall images. Small
+raster sources are enlarged and may therefore look softer; use the highest
+practical source resolution when fine detail matters. Captions wrap beneath the
+same figure width and do not change the image alignment.
 
-Standalone Markdown images can be opened at their full size. With JavaScript,
-the original file appears in a dialog that closes with its button, the backdrop,
-or Escape. Without JavaScript, the image remains a normal link to the original
-file. Inline images and images already wrapped in a Markdown link are left
-unchanged.
+Standalone Markdown images can be opened in a larger view. With JavaScript,
+the original file appears in a reading-width dialog bounded by the viewport and
+closes with its button, the backdrop, or Escape. The complete image remains
+visible without cropping. Without JavaScript, the image remains a normal link
+to the original file. Inline images and images already wrapped in a Markdown
+link are left unchanged.
 
 ---
 

@@ -81,4 +81,13 @@ describe("CommentSection", () => {
 		expect(widget.api.reset).toHaveBeenCalledWith("widget-id");
 		expect(screen.getByRole("button", { name: "送信" })).toBeDisabled();
 	});
+
+	it("announces comment loading failures in the shared list-state region", async () => {
+		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("unavailable")));
+		const widget = turnstile();
+		render(<CommentSection postSlug={postSlug} siteKey="site-key" turnstileApi={widget.api} />);
+
+		const message = await screen.findByText("コメントを読み込めませんでした。");
+		expect(message.closest("[aria-live='polite']")).toHaveClass("comment-list-status");
+	});
 });
