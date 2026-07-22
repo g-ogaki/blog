@@ -147,18 +147,34 @@ describe("PostMarkdown", () => {
 		);
 		expect(screen.getByRole("img", { name: "Diagram" })).not.toHaveAttribute("title");
 		expect(screen.getByText("Architecture", { selector: "figcaption" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "画像を拡大: Diagram" })).toHaveAttribute(
+			"href",
+			"/post-assets/2026/20260503-learning-typescript/images/diagram.png",
+		);
 		expect(screen.getByRole("img", { name: "Raw diagram" })).toHaveAttribute(
 			"src",
 			"/post-assets/2026/20260503-learning-typescript/images/raw.png",
 		);
+		expect(screen.getByRole("link", { name: "画像を拡大: Raw diagram" })).toHaveAttribute(
+			"href",
+			"/post-assets/2026/20260503-learning-typescript/images/raw.png",
+		);
 	});
 
-	it("keeps untitled images ordinary and unlabeled code fences unwrapped", async () => {
+	it("enlarges untitled standalone images and keeps unlabeled code fences unwrapped", async () => {
 		const { container } = await renderMarkdown("```\nplain text\n```\n\n![Diagram](images/diagram.png)");
 
 		expect(container.querySelector(".code-label")).not.toBeInTheDocument();
 		expect(container.querySelector("figure")).not.toBeInTheDocument();
-		expect(screen.getByRole("img", { name: "Diagram" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "画像を拡大: Diagram" })).toBeInTheDocument();
+	});
+
+	it("leaves inline and already-linked images unchanged", async () => {
+		await renderMarkdown("Text ![Inline](images/inline.png) remains inline.\n\n[![Linked](images/linked.png)](https://example.com)");
+
+		expect(screen.queryByRole("link", { name: "画像を拡大: Inline" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "画像を拡大: Linked" })).not.toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "Linked" })).toHaveAttribute("href", "https://example.com");
 	});
 
 	it("rejects unsupported raw HTML and unsafe Markdown URLs", async () => {

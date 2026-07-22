@@ -29,7 +29,9 @@
 
 Rendering is asynchronous on the server and produces static React output. Post
 assets are copied to the public output during development and production builds;
-no runtime content-file endpoint is used.
+no runtime content-file endpoint is used. Local development uses a dependency-free
+Node.js content watcher to republish assets, regenerate Markdown-derived metadata,
+and restart Next.js only for persistent file additions, deletions, and renames.
 
 Raw article HTML is parsed into HAST, checked against the explicit content-layer
 policy, and sanitized before trusted KaTeX and Shiki transformations run. The

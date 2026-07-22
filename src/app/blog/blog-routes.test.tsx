@@ -1,9 +1,12 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { BlogPage } from "@/components/blog-page";
 import { generatePostMetadata, generatePostStaticParams, LocalizedPostPage } from "@/components/localized-post-page";
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	vi.unstubAllEnvs();
+});
 
 describe("blog routes", () => {
 	it("lists only English translations on the English archive", () => {
@@ -48,6 +51,15 @@ describe("blog routes", () => {
 			{ year: "2026", post: "20260616-mix-voice-1" },
 			{ year: "2026", post: "20260530-le-gall" },
 		]);
+	});
+
+	it("adds draft article routes only in local development", () => {
+		vi.stubEnv("NODE_ENV", "development");
+
+		expect(generatePostStaticParams("ja")).toContainEqual({
+			post: "20260716-article-spacing",
+			year: "2026",
+		});
 	});
 
 	it("renders a published post as an article", async () => {

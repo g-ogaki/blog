@@ -6,7 +6,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev": "npm run publish:assets -- --include-drafts && npm run generate:metadata && next dev",
+    "dev": "node --import tsx scripts/dev.ts",
     "build": "npm run validate:content && npm run publish:assets && npm run generate:shiki-languages && npm run generate:metadata && next build && npm run build:search",
     "build:worker": "opennextjs-cloudflare build && npm run verify:release",
     "start": "next start",

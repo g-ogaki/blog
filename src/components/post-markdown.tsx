@@ -10,6 +10,7 @@ import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
 import { createBundledHighlighter } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import { ArticleImage } from "@/components/article-image";
 import { productionLanguages } from "@/generated/shiki-languages";
 import {
 	extractStandaloneLinkUrls,
@@ -128,6 +129,16 @@ function rehypeNormalizeArticleBlocks() {
 			for (let index = 0; index < parent.children.length; index += 1) {
 				const node = parent.children[index];
 				if (node.type !== "element") continue;
+				if (node.tagName === "img") {
+					const isOnlyParagraphContent = parent.type === "element" && parent.tagName === "p" && parent.children.every((child) => (
+						child === node || (child.type === "text" && child.value.trim() === "")
+					));
+					const isStandaloneRawImage = parent.type === "root" || (parent.type === "element" && parent.tagName === "figure");
+					if (isOnlyParagraphContent || isStandaloneRawImage) {
+						node.properties.dataEnlargeable = true;
+						if (isOnlyParagraphContent) parent.children = [node];
+					}
+				}
 				const classNames = Array.isArray(node.properties.className) ? node.properties.className : [];
 				if (classNames.includes("katex-display") && !classNames.includes("math-block")) {
 					node.properties.className = [...classNames, "math-block"];
@@ -205,11 +216,24 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadGen
 	const content = await MarkdownAsync({
 		children: post.content,
 		components: {
+			img({ node, ...properties }) {
+				const enlargeable = node?.properties?.dataEnlargeable ?? node?.properties?.["data-enlargeable"];
+				if (enlargeable !== undefined && typeof properties.src === "string") {
+					return <ArticleImage {...properties} closeLabel={dictionary.post.closeImage} openLabel={dictionary.post.enlargeImage} src={properties.src} />;
+				}
+				// eslint-disable-next-line @next/next/no-img-element
+				return <img {...properties} alt={properties.alt ?? ""} />;
+			},
 			p({ children, node, ...properties }) {
 				const onlyChild = node?.children.length === 1 ? node.children[0] : undefined;
-				if (onlyChild?.type === "element" && onlyChild.tagName === "img" && typeof onlyChild.properties.title === "string" && isValidElement(children)) {
+				const enlargeable = onlyChild?.type === "element" && onlyChild.tagName === "img"
+					? onlyChild.properties.dataEnlargeable ?? onlyChild.properties["data-enlargeable"]
+					: undefined;
+				if (onlyChild?.type === "element" && onlyChild.tagName === "img" && enlargeable !== undefined && isValidElement(children)) {
 					const image = cloneElement(children as ReactElement<{ title?: string }>, { title: undefined });
-					return <figure className="article-figure">{image}<figcaption>{onlyChild.properties.title}</figcaption></figure>;
+					return typeof onlyChild.properties.title === "string"
+						? <figure className="article-figure">{image}<figcaption>{onlyChild.properties.title}</figcaption></figure>
+						: <div className="article-figure">{image}</div>;
 				}
 				const internalUrl = node?.properties?.["data-internal-link-card"] ?? node?.properties?.dataInternalLinkCard;
 				if (typeof internalUrl === "string") {
