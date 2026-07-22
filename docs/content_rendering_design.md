@@ -109,7 +109,16 @@ draft assets even though drafts are still validated.
 
 A standalone Markdown image with a title renders as a semantic `figure`: the
 title becomes a visible `figcaption` and is removed from the image tooltip to
-avoid duplicate presentation. An untitled image remains an ordinary image.
+avoid duplicate presentation. Article images retain their intrinsic aspect ratio
+and are never cropped to a fixed frame.
+
+Standalone Markdown images, captioned images, top-level raw HTML images, and raw
+HTML images directly inside a `figure` link to their original asset. After
+hydration, activating that link opens an accessible native dialog with a close
+button, backdrop dismissal, and native Escape behavior. A magnifier appears on
+hover and keyboard focus. Without JavaScript, the same control remains an
+ordinary link to the original file. Inline images and images already authored
+inside links are not enhanced.
 
 ## Link cards
 

@@ -14,6 +14,27 @@ data.
 
 ## Writing a New Post
 
+Start the authoring server once:
+
+```sh
+npm run dev
+```
+
+The command publishes draft and published assets, generates published metadata,
+starts Next.js, and then watches `content/posts` recursively. Markdown changes,
+asset additions, replacements, renames, deletions, and new post directories are
+debounced and prepared automatically. Modifying an existing Markdown or asset
+file keeps Next.js running and uses native development reload. Persistent file
+additions, deletions, and renames restart Next.js once after successful
+preparation. If an in-progress edit is invalid, the development page may show an
+error until saving a valid change retries preparation.
+Draft article URLs are available in this local development process while
+remaining excluded from production builds and deployed routes.
+
+External link previews are not refreshed by the watcher. After adding or
+changing a standalone external URL, continue to run
+`npm run refresh:link-previews` explicitly.
+
 ```text
 Create directory
 ↓
@@ -21,7 +42,7 @@ Write Markdown
 ↓
 Add images
 ↓
-Refresh external link previews
+Refresh external link previews when needed
 ↓
 Preview locally
 ↓

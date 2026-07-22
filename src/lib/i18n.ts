@@ -84,7 +84,14 @@ export const dictionaries = {
 			formatYear: (year: string) => `${year}年`,
 			formatMonth: (year: string, month: number) => `${year}年${month}月`,
 		},
-		post: { breadcrumb: "パンくず", blog: "ブログ", tags: "タグ", toc: "目次" },
+		post: {
+			breadcrumb: "パンくず",
+			blog: "ブログ",
+			closeImage: "拡大画像を閉じる",
+			enlargeImage: "画像を拡大",
+			tags: "タグ",
+			toc: "目次",
+		},
 		comments: {
 			heading: "コメント",
 			count: (count: number) => `${count}件のコメント`,
@@ -171,7 +178,14 @@ export const dictionaries = {
 			formatYear: (year: string) => year,
 			formatMonth: (year: string, month: number) => new Intl.DateTimeFormat("en", { month: "long", timeZone: "UTC", year: "numeric" }).format(new Date(Date.UTC(Number(year), month - 1, 1))),
 		},
-		post: { breadcrumb: "Breadcrumb", blog: "Blog", tags: "Tags", toc: "Table of contents" },
+		post: {
+			breadcrumb: "Breadcrumb",
+			blog: "Blog",
+			closeImage: "Close enlarged image",
+			enlargeImage: "Enlarge image",
+			tags: "Tags",
+			toc: "Table of contents",
+		},
 		comments: {
 			heading: "Comments",
 			count: (count: number) => `${count} ${count === 1 ? "comment" : "comments"}`,

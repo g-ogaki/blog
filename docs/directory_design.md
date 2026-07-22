@@ -25,6 +25,7 @@
 │   │   │   └── [year]/[post]/page.tsx
 │   │   └── comments/moderate/page.tsx
 │   ├── components/
+│   │   ├── article-image.tsx
 │   │   ├── comment-section.tsx
 │   │   ├── home-terminal.tsx
 │   │   ├── moderation-confirmation.tsx
@@ -70,7 +71,10 @@
 │   └── post-assets/ (generated, ignored)
 │
 ├── scripts/
+│   ├── dev.ts
 │   ├── generate-static-metadata.ts
+│   ├── lib/
+│   │   └── authoring-changes.ts
 │   ├── publish-post-assets.ts
 │   └── validate-content.ts
 │
