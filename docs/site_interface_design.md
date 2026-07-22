@@ -154,11 +154,11 @@ translated from the original Japanese using AI and may contain inaccuracies.”
 notice is labeled for assistive technology and excluded from Pagefind indexing.
 Japanese entries, archives, feeds, and metadata do not display the disclosure.
 
-When an entry contains level-two or level-three Markdown headings, an
+When an entry contains level-two through level-four Markdown headings, an
 always-expanded table of contents appears between its metadata and prose inside
 the `max-w-3xl` reading column. It uses the visible heading 「目次」, subtle
 horizontal borders, neutral unnumbered links, and default Tailwind spacing.
-Level-three links are indented beneath their level-two parent. The same inline
+Deeper links are indented beneath their nearest shallower parent. The same inline
 treatment is retained at narrow and wide viewports; it does not become a card,
 collapsible control, sticky rail, or scroll-tracking client interface.
 

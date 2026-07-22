@@ -38,7 +38,7 @@ on browser defaults.
 
 ## Headings and table of contents
 
-During Markdown transformation, `h2` and `h3` headings receive deterministic
+During Markdown transformation, `h2`, `h3`, and `h4` headings receive deterministic
 GitHub-compatible fragment IDs and are collected into a static table of contents.
 Japanese characters are preserved, Latin text is lowercased, whitespace becomes
 hyphens, and punctuation is removed. Duplicate normalized headings receive
@@ -49,11 +49,17 @@ reliable navigation target.
 
 The table of contents is rendered only when an eligible heading exists. It is an
 always-expanded navigation region labeled 「目次」 between article metadata and
-prose. `h3` entries nest beneath the preceding `h2`; an `h3` without a preceding
-`h2` remains top-level. Heading IDs and navigation are present in static HTML and
+prose. Entries nest beneath the nearest preceding heading of a shallower level;
+a heading without a preceding shallower heading remains top-level. Heading IDs and navigation are present in static HTML and
 do not require client-side parsing, scrolling state, or JavaScript. Pagefind
 ignores the navigation copy so heading text is indexed once from the article
 content rather than duplicated by the table of contents.
+
+Article typography also defines progressively smaller treatments for `h4`,
+`h5`, and `h6`, but only levels through `h4` are added to the table of contents.
+The first article-body element does not receive its normal top margin,
+so an article beginning with a heading keeps the same opening rhythm as one
+beginning with prose.
 
 ## Mathematics and code
 
@@ -68,13 +74,24 @@ imports is generated, so the Worker includes only languages used by published
 posts. Draft-only languages are available in development but excluded from the
 production registry.
 
-Fenced code uses its info string as the language. Inline code opts into syntax
-highlighting with a trailing `{:language}` marker. Unmarked inline code remains
-a semantic `code` element. A language-marked fenced block displays a compact
-language label above the highlighted code; aliases such as `ts` resolve to their
-canonical grammar and both `ts` and `typescript` display as `typescript`. Plain
-fenced blocks have no label. Any Shiki language identifier may be used; an
+Fenced code uses its info string as the language. A fence may append a
+whitespace-free filename after the first colon, such as `python:main.py`. The
+language before the colon selects and validates the Shiki grammar, while the
+code-block header displays only the filename. A language-only fence displays
+its canonical language label. Inline code opts into syntax highlighting with a
+trailing `{:language}` marker. Unmarked inline code remains a semantic `code`
+element. Aliases such as `ts` resolve to their canonical grammar and both `ts`
+and `typescript` display as `typescript`. Plain fenced blocks have no label. Any
 unknown identifier fails content validation with its post and source line.
+
+Raw article HTML may use the legacy `font` element only with a named or
+hexadecimal `color` attribute. Font face, size, style, and event attributes
+remain outside the authoring policy. A Markdown blockquote may use a final
+paragraph beginning with an em dash as its source attribution; the renderer
+moves it outside the quotation border and renders it as a right-aligned caption,
+matching article image captions, without displaying the marker em dash.
+Blockquotes scroll horizontally when an
+unbreakable mathematical expression exceeds the reading column.
 
 ## Images and Open Graph
 

@@ -7,6 +7,8 @@ const inlineLanguagePattern = /(.+)\{:([\w-]+)\}$/;
 const plainTextLanguages = new Set(["plain", "plaintext", "text", "txt"]);
 
 export interface CodeLanguageUsage {
+	filename?: string;
+	filenameError?: boolean;
 	language: string;
 	line?: number;
 }
@@ -21,13 +23,47 @@ export interface ResolvedCodeLanguages {
 	languages: readonly string[];
 }
 
+export function parseFencedCodeInfo(info: string) {
+	const separator = info.indexOf(":");
+	if (separator < 0) return { language: info };
+	const language = info.slice(0, separator);
+	const filename = info.slice(separator + 1);
+	return {
+		filename,
+		filenameError: !language || !filename || /\s/u.test(filename),
+		language,
+	};
+}
+
+export function remarkCodeFilenames() {
+	return (tree: Root) => {
+		visit(tree, "code", (node: Code) => {
+			if (!node.lang) return;
+			const parsed = parseFencedCodeInfo(node.lang);
+			if (parsed.filenameError) {
+				const location = node.position?.start.line ? ` at line ${node.position.start.line}` : "";
+				throw new Error(`invalid fenced code filename${location}`);
+			}
+			node.lang = parsed.language;
+			if (!parsed.filename) return;
+			node.data = {
+				...node.data,
+				hProperties: {
+					...node.data?.hProperties,
+					"data-code-filename": parsed.filename,
+				},
+			};
+		});
+	};
+}
+
 export function extractCodeLanguageUsages(content: string): CodeLanguageUsage[] {
 	const tree = unified().use(remarkParse).parse(content) as Root;
 	const usages: CodeLanguageUsage[] = [];
 
 	visit(tree, "code", (node: Code) => {
 		if (!node.lang) return;
-		usages.push({ language: node.lang, line: node.position?.start.line });
+		usages.push({ ...parseFencedCodeInfo(node.lang), line: node.position?.start.line });
 	});
 	visit(tree, "inlineCode", (node: InlineCode) => {
 		const match = node.value.match(inlineLanguagePattern);
@@ -52,6 +88,10 @@ export function resolveCodeLanguages(
 	const languages = new Set<string>();
 	const aliases = new Map<string, string>();
 	for (const usage of usages) {
+		if (usage.filenameError) {
+			const location = usage.line ? `:${usage.line}` : "";
+			throw new Error(`${sourcePath}${location}: invalid fenced code filename; use language:filename without whitespace`);
+		}
 		if (plainTextLanguages.has(usage.language)) continue;
 		const canonical = canonicalByName.get(usage.language);
 		if (!canonical) {

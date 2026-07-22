@@ -13,7 +13,7 @@ const languages = [
 describe("Markdown code languages", () => {
 	it("extracts fenced and inline language markers with their source lines", () => {
 		const usages = extractCodeLanguageUsages([
-			"```py",
+			"```py:main.py",
 			"print('hello')",
 			"```",
 			"",
@@ -25,7 +25,7 @@ describe("Markdown code languages", () => {
 		].join("\n"));
 
 		expect(usages).toEqual([
-			{ language: "py", line: 1 },
+			{ filename: "main.py", filenameError: false, language: "py", line: 1 },
 			{ language: "ts", line: 5 },
 		]);
 	});
@@ -50,6 +50,14 @@ describe("Markdown code languages", () => {
 			languages,
 			"content/posts/example/index.md",
 		)).toThrow('content/posts/example/index.md:12: unknown Shiki language "typscript"');
+	});
+
+	it("rejects an empty fenced-code filename with its source location", () => {
+		expect(() => resolveCodeLanguages(
+			extractCodeLanguageUsages("```python:\nprint(1)\n```"),
+			languages,
+			"content/posts/example/index.md",
+		)).toThrow(/content\/posts\/example\/index\.md:1: invalid fenced code filename/);
 	});
 
 	it("generates literal lazy imports for each canonical grammar in published content", () => {

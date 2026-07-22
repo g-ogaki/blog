@@ -4,12 +4,13 @@ import rehypeRaw from "rehype-raw";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { remarkCodeFilenames } from "./code-languages";
 
 const globalProperties = ["ariaDescribedBy", "ariaHidden", "ariaLabel", "ariaLabelledBy", "dir", "lang", "title"] as const;
 
 export const articleHtmlElements = [
 	"a", "abbr", "audio", "b", "blockquote", "br", "cite", "code", "dd", "del", "details", "div", "dl", "dt",
-	"em", "figcaption", "figure", "h2", "h3", "h4", "h5", "h6", "hr", "i", "iframe", "img", "ins", "kbd",
+	"em", "figcaption", "figure", "font", "h2", "h3", "h4", "h5", "h6", "hr", "i", "iframe", "img", "ins", "kbd",
 	"li", "mark", "ol", "p", "pre", "q", "s", "samp", "small", "source", "span", "strong", "sub", "summary",
 	"sup", "table", "tbody", "td", "tfoot", "th", "thead", "time", "tr", "track", "u", "ul", "var", "video",
 ] as const;
@@ -24,7 +25,7 @@ const propertiesByElement: Record<ArticleHtmlElement, readonly string[]> = {
 	blockquote: ["cite"],
 	br: [],
 	cite: [],
-	code: ["className"],
+	code: ["className", "dataCodeFilename"],
 	dd: [],
 	del: ["cite", "dateTime"],
 	details: ["open"],
@@ -34,6 +35,7 @@ const propertiesByElement: Record<ArticleHtmlElement, readonly string[]> = {
 	em: [],
 	figcaption: [],
 	figure: [],
+	font: ["color"],
 	h2: [],
 	h3: [],
 	h4: [],
@@ -121,6 +123,22 @@ function validateProperties(node: Element) {
 		if (property === "className" && !isAllowedCodeClass(value)) {
 			fail(node, `<${node.tagName}> contains an unsupported class`);
 		}
+	}
+}
+
+function validateCodeFilename(node: Element) {
+	if (node.tagName !== "code" || node.properties.dataCodeFilename === undefined) return;
+	const filename = node.properties.dataCodeFilename;
+	if (typeof filename !== "string" || !filename || /\s/u.test(filename)) {
+		fail(node, "<code> contains an invalid generated filename");
+	}
+}
+
+function validateFontColor(node: Element) {
+	if (node.tagName !== "font" || node.properties.color === undefined) return;
+	const color = node.properties.color;
+	if (typeof color !== "string" || !/^(?:#[\da-f]{3,4}|#[\da-f]{6}|#[\da-f]{8}|[a-z]+)$/iu.test(color)) {
+		fail(node, "<font> color must be a named or hexadecimal color");
 	}
 }
 
@@ -223,6 +241,8 @@ export function applyArticleHtmlPolicy(tree: Root, options: ArticleHtmlPolicyOpt
 			if (child.type !== "element") continue;
 			if (!allowedElements.has(child.tagName)) fail(child, `<${child.tagName}> is not allowed in article HTML`);
 			validateProperties(child);
+			validateCodeFilename(child);
+			validateFontColor(child);
 			validateDetails(child, ancestors);
 			if (child.tagName === "iframe") normalizeYoutubeIframe(child);
 			validateMedia(child, ancestors);
@@ -249,6 +269,7 @@ export function rehypeArticleHtmlPolicy(options?: ArticleHtmlPolicyOptions) {
 export function validateArticleHtml(markdown: string, options?: ArticleHtmlPolicyOptions) {
 	const processor = unified()
 		.use(remarkParse)
+		.use(remarkCodeFilenames)
 		.use(remarkRehype, { allowDangerousHtml: true })
 		.use(rehypeRaw)
 		.use(rehypeArticleHtmlPolicy, options);
@@ -260,7 +281,10 @@ const schemaAttributes: Schema["attributes"] = Object.fromEntries(
 	Object.entries(propertiesByElement).map(([element, properties]) => [element, [...properties]]),
 );
 schemaAttributes["*"] = [...globalProperties];
-schemaAttributes.code = [["className", /^language-[a-z\d][a-z\d+_-]*$/iu, "math-inline", "math-display"]];
+schemaAttributes.code = [
+	["className", /^language-[a-z\d][a-z\d+_-]*$/iu, "math-inline", "math-display"],
+	"dataCodeFilename",
+];
 
 export const articleHtmlSanitizeSchema: Schema = {
 	allowComments: false,
