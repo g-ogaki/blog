@@ -89,7 +89,10 @@ export function SearchArchive({ locale = "ja", posts, taxonomy }: SearchArchiveP
 			setStatus("searching");
 			try {
 				const response = await pagefind.search(deferredQuery.trim() || null, { filters: toPagefindFilters(filters) });
-				const nextResults = await Promise.all(response.results.map((result) => result.data()));
+				const pagefindResults = await Promise.all(response.results.map((result) => result.data()));
+				const nextResults = deferredQuery.trim()
+					? pagefindResults
+					: pagefindResults.toSorted((left, right) => (right.meta.date ?? "").localeCompare(left.meta.date ?? ""));
 				if (active) startTransition(() => { setResults(nextResults); setStatus("ready"); });
 			} catch {
 				if (active) setStatus("unavailable");

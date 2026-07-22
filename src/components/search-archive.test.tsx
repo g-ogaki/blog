@@ -127,6 +127,34 @@ describe("SearchArchive", () => {
 		);
 	});
 
+	it("orders filter-only results newest first while preserving keyword relevance", async () => {
+		const resultPosts = [
+			{ ...posts[0], url: "/blog/2025/older", metadata: { ...posts[0].metadata, date: "2025-01-01", title: "Older result" } },
+			{ ...posts[0], url: "/blog/2026/newer", metadata: { ...posts[0].metadata, date: "2026-01-01", title: "Newer result" } },
+		];
+		pagefind.load.mockResolvedValue({
+			init: vi.fn().mockResolvedValue(undefined),
+			filters: vi.fn().mockResolvedValue({}),
+			search: vi.fn().mockResolvedValue({ results: pagefindResults(resultPosts) }),
+		});
+		const { container } = render(<SearchArchive posts={posts} taxonomy={taxonomy} />);
+		await screen.findByText("全1件");
+
+		fireEvent.click(screen.getByRole("link", { name: "Programming" }));
+		await screen.findByRole("link", { name: "Newer result" });
+		expect([...container.querySelectorAll<HTMLAnchorElement>(".post-row__link")].map((link) => link.textContent)).toEqual([
+			expect.stringContaining("Newer result"),
+			expect.stringContaining("Older result"),
+		]);
+
+		fireEvent.change(screen.getByRole("searchbox", { name: "記事を検索" }), { target: { value: "result" } });
+		await waitFor(() => expect(container.querySelector(".post-row__link")?.textContent).toContain("Older result"));
+		expect([...container.querySelectorAll<HTMLAnchorElement>(".post-row__link")].map((link) => link.textContent)).toEqual([
+			expect.stringContaining("Older result"),
+			expect.stringContaining("Newer result"),
+		]);
+	});
+
 	it("keeps year and month filters mutually exclusive", async () => {
 		const search = mockPagefind();
 		render(<SearchArchive posts={posts} taxonomy={taxonomy} />);

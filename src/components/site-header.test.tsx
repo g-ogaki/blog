@@ -18,9 +18,16 @@ describe("SiteHeader", () => {
 	it("provides route-aware identity, navigation, and static search", () => {
 		render(<SiteHeader />);
 
+		const home = screen.getByRole("link", { name: "ホーム" });
+		const search = screen.getByRole("searchbox", { name: "ブログを検索" });
+		const disclosure = screen.getByRole("button", { name: "その他の操作" });
 		expect(screen.getByRole("link", { name: "moni's page" })).toHaveAttribute("href", "/");
-		expect(screen.getByRole("link", { name: "ホーム" })).toHaveAttribute("aria-current", "page");
-		expect(screen.getByRole("searchbox", { name: "ブログを検索" })).toHaveAttribute("name", "q");
+		expect(home).toHaveAttribute("aria-current", "page");
+		expect(home.closest("details")).toBeNull();
+		expect(screen.getByRole("link", { name: "ブログ" }).closest("details")).toBeNull();
+		expect(disclosure).toHaveAttribute("aria-controls", "header-secondary-controls");
+		expect(document.getElementById("header-secondary-controls")).toContainElement(search);
+		expect(search).toHaveAttribute("name", "q");
 	});
 
 	it("omits duplicate search on the archive and marks Blog current", () => {
@@ -102,5 +109,24 @@ describe("SiteHeader", () => {
 
 		expect(screen.queryByRole("menu", { name: "表示テーマ" })).not.toBeInTheDocument();
 		await waitFor(() => expect(trigger).toHaveFocus());
+	});
+
+	it("closes the secondary disclosure with Escape and restores trigger focus", async () => {
+		render(<SiteHeader />);
+		const trigger = screen.getByRole("button", { name: "その他の操作" });
+		const disclosure = trigger.closest("details");
+		expect(disclosure).not.toBeNull();
+		disclosure!.open = true;
+
+		fireEvent.keyDown(document, { key: "Escape" });
+
+		expect(disclosure).not.toHaveAttribute("open");
+		await waitFor(() => expect(trigger).toHaveFocus());
+
+		disclosure!.open = true;
+		fireEvent.pointerDown(screen.getByRole("searchbox", { name: "ブログを検索" }));
+		expect(disclosure).toHaveAttribute("open");
+		fireEvent.pointerDown(document.body);
+		expect(disclosure).not.toHaveAttribute("open");
 	});
 });

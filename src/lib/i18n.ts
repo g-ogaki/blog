@@ -33,7 +33,7 @@ export const dictionaries = {
 	ja: {
 		siteDescription: "moniが技術や日々の学びを記録する個人サイトです。",
 		skipLink: "本文へ移動",
-		navigation: { label: "メインナビゲーション", home: "ホーム", blog: "ブログ" },
+		navigation: { label: "メインナビゲーション", home: "ホーム", blog: "ブログ", more: "その他の操作" },
 		language: {
 			change: "表示言語を変更",
 			menu: "表示言語",
@@ -127,7 +127,7 @@ export const dictionaries = {
 			afterLink: " using AI and may contain inaccuracies.",
 		},
 		skipLink: "Skip to content",
-		navigation: { label: "Main navigation", home: "Home", blog: "Blog" },
+		navigation: { label: "Main navigation", home: "Home", blog: "Blog", more: "More options" },
 		language: {
 			change: "Change display language",
 			menu: "Display language",
