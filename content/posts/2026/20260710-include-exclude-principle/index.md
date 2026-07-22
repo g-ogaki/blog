@@ -431,7 +431,9 @@ $$
 
 が得られます。特に $y=z$ のとき
 
-$$ f(y) = F(y) + \sum_{x \in [\wedge P_y, y)} \left( \sum_{S: S \subset P_y, S \neq \emptyset, \wedge S = x} (-1)^{|S|} \right) F(x) $$
+$$
+f(y) = F(y) + \sum_{x \in [\wedge P_y, y)} \left( \sum_{S: S \subset P_y, S \neq \emptyset, \wedge S = x} (-1)^{|S|} \right) F(x)
+$$
 
 となり、メビウス関数に関する等式 $\mu(x,y) = \displaystyle \sum_{S: S\subset P_y, S\neq \emptyset, \wedge S = x} (-1)^{|S|} $ が得られます。固定した $y \in P$ に対して全ての $\mu(x,y)$ の値を求める計算量は、$\wedge$ の計算量が $O(1)$ のとき $O(2^{|P_y|})$ です。
 

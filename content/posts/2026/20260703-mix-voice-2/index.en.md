@@ -205,4 +205,4 @@ In practice, voice quality also has aspects that $${Q}$$ alone cannot measure. F
 
 If you are not accustomed to mathematics, thank you especially for making it this far. Only Part 3, which discusses formants, remains. Unfortunately, it requires still more advanced mathematics. Once you have prepared yourself, take a look when you have some energy to spare.
 
-[A Scientific Approach to Mixed Voice 3. Formant Tuning](/blog/2026/20260716-mix-voice-3)
+[A Scientific Approach to Mixed Voice 3. Formant Tuning](/en/blog/2026/20260716-mix-voice-3)
