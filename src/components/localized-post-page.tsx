@@ -17,11 +17,11 @@ interface PostPageProps {
 	params: Promise<{ year: string; post: string }>;
 }
 
-function publishedPosts(locale: Locale | "all") {
-	return loadPosts({ includeDrafts: false, locale });
+function routablePosts(locale: Locale | "all") {
+	return loadPosts({ includeDrafts: process.env.NODE_ENV === "development", locale });
 }
 
-function findPost({ year, post }: PostPageParams, locale: Locale, posts = publishedPosts(locale)) {
+function findPost({ year, post }: PostPageParams, locale: Locale, posts = routablePosts(locale)) {
 	return posts.find((candidate) => candidate.locale === locale && candidate.year === year && candidate.directoryName === post);
 }
 
@@ -39,11 +39,11 @@ function TranslationNotice({ postSlug }: { postSlug: string }) {
 }
 
 export function generatePostStaticParams(locale: Locale) {
-	return publishedPosts(locale).map((post) => ({ year: post.year, post: post.directoryName }));
+	return routablePosts(locale).map((post) => ({ year: post.year, post: post.directoryName }));
 }
 
 export async function generatePostMetadata(locale: Locale, params: Promise<PostPageParams>): Promise<Metadata> {
-	const allPosts = publishedPosts("all");
+	const allPosts = routablePosts("all");
 	const post = findPost(await params, locale, allPosts);
 	if (!post) notFound();
 	const translations = allPosts.filter((candidate) => candidate.slug === post.slug);
@@ -71,7 +71,7 @@ export async function generatePostMetadata(locale: Locale, params: Promise<PostP
 }
 
 export async function LocalizedPostPage({ locale, params }: PostPageProps) {
-	const posts = publishedPosts("all");
+	const posts = routablePosts("all");
 	const post = findPost(await params, locale, posts);
 	if (!post) notFound();
 	const copy = getDictionary(locale).post;

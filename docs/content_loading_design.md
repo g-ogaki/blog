@@ -61,8 +61,9 @@ internal link cards. Consumers do not parse Markdown independently.
 ## Drafts
 
 Draft metadata and local files are always validated. Drafts may be returned for
-local development but are excluded from production loading, public routes,
-feeds, search, and sitemap generation.
+local development and their article URLs are routable under the supervised
+Next.js development server. They are excluded from production loading, public
+routes, feeds, search, and sitemap generation.
 
 ## Asset publication
 
@@ -71,3 +72,14 @@ Validated non-Markdown files colocated with the translation sources are publishe
 articles; local development includes drafts. Markdown sources are never copied, and stale
 generated assets are removed before each publication. Rendering rewrites
 relative Markdown URLs to the matching `/post-assets/<slug>/...` URL.
+
+`npm run dev` supervises Next.js and recursively watches `content/posts`.
+Filesystem events are debounced. Asset changes republish the draft-inclusive
+asset tree; Markdown changes also regenerate published metadata. A file inventory
+distinguishes modifications from persistent additions, deletions, and renames.
+Modifications use native Next.js development reload without restarting the
+server; structural changes restart it once after preparation succeeds. Temporary
+files that disappear within the debounce window do not count as structural
+changes. Invalid source edits may temporarily show a development error and are
+retried on the next save. The production build continues to run asset publication
+once before `next build`.

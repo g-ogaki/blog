@@ -157,10 +157,11 @@ export function CommentSection({ locale = "ja", postSlug, siteKey, turnstileApi 
 				{commentsState === "ready" ? <p className="m-0 text-sm text-text-muted">{copy.count(comments.length)}</p> : null}
 			</header>
 
-			<div aria-live="polite" className="comment-list-status text-sm text-text-muted">
-				{commentsState === "loading" ? <p>{copy.loading}</p> : null}
-				{commentsState === "error" ? <p>{copy.loadError}</p> : null}
-			</div>
+			{commentsState !== "ready" ? (
+				<div aria-live="polite" className="comment-list-status mt-8 border-t border-site-border text-sm text-text-muted">
+					<p className="m-0 py-6">{commentsState === "loading" ? copy.loading : copy.loadError}</p>
+				</div>
+			) : null}
 			{commentsState === "ready" && comments.length === 0 ? (
 				<ol className="comment-list mt-8 list-none border-t border-site-border p-0">
 					<li className="py-6"><p className="m-0 text-text-muted">{copy.empty}</p></li>

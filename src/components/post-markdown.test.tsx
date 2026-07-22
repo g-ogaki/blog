@@ -49,6 +49,8 @@ describe("PostMarkdown", () => {
 			"",
 			"### 子の `見出し`",
 			"",
+			"#### 孫の見出し",
+			"",
 			"## 日本語の 見出し",
 		].join("\n"));
 
@@ -57,11 +59,13 @@ describe("PostMarkdown", () => {
 		const matchingLinks = within(navigation).getAllByRole("link", { name: "日本語の 見出し" });
 		const parentLink = matchingLinks[0];
 		const childLink = within(navigation).getByRole("link", { name: "子の 見出し" });
+		const grandchildLink = within(navigation).getByRole("link", { name: "孫の見出し" });
 		const duplicateLink = matchingLinks[1];
 
 		expect(parentLink).toHaveAttribute("href", "#日本語の-見出し");
 		expect(childLink).toHaveAttribute("href", "#子の-見出し");
 		expect(within(parentLink.closest("li") as HTMLElement).getByRole("link", { name: "子の 見出し" })).toBe(childLink);
+		expect(within(childLink.closest("li") as HTMLElement).getByRole("link", { name: "孫の見出し" })).toBe(grandchildLink);
 		expect(screen.getAllByRole("heading", { level: 2, name: "日本語の 見出し" })[0]).toHaveAttribute("id", "日本語の-見出し");
 		expect(screen.getAllByRole("heading", { level: 2, name: "日本語の 見出し" })[1]).toHaveAttribute("id", "日本語の-見出し-1");
 		expect(duplicateLink).toHaveAttribute("href", "#日本語の-見出し-1");
@@ -77,8 +81,8 @@ describe("PostMarkdown", () => {
 		expect(links[0].closest("ul")).toBe(links[1].closest("ul"));
 	});
 
-	it("omits the table of contents when Markdown has no h2 or h3 headings", async () => {
-		await renderMarkdown("#### Detail\n\nText.");
+	it("omits the table of contents when Markdown has no h2, h3, or h4 headings", async () => {
+		await renderMarkdown("##### Detail\n\nText.");
 
 		expect(screen.queryByRole("navigation", { name: "目次" })).not.toBeInTheDocument();
 	});
@@ -93,7 +97,7 @@ describe("PostMarkdown", () => {
 
 	it("highlights fenced and language-marked inline code with Shiki", async () => {
 		const { container } = await renderMarkdown(
-			"Use `const answer = 42{:ts}`.\n\n```ts\nconst answer: number = 42;\n```\n\n```python\nprint('hello')\n```",
+			"Use `const answer = 42{:ts}`.\n\n```ts\nconst answer: number = 42;\n```\n\n```python:main.py\nprint('hello')\n```",
 		);
 
 		const highlightedBlocks = container.querySelectorAll("pre.shiki");
@@ -103,7 +107,28 @@ describe("PostMarkdown", () => {
 		expect(container.querySelector("span.shiki")).toHaveTextContent("const answer = 42");
 		expect(container.querySelectorAll(".shiki span[style]").length).toBeGreaterThan(0);
 		expect(screen.getByText("typescript", { selector: ".code-label" })).toBeInTheDocument();
-		expect(screen.getByText("python", { selector: ".code-label" })).toBeInTheDocument();
+		expect(screen.getByText("main.py", { selector: ".code-label" })).toBeInTheDocument();
+	});
+
+	it("styles deeper headings and renders a final em-dash quotation source as a caption", async () => {
+		const { container } = await renderMarkdown([
+			"#### Detail",
+			"",
+			"> A quotation with $${x_1 + \\cdots + x_n}$$.",
+			">",
+			"> — Reference",
+			"",
+			'<font color="#c00">Important</font>',
+		].join("\n"));
+
+		expect(screen.getByRole("heading", { level: 4, name: "Detail" })).toBeInTheDocument();
+		const reference = screen.getByText("Reference");
+		expect(reference.tagName).toBe("FIGCAPTION");
+		expect(reference.closest("figure")).toHaveClass("article-quotation");
+		expect(reference.closest("blockquote")).toBeNull();
+		expect(screen.queryByText("— Reference")).not.toBeInTheDocument();
+		expect(container.querySelector("blockquote .katex")).toBeInTheDocument();
+		expect(container.querySelector("font")).toHaveAttribute("color", "#c00");
 	});
 
 	it("renders links and rewrites post-relative image paths", async () => {
@@ -122,18 +147,34 @@ describe("PostMarkdown", () => {
 		);
 		expect(screen.getByRole("img", { name: "Diagram" })).not.toHaveAttribute("title");
 		expect(screen.getByText("Architecture", { selector: "figcaption" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "画像を拡大: Diagram" })).toHaveAttribute(
+			"href",
+			"/post-assets/2026/20260503-learning-typescript/images/diagram.png",
+		);
 		expect(screen.getByRole("img", { name: "Raw diagram" })).toHaveAttribute(
 			"src",
 			"/post-assets/2026/20260503-learning-typescript/images/raw.png",
 		);
+		expect(screen.getByRole("link", { name: "画像を拡大: Raw diagram" })).toHaveAttribute(
+			"href",
+			"/post-assets/2026/20260503-learning-typescript/images/raw.png",
+		);
 	});
 
-	it("keeps untitled images ordinary and unlabeled code fences unwrapped", async () => {
+	it("enlarges untitled standalone images and keeps unlabeled code fences unwrapped", async () => {
 		const { container } = await renderMarkdown("```\nplain text\n```\n\n![Diagram](images/diagram.png)");
 
 		expect(container.querySelector(".code-label")).not.toBeInTheDocument();
 		expect(container.querySelector("figure")).not.toBeInTheDocument();
-		expect(screen.getByRole("img", { name: "Diagram" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "画像を拡大: Diagram" })).toBeInTheDocument();
+	});
+
+	it("leaves inline and already-linked images unchanged", async () => {
+		await renderMarkdown("Text ![Inline](images/inline.png) remains inline.\n\n[![Linked](images/linked.png)](https://example.com)");
+
+		expect(screen.queryByRole("link", { name: "画像を拡大: Inline" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "画像を拡大: Linked" })).not.toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "Linked" })).toHaveAttribute("href", "https://example.com");
 	});
 
 	it("rejects unsupported raw HTML and unsafe Markdown URLs", async () => {
@@ -219,6 +260,15 @@ describe("PostMarkdown", () => {
 		expect(screen.getByText("Fetched during the build.")).toBeInTheDocument();
 		expect(screen.getByText(/Inline https:\/\/example.com\/inline remains text/)).toBeInTheDocument();
 		expect(loadLinkPreview).toHaveBeenCalledTimes(1);
+	});
+
+	it("renders generated external preview metadata without an injected network loader", async () => {
+		await renderMarkdown("https://www.amazon.co.jp/dp/013717893X");
+
+		const card = screen.getByRole("link", { name: /Principles of Voice Production/ });
+		expect(card).toHaveClass("link-card");
+		expect(card).toHaveAttribute("href", "https://www.amazon.co.jp/dp/013717893X");
+		expect(screen.getByText("amazon.co.jp")).toBeInTheDocument();
 	});
 
 	it("falls back to a normal link when preview metadata is unavailable", async () => {

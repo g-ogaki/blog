@@ -10,17 +10,19 @@ import { MarkdownAsync, defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
 import { createBundledHighlighter } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+import { ArticleImage } from "@/components/article-image";
 import { productionLanguages } from "@/generated/shiki-languages";
 import {
 	extractStandaloneLinkUrls,
 	extractStandaloneInternalLinkUrls,
-	loadCachedLinkPreview,
 	remarkMarkInternalLinkCards,
 	type LinkPreview,
 	type LinkPreviewLoader,
 } from "@/lib/content/link-preview";
+import { loadGeneratedLinkPreview } from "@/lib/content/link-preview-manifest";
 import type { Post } from "@/lib/content/posts";
 import { articleHtmlSanitizeSchema, rehypeArticleHtmlPolicy } from "@/lib/content/article-html-policy";
+import { remarkCodeFilenames } from "@/lib/content/code-languages";
 import { rehypeTableOfContents, type TableOfContentsEntry } from "@/lib/content/table-of-contents";
 import { getDictionary } from "@/lib/i18n";
 
@@ -106,13 +108,65 @@ function codeLanguageLabel(language: string) {
 
 function rehypeNormalizeArticleBlocks() {
 	return (tree: Root) => {
+		const textContent = (node: Element): string => node.children.map((child) => {
+			if (child.type === "text") return child.value;
+			return child.type === "element" ? textContent(child) : "";
+		}).join("");
+		const stripAttributionMarker = (node: Element): boolean => {
+			for (const child of node.children) {
+				if (child.type === "text") {
+					const strippedValue = child.value.replace(/^\s*—\s*/u, "");
+					if (strippedValue !== child.value) {
+						child.value = strippedValue;
+						return true;
+					}
+				}
+				if (child.type === "element" && stripAttributionMarker(child)) return true;
+			}
+			return false;
+		};
 		const wrapChildren = (parent: Root | Element) => {
 			for (let index = 0; index < parent.children.length; index += 1) {
 				const node = parent.children[index];
 				if (node.type !== "element") continue;
+				if (node.tagName === "img") {
+					const isOnlyParagraphContent = parent.type === "element" && parent.tagName === "p" && parent.children.every((child) => (
+						child === node || (child.type === "text" && child.value.trim() === "")
+					));
+					const isStandaloneRawImage = parent.type === "root" || (parent.type === "element" && parent.tagName === "figure");
+					if (isOnlyParagraphContent || isStandaloneRawImage) {
+						node.properties.dataEnlargeable = true;
+						if (isOnlyParagraphContent) parent.children = [node];
+					}
+				}
 				const classNames = Array.isArray(node.properties.className) ? node.properties.className : [];
 				if (classNames.includes("katex-display") && !classNames.includes("math-block")) {
 					node.properties.className = [...classNames, "math-block"];
+				}
+				if (node.tagName === "blockquote") {
+					const lastElement = node.children.findLast((child): child is Element => child.type === "element");
+					if (lastElement?.tagName === "p" && /^\s*—\s*\S/u.test(textContent(lastElement))) {
+						const lastElementIndex = node.children.lastIndexOf(lastElement);
+						node.children.splice(lastElementIndex, 1);
+						stripAttributionMarker(lastElement);
+						const quotation: Element = {
+							type: "element",
+							tagName: "figure",
+							properties: { className: ["article-quotation"] },
+							children: [
+								node,
+								{
+									type: "element",
+									tagName: "figcaption",
+									properties: {},
+									children: lastElement.children,
+								},
+							],
+						};
+						parent.children[index] = quotation;
+						wrapChildren(quotation);
+						continue;
+					}
 				}
 				if (node.tagName !== "pre") {
 					wrapChildren(node);
@@ -122,10 +176,15 @@ function rehypeNormalizeArticleBlocks() {
 				const codeClassNames = code?.properties.className;
 				const languageClass = Array.isArray(codeClassNames) ? codeClassNames.find((value) => typeof value === "string" && value.startsWith("language-")) : undefined;
 				if (typeof languageClass !== "string") continue;
+				const filename = code?.properties.dataCodeFilename ?? code?.properties["data-code-filename"];
 				parent.children[index] = {
 					type: "element",
 					tagName: "div",
-					properties: { className: ["code-block"], "data-language": codeLanguageLabel(languageClass.slice("language-".length)) },
+					properties: {
+						className: ["code-block"],
+						"data-filename": typeof filename === "string" ? filename : undefined,
+						"data-language": codeLanguageLabel(languageClass.slice("language-".length)),
+					},
 					children: [node],
 				};
 			}
@@ -134,7 +193,7 @@ function rehypeNormalizeArticleBlocks() {
 	};
 }
 
-export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCachedLinkPreview }: PostMarkdownProps) {
+export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadGeneratedLinkPreview }: PostMarkdownProps) {
 	const dictionary = getDictionary(post.locale);
 	const highlighter = await highlighterPromise;
 	const tableOfContents: TableOfContentsEntry[] = [];
@@ -157,28 +216,42 @@ export async function PostMarkdown({ post, posts = [], loadLinkPreview = loadCac
 	const content = await MarkdownAsync({
 		children: post.content,
 		components: {
-			p({ children, node }) {
+			img({ node, ...properties }) {
+				const enlargeable = node?.properties?.dataEnlargeable ?? node?.properties?.["data-enlargeable"];
+				if (enlargeable !== undefined && typeof properties.src === "string") {
+					return <ArticleImage {...properties} closeLabel={dictionary.post.closeImage} openLabel={dictionary.post.enlargeImage} src={properties.src} />;
+				}
+				// eslint-disable-next-line @next/next/no-img-element
+				return <img {...properties} alt={properties.alt ?? ""} />;
+			},
+			p({ children, node, ...properties }) {
 				const onlyChild = node?.children.length === 1 ? node.children[0] : undefined;
-				if (onlyChild?.type === "element" && onlyChild.tagName === "img" && typeof onlyChild.properties.title === "string" && isValidElement(children)) {
+				const enlargeable = onlyChild?.type === "element" && onlyChild.tagName === "img"
+					? onlyChild.properties.dataEnlargeable ?? onlyChild.properties["data-enlargeable"]
+					: undefined;
+				if (onlyChild?.type === "element" && onlyChild.tagName === "img" && enlargeable !== undefined && isValidElement(children)) {
 					const image = cloneElement(children as ReactElement<{ title?: string }>, { title: undefined });
-					return <figure className="article-figure">{image}<figcaption>{onlyChild.properties.title}</figcaption></figure>;
+					return typeof onlyChild.properties.title === "string"
+						? <figure className="article-figure">{image}<figcaption>{onlyChild.properties.title}</figcaption></figure>
+						: <div className="article-figure">{image}</div>;
 				}
 				const internalUrl = node?.properties?.["data-internal-link-card"] ?? node?.properties?.dataInternalLinkCard;
 				if (typeof internalUrl === "string") {
 					const preview = internalPreviews.get(internalUrl);
-					return preview ? <LinkCard preview={preview} /> : <p>{children}</p>;
+					return preview ? <LinkCard preview={preview} /> : <p {...properties}>{children}</p>;
 				}
-				if (typeof children !== "string" || !previews.has(children)) return <p>{children}</p>;
+				if (typeof children !== "string" || !previews.has(children)) return <p {...properties}>{children}</p>;
 				const preview = previews.get(children);
-				return preview ? <LinkCard preview={preview} /> : <p><a href={children}>{children}</a></p>;
+				return preview ? <LinkCard preview={preview} /> : <p {...properties}><a href={children}>{children}</a></p>;
 			},
 			div({ children, node, ...properties }) {
+				const filename = node?.properties?.["data-filename"];
 				const language = node?.properties?.["data-language"];
 				if (typeof language !== "string") return <div {...properties}>{children}</div>;
-				return <div {...properties}><div className="code-label">{language}</div>{children}</div>;
+				return <div {...properties}><div className="code-label">{typeof filename === "string" ? filename : language}</div>{children}</div>;
 			},
 		},
-		remarkPlugins: [remarkMath, remarkMarkInternalLinkCards],
+		remarkPlugins: [remarkMath, remarkCodeFilenames, remarkMarkInternalLinkCards],
 		rehypePlugins: [
 			rehypeRaw,
 			rehypeArticleHtmlPolicy,

@@ -83,6 +83,18 @@ To add a visible caption to an article image, provide a Markdown image title:
 
 When the titled image is the only content in its paragraph, the title is
 rendered as a visible caption. Images without a title do not render a caption.
+Standalone images fill a centered article figure up to the documented reading
+measure while keeping their original aspect ratio, including tall images. Small
+raster sources are enlarged and may therefore look softer; use the highest
+practical source resolution when fine detail matters. Captions wrap beneath the
+same figure width and do not change the image alignment.
+
+Standalone Markdown images can be opened in a larger view. With JavaScript,
+the original file appears in a reading-width dialog bounded by the viewport and
+closes with its button, the backdrop, or Escape. The complete image remains
+visible without cropping. Without JavaScript, the image remains a normal link
+to the original file. Inline images and images already wrapped in a Markdown
+link are left unchanged.
 
 ---
 
@@ -97,10 +109,10 @@ subsections:
 ### 小見出し
 ```
 
-These headings automatically appear in the entry's 「目次」 navigation. Level
-three headings nest beneath the preceding level-two heading. The page title is
-the only level-one heading, and level-four or deeper headings are not included
-in the table of contents.
+Level-two through level-four headings automatically appear in the entry's
+「目次」 navigation and nest beneath the nearest preceding shallower heading.
+The page title is the only level-one heading, and level-five or deeper headings
+are not included in the table of contents.
 
 Heading text also becomes its fragment ID. Japanese text is preserved, Latin
 text is lowercased, spaces become hyphens, and punctuation is removed. For
@@ -143,6 +155,18 @@ display as `typescript`; `py`, `cpp`, `json`, `html`, and `css` work the same
 way. A fence without a language has no label. An unknown or misspelled language
 fails content validation and reports its source line.
 
+Append a filename after the language with a colon when the block represents a
+specific file:
+
+````md
+```python:main.py
+print("hello")
+```
+````
+
+The renderer uses `python` for highlighting and displays `main.py` in the code
+header. Filenames must be nonempty and cannot contain whitespace.
+
 To syntax-highlight inline code, append a Shiki language marker inside the
 backticks:
 
@@ -160,12 +184,37 @@ inline or fenced code is displayed literally rather than interpreted.
 Standard HTML may be mixed with Markdown when Markdown has no equivalent. The
 supported semantic elements are `a`, `abbr`, `audio`, `b`, `blockquote`, `br`,
 `cite`, `code`, `dd`, `del`, `details`, `div`, `dl`, `dt`, `em`, `figcaption`,
-`figure`, `h2` through `h6`, `hr`, `i`, `iframe`, `img`, `ins`, `kbd`, `li`,
+`figure`, `font`, `h2` through `h6`, `hr`, `i`, `iframe`, `img`, `ins`, `kbd`, `li`,
 `mark`, `ol`, `p`, `pre`, `q`, `s`, `samp`, `small`, `source`, `span`, `strong`,
 `sub`, `summary`, `sup`, table elements, `time`, `track`, `u`, `ul`, `var`, and
 `video`. Each element also has an explicit attribute allowlist. Unsupported
 markup fails content validation; arbitrary classes, inline styles, IDs, event
 handlers, scripts, forms, and unrestricted embeds are not accepted.
+
+Legacy color markup is accepted only in this constrained form:
+
+```html
+<font color="#c00">Important text</font>
+```
+
+The color may be a CSS color name or hexadecimal value. `face`, `size`,
+`style`, and event attributes are rejected.
+
+To add a source to a quotation, end the blockquote with a separate paragraph
+beginning with an em dash:
+
+```md
+> Quoted text.
+>
+> — Source
+```
+
+The source is rendered outside the quotation border as a right-aligned caption,
+using the same layout as an image caption. The leading em dash is an authoring
+marker and is not displayed.
+
+Long unbreakable mathematics inside a quotation scrolls horizontally rather
+than widening or clipping the article.
 
 Use blank lines around block HTML whose contents include Markdown:
 
@@ -213,9 +262,17 @@ https://nextjs.org
 
 creates a link card.
 
-The paragraph must contain only one absolute `https` URL. Metadata is fetched
-during the static build; if the remote page is unavailable or has no usable
-metadata, the URL is rendered as a normal link.
+The paragraph must contain only one absolute `https` URL. After adding or
+changing one, refresh its generated metadata before committing:
+
+```sh
+npm run refresh:link-previews
+```
+
+The tracked manifest keeps production builds independent of third-party
+availability. Published content validation fails when a standalone URL has no
+generated preview, while a failed refresh retains previously generated
+metadata.
 
 Inline URL:
 

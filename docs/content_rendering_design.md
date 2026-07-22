@@ -38,7 +38,7 @@ on browser defaults.
 
 ## Headings and table of contents
 
-During Markdown transformation, `h2` and `h3` headings receive deterministic
+During Markdown transformation, `h2`, `h3`, and `h4` headings receive deterministic
 GitHub-compatible fragment IDs and are collected into a static table of contents.
 Japanese characters are preserved, Latin text is lowercased, whitespace becomes
 hyphens, and punctuation is removed. Duplicate normalized headings receive
@@ -49,11 +49,17 @@ reliable navigation target.
 
 The table of contents is rendered only when an eligible heading exists. It is an
 always-expanded navigation region labeled 「目次」 between article metadata and
-prose. `h3` entries nest beneath the preceding `h2`; an `h3` without a preceding
-`h2` remains top-level. Heading IDs and navigation are present in static HTML and
+prose. Entries nest beneath the nearest preceding heading of a shallower level;
+a heading without a preceding shallower heading remains top-level. Heading IDs and navigation are present in static HTML and
 do not require client-side parsing, scrolling state, or JavaScript. Pagefind
 ignores the navigation copy so heading text is indexed once from the article
 content rather than duplicated by the table of contents.
+
+Article typography also defines progressively smaller treatments for `h4`,
+`h5`, and `h6`, but only levels through `h4` are added to the table of contents.
+The first article-body element does not receive its normal top margin,
+so an article beginning with a heading keeps the same opening rhythm as one
+beginning with prose.
 
 ## Mathematics and code
 
@@ -68,13 +74,24 @@ imports is generated, so the Worker includes only languages used by published
 posts. Draft-only languages are available in development but excluded from the
 production registry.
 
-Fenced code uses its info string as the language. Inline code opts into syntax
-highlighting with a trailing `{:language}` marker. Unmarked inline code remains
-a semantic `code` element. A language-marked fenced block displays a compact
-language label above the highlighted code; aliases such as `ts` resolve to their
-canonical grammar and both `ts` and `typescript` display as `typescript`. Plain
-fenced blocks have no label. Any Shiki language identifier may be used; an
+Fenced code uses its info string as the language. A fence may append a
+whitespace-free filename after the first colon, such as `python:main.py`. The
+language before the colon selects and validates the Shiki grammar, while the
+code-block header displays only the filename. A language-only fence displays
+its canonical language label. Inline code opts into syntax highlighting with a
+trailing `{:language}` marker. Unmarked inline code remains a semantic `code`
+element. Aliases such as `ts` resolve to their canonical grammar and both `ts`
+and `typescript` display as `typescript`. Plain fenced blocks have no label. Any
 unknown identifier fails content validation with its post and source line.
+
+Raw article HTML may use the legacy `font` element only with a named or
+hexadecimal `color` attribute. Font face, size, style, and event attributes
+remain outside the authoring policy. A Markdown blockquote may use a final
+paragraph beginning with an em dash as its source attribution; the renderer
+moves it outside the quotation border and renders it as a right-aligned caption,
+matching article image captions, without displaying the marker em dash.
+Blockquotes scroll horizontally when an
+unbreakable mathematical expression exceeds the reading column.
 
 ## Images and Open Graph
 
@@ -92,28 +109,52 @@ draft assets even though drafts are still validated.
 
 A standalone Markdown image with a title renders as a semantic `figure`: the
 title becomes a visible `figcaption` and is removed from the image tooltip to
-avoid duplicate presentation. An untitled image remains an ordinary image.
+avoid duplicate presentation. Article images retain their intrinsic aspect ratio
+and are never cropped to a fixed frame. Standalone figures fill a centered
+`max-w-2xl` measure, so smaller sources are expanded consistently while captions
+wrap beneath the same width. Raster sources may look softer when enlarged because
+presentation scaling does not add image detail.
+
+Standalone Markdown images, captioned images, top-level raw HTML images, and raw
+HTML images directly inside a `figure` link to their original asset. After
+hydration, activating that link opens an accessible native dialog with a close
+button, backdrop dismissal, and native Escape behavior. A magnifier appears on
+hover and keyboard focus. Without JavaScript, the same control remains an
+ordinary link to the original file. Inline images and images already authored
+inside links are not enhanced. The dialog uses a `max-w-3xl` image area bounded
+by the available viewport, making the enlarged view modestly larger than the
+inline figure without cropping wide or tall sources.
 
 ## Link cards
 
 A standalone URL paragraph becomes a link card; inline links stay hyperlinks.
-Metadata is fetched only at build time from Open Graph or Twitter Card tags.
-Support YouTube, X, GitHub, and generic Open Graph pages; fall back to a normal
-link when metadata is absent or unavailable. Fetch only `https` URLs, enforce
-short time and response-size limits, and never fetch private, loopback, or
-link-local network addresses.
+Metadata is refreshed explicitly into the tracked
+`src/generated/link-previews.json` manifest from Open Graph or Twitter Card
+tags. Production rendering reads only that manifest, so a deployment neither
+contacts third-party sites nor loses an existing card during a transient
+outage. Support YouTube, X, GitHub, and generic Open Graph pages. Fetch only
+`https` URLs, enforce short time and response-size limits, and never fetch
+private, loopback, or link-local network addresses.
 
 Only a paragraph containing exactly one absolute `https` URL is a candidate.
-Candidates are discovered from the Markdown syntax tree, deduplicated per post,
-and cached by URL for the lifetime of the build process. Inline URLs, explicit
-Markdown links, `http` URLs, and URLs with credentials are never fetched.
+Candidates are discovered from the Markdown syntax tree and deduplicated across
+all published translations. Inline URLs, explicit Markdown links, `http` URLs,
+and URLs with credentials are never fetched. Run `npm run
+refresh:link-previews` after adding or changing a standalone URL. Content
+validation rejects a published URL without generated metadata.
 
-The loader applies these limits to each preview operation:
+The refresh loader applies these limits to each preview attempt:
 
-* 3-second total deadline, including DNS and response streaming
-* 512 KiB maximum response body, with `Content-Length` preflight when present
+* 10-second total deadline, including DNS and response streaming
+* 512 KiB maximum HTML head, with reading stopped after `</head>`
 * 3 redirects, with full URL and network validation repeated for every hop
 * successful `text/html` responses only
+
+Refresh uses at most four concurrent requests and makes two attempts per URL.
+If refresh fails for a URL already in the manifest, the previous metadata is
+retained. A new uncached failure aborts the refresh without partially rewriting
+the manifest. Entries that are no longer referenced are removed after a
+successful refresh.
 
 DNS resolution is conservative: every returned address must be globally
 routable. Private, loopback, link-local, carrier-grade NAT, multicast, reserved,
@@ -126,9 +167,10 @@ next hop.
 Metadata precedence is Open Graph, then Twitter Card, then the HTML `title` and
 description tag. Relative preview images resolve against the final URL and must
 use HTTPS. YouTube, X, and GitHub hosts receive stable provider labels; generic
-pages use `og:site_name` or the hostname. Missing metadata, network errors, limit
-violations, and security rejections all produce a normal HTTPS hyperlink so a
-third-party failure cannot fail the site build.
+pages use `og:site_name` or the hostname. The rendered card always links to the
+URL authored in Markdown rather than a temporary redirect destination. Missing
+metadata, network errors, limit violations, and security rejections prevent a
+new cache entry; they cannot remove a previously generated card.
 
 A paragraph containing only an internal Markdown link such as
 `[Related post](/blog/YYYY/YYYYMMDD-slug)` also becomes a card. Its title,

@@ -33,7 +33,7 @@ export const dictionaries = {
 	ja: {
 		siteDescription: "moniが技術や日々の学びを記録する個人サイトです。",
 		skipLink: "本文へ移動",
-		navigation: { label: "メインナビゲーション", home: "ホーム", blog: "ブログ" },
+		navigation: { label: "メインナビゲーション", home: "ホーム", blog: "ブログ", more: "その他の操作" },
 		language: {
 			change: "表示言語を変更",
 			menu: "表示言語",
@@ -84,7 +84,14 @@ export const dictionaries = {
 			formatYear: (year: string) => `${year}年`,
 			formatMonth: (year: string, month: number) => `${year}年${month}月`,
 		},
-		post: { breadcrumb: "パンくず", blog: "ブログ", tags: "タグ", toc: "目次" },
+		post: {
+			breadcrumb: "パンくず",
+			blog: "ブログ",
+			closeImage: "拡大画像を閉じる",
+			enlargeImage: "画像を拡大",
+			tags: "タグ",
+			toc: "目次",
+		},
 		comments: {
 			heading: "コメント",
 			count: (count: number) => `${count}件のコメント`,
@@ -120,7 +127,7 @@ export const dictionaries = {
 			afterLink: " using AI and may contain inaccuracies.",
 		},
 		skipLink: "Skip to content",
-		navigation: { label: "Main navigation", home: "Home", blog: "Blog" },
+		navigation: { label: "Main navigation", home: "Home", blog: "Blog", more: "More options" },
 		language: {
 			change: "Change display language",
 			menu: "Display language",
@@ -171,7 +178,14 @@ export const dictionaries = {
 			formatYear: (year: string) => year,
 			formatMonth: (year: string, month: number) => new Intl.DateTimeFormat("en", { month: "long", timeZone: "UTC", year: "numeric" }).format(new Date(Date.UTC(Number(year), month - 1, 1))),
 		},
-		post: { breadcrumb: "Breadcrumb", blog: "Blog", tags: "Tags", toc: "Table of contents" },
+		post: {
+			breadcrumb: "Breadcrumb",
+			blog: "Blog",
+			closeImage: "Close enlarged image",
+			enlargeImage: "Enlarge image",
+			tags: "Tags",
+			toc: "Table of contents",
+		},
 		comments: {
 			heading: "Comments",
 			count: (count: number) => `${count} ${count === 1 ? "comment" : "comments"}`,

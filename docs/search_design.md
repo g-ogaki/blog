@@ -68,6 +68,9 @@ as repeated `tag` parameters; an article must contain every selected tag. Search
 text and filters can be combined, and the active state is reflected in the URL
 with `history.replaceState`. Year and month form one date dimension: selecting a
 year clears the active month, and selecting a month clears the active year.
+When taxonomy filters are active without a keyword, matching results are ordered
+by publication date descending. A nonempty keyword preserves Pagefind's relevance
+order, including when filters are also active.
 
 With JavaScript active, matching articles are presented in batches of ten. The
 visible count and 「さらに読み込む」 control are shown only while another batch

@@ -61,13 +61,17 @@ Reason:
 
 ## ADR-006
 
-Link previews are generated at build time.
+External link-preview metadata is refreshed explicitly into a tracked generated
+manifest. Production builds consume the validated manifest without contacting
+third-party sites. Previously generated metadata is retained when a refresh
+fails, and published standalone URLs require a manifest entry.
 
 Reason:
 
-* Avoid runtime fetching
-* Avoid CORS issues
-* Faster page rendering
+* Keep static output deterministic across deployments
+* Avoid runtime fetching and CORS issues
+* Prevent transient provider failures from removing existing cards
+* Keep metadata changes visible in code review
 
 ---
 
@@ -192,5 +196,34 @@ The anonymous endpoint uses Cloudflare's approximate per-location rate-limit
 binding at five requests per trusted client IP per minute. It relies on the
 Workers AI free-plan daily allocation as its hard cost backstop; no durable
 application quota or Turnstile challenge is added initially.
+
+---
+
+## ADR-015
+
+Local article authoring uses a dependency-free Node.js supervisor around the
+Next.js development server. It recursively watches `content/posts`, debounces
+filesystem events, republishes assets, and regenerates Markdown-derived
+metadata. Next.js keeps running for modifications to existing files and uses its
+native development reload. A debounced file-inventory comparison restarts it
+only after a persistent file addition, deletion, or rename is prepared
+successfully. This avoids reconnecting remote Cloudflare bindings during normal
+prose edits without missing changes to the content graph.
+
+The development server reads the actively edited content tree. Invalid Markdown
+may therefore show a development error until the next valid save; fast native
+reload is preferred over maintaining a last-known-valid mirror.
+
+External link-preview refresh remains an explicit author action because it
+contacts third-party sites and changes a tracked manifest.
+
+Reason:
+
+* Preview Markdown, asset additions, replacements, renames, and deletions in one
+  development session
+* Avoid remote-binding reconnection during ordinary saves
+* Rediscover new and removed routes and assets after structural changes
+* Avoid another watcher or process-manager dependency
+* Keep network-dependent generated metadata deliberate and reviewable
 
 ---

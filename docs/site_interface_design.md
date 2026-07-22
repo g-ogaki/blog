@@ -6,13 +6,16 @@ The locale root layouts own the shared header, footer, skip link, document
 language, localized metadata defaults, and theme initialization. Primary navigation links
 to the current locale's homepage and blog archive. Japanese keeps the unprefixed
 routes; English uses `/en`. The shell uses semantic landmarks and visible
-keyboard focus styles. Search-bearing headers reflow into two rows at `48rem`
-and below, keeping the wordmark and navigation above search and the language/theme
-controls. The archive header omits search and may defer its compact arrangement
-until `36rem`; that smaller breakpoint also owns narrow gutters and viewport-bound
-menus. The homepage and blog-entry page share the same search-bearing header
-geometry and control treatments; only their semantic current-navigation item
-changes. Primary-navigation labels do not wrap internally.
+keyboard focus styles. At `48rem` and below, search-bearing headers keep the
+wordmark and primary navigation in one aligned row while a native ellipsis
+disclosure contains search and the language/theme controls. The archive header
+omits search and may defer this compact arrangement until `36rem`. The wordmark,
+navigation links, and disclosure trigger share a `44px` minimum target height.
+The homepage and blog-entry page share the same search-bearing header geometry
+and control treatments; only their semantic current-navigation item changes.
+Primary-navigation labels do not wrap internally. The disclosure remains usable
+without JavaScript and is progressively enhanced to close on Escape and outside
+interaction.
 
 The language menu contains explicit Japanese and English links. Selecting a
 language stores the `site_locale` preference and navigates to the same article
@@ -31,8 +34,8 @@ Japanese.
 The centered footer places X (Twitter), GitHub, and Feed above the muted legal
 line `© YYYY moni · Licensed under CC0 1.0 Universal`. Only the license name links
 to `https://creativecommons.org/publicdomain/zero/1.0/deed.en`; the line remains
-regular-weight and may wrap naturally on narrow screens. X and GitHub open in a
-new tab; Feed stays in the current tab.
+regular-weight and stays on one line, using the smaller interface size on narrow
+screens. X and GitHub open in a new tab; Feed stays in the current tab.
 
 ## Homepage
 
@@ -154,13 +157,17 @@ translated from the original Japanese using AI and may contain inaccuracies.”
 notice is labeled for assistive technology and excluded from Pagefind indexing.
 Japanese entries, archives, feeds, and metadata do not display the disclosure.
 
-When an entry contains level-two or level-three Markdown headings, an
+When an entry contains level-two through level-four Markdown headings, an
 always-expanded table of contents appears between its metadata and prose inside
 the `max-w-3xl` reading column. It uses the visible heading 「目次」, subtle
 horizontal borders, neutral unnumbered links, and default Tailwind spacing.
-Level-three links are indented beneath their level-two parent. The same inline
+Deeper links are indented beneath their nearest shallower parent. The same inline
 treatment is retained at narrow and wide viewports; it does not become a card,
 collapsible control, sticky rail, or scroll-tracking client interface.
+
+Comment loading, load-error, and empty states occupy the same list position and
+use the same top border, spacing, and muted treatment. Loading and failure copy
+remain polite live-region updates without changing the static article content.
 
 ## Dates
 

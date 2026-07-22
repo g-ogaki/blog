@@ -18,9 +18,16 @@ describe("SiteHeader", () => {
 	it("provides route-aware identity, navigation, and static search", () => {
 		render(<SiteHeader />);
 
+		const home = screen.getByRole("link", { name: "ホーム" });
+		const search = screen.getByRole("searchbox", { name: "ブログを検索" });
+		const disclosure = screen.getByRole("button", { name: "その他の操作" });
 		expect(screen.getByRole("link", { name: "moni's page" })).toHaveAttribute("href", "/");
-		expect(screen.getByRole("link", { name: "ホーム" })).toHaveAttribute("aria-current", "page");
-		expect(screen.getByRole("searchbox", { name: "ブログを検索" })).toHaveAttribute("name", "q");
+		expect(home).toHaveAttribute("aria-current", "page");
+		expect(home.closest("details")).toBeNull();
+		expect(screen.getByRole("link", { name: "ブログ" }).closest("details")).toBeNull();
+		expect(disclosure).toHaveAttribute("aria-controls", "header-secondary-controls");
+		expect(document.getElementById("header-secondary-controls")).toContainElement(search);
+		expect(search).toHaveAttribute("name", "q");
 	});
 
 	it("omits duplicate search on the archive and marks Blog current", () => {
@@ -31,22 +38,22 @@ describe("SiteHeader", () => {
 		expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
 	});
 
-	it("localizes English navigation and links translated and untranslated articles correctly", () => {
-		route.pathname = "/en/blog/2026/20260503-learning-typescript";
+	it("localizes English navigation and links translated articles in both directions", () => {
+		route.pathname = "/en/blog/2026/20260721-vibe-code-and-design";
 		render(<SiteHeader locale="en" />);
 		expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/en");
 		fireEvent.click(screen.getByRole("button", { name: "Change display language" }));
 		expect(screen.getByRole("menuitemradio", { name: /日本語/ })).toHaveAttribute(
 			"href",
-			"/language/ja?redirect=%2Fblog%2F2026%2F20260503-learning-typescript",
+			"/language/ja?redirect=%2Fblog%2F2026%2F20260721-vibe-code-and-design",
 		);
 		cleanup();
-		route.pathname = "/blog/2026/20260702-math-as-prose";
+		route.pathname = "/blog/2026/20260616-mix-voice-1";
 		render(<SiteHeader locale="ja" />);
 		fireEvent.click(screen.getByRole("button", { name: "表示言語を変更" }));
 		expect(screen.getByRole("menuitemradio", { name: /English/ })).toHaveAttribute(
 			"href",
-			"/language/en?redirect=%2Fblog%2F2026%2F20260702-math-as-prose",
+			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260616-mix-voice-1",
 		);
 	});
 
@@ -61,13 +68,13 @@ describe("SiteHeader", () => {
 	});
 
 	it("offers an English counterpart in English when the translation exists", () => {
-		route.pathname = "/blog/2026/20260503-learning-typescript";
+		route.pathname = "/blog/2026/20260721-vibe-code-and-design";
 		document.cookie = "site_locale=en; Path=/";
 		render(<LanguageSuggestion locale="ja" />);
 
 		expect(screen.getByRole("link", { name: "Read this page in English" })).toHaveAttribute(
 			"href",
-			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260503-learning-typescript",
+			"/language/en?redirect=%2Fen%2Fblog%2F2026%2F20260721-vibe-code-and-design",
 		);
 	});
 
@@ -102,5 +109,24 @@ describe("SiteHeader", () => {
 
 		expect(screen.queryByRole("menu", { name: "表示テーマ" })).not.toBeInTheDocument();
 		await waitFor(() => expect(trigger).toHaveFocus());
+	});
+
+	it("closes the secondary disclosure with Escape and restores trigger focus", async () => {
+		render(<SiteHeader />);
+		const trigger = screen.getByRole("button", { name: "その他の操作" });
+		const disclosure = trigger.closest("details");
+		expect(disclosure).not.toBeNull();
+		disclosure!.open = true;
+
+		fireEvent.keyDown(document, { key: "Escape" });
+
+		expect(disclosure).not.toHaveAttribute("open");
+		await waitFor(() => expect(trigger).toHaveFocus());
+
+		disclosure!.open = true;
+		fireEvent.pointerDown(screen.getByRole("searchbox", { name: "ブログを検索" }));
+		expect(disclosure).toHaveAttribute("open");
+		fireEvent.pointerDown(document.body);
+		expect(disclosure).not.toHaveAttribute("open");
 	});
 });

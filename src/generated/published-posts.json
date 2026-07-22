@@ -1,50 +1,79 @@
 [
 	{
-		"slug": "2026/20260716-article-spacing",
+		"slug": "2026/20260721-vibe-code-and-design",
 		"translations": {
 			"ja": {
-				"title": "読みやすい技術記事の余白を考える",
-				"url": "/blog/2026/20260716-article-spacing"
-			}
-		}
-	},
-	{
-		"slug": "2026/20260702-math-as-prose",
-		"translations": {
-			"ja": {
-				"title": "数式を文章の一部として配置する",
-				"url": "/blog/2026/20260702-math-as-prose"
-			}
-		}
-	},
-	{
-		"slug": "2026/20260618-quiet-blog-renewal",
-		"translations": {
-			"ja": {
-				"title": "静かな個人ブログを作り直した記録",
-				"url": "/blog/2026/20260618-quiet-blog-renewal"
-			}
-		}
-	},
-	{
-		"slug": "2026/20260605-hoge-huga",
-		"translations": {
-			"ja": {
-				"title": "Rustの所有権を小さなコードで確かめる",
-				"url": "/blog/2026/20260605-hoge-huga"
-			}
-		}
-	},
-	{
-		"slug": "2026/20260503-learning-typescript",
-		"translations": {
-			"ja": {
-				"title": "TypeScriptを学び始めました",
-				"url": "/blog/2026/20260503-learning-typescript"
+				"title": "このサイトは Vibe code と Vibe design で作られています",
+				"url": "/blog/2026/20260721-vibe-code-and-design"
 			},
 			"en": {
-				"title": "Getting Started with TypeScript",
-				"url": "/en/blog/2026/20260503-learning-typescript"
+				"title": "This Site Was Built with Vibe Coding and Vibe Design",
+				"url": "/en/blog/2026/20260721-vibe-code-and-design"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260716-mix-voice-3",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 3. フォーマントチューニング",
+				"url": "/blog/2026/20260716-mix-voice-3"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 3. Formant Tuning",
+				"url": "/en/blog/2026/20260716-mix-voice-3"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260710-include-exclude-principle",
+		"translations": {
+			"ja": {
+				"title": "包除原理の簡単な証明",
+				"url": "/blog/2026/20260710-include-exclude-principle"
+			},
+			"en": {
+				"title": "A Simple Proof of the Inclusion–Exclusion Principle",
+				"url": "/en/blog/2026/20260710-include-exclude-principle"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260703-mix-voice-2",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 2. TA筋とCT筋",
+				"url": "/blog/2026/20260703-mix-voice-2"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 2. TA and CT Muscles",
+				"url": "/en/blog/2026/20260703-mix-voice-2"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260616-mix-voice-1",
+		"translations": {
+			"ja": {
+				"title": "科学するミックスボイス 1. 解剖生理学",
+				"url": "/blog/2026/20260616-mix-voice-1"
+			},
+			"en": {
+				"title": "A Scientific Approach to Mixed Voice 1. Anatomy and Physiology",
+				"url": "/en/blog/2026/20260616-mix-voice-1"
+			}
+		}
+	},
+	{
+		"slug": "2026/20260530-le-gall",
+		"translations": {
+			"ja": {
+				"title": "数学書「Brownian Motion, Martingales, and Stochastic Calculus (Le Gall)」を読んで",
+				"url": "/blog/2026/20260530-le-gall"
+			},
+			"en": {
+				"title": "Thoughts on Brownian Motion, Martingales, and Stochastic Calculus by Le Gall",
+				"url": "/en/blog/2026/20260530-le-gall"
 			}
 		}
 	}

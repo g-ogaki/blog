@@ -13,7 +13,7 @@ export function SiteFooter({ locale = "ja" }: { locale?: Locale }) {
 						<li><Link className="inline-flex rounded-sm p-1 no-underline hover:bg-hover-surface motion-safe:transition-colors motion-safe:duration-150" href={feedPath(locale)}>Feed</Link></li>
 					</ul>
 				</nav>
-				<p className="footer-legal m-0 text-sm text-text-muted">© {new Date().getFullYear()} moni · Licensed under <a className="text-inherit" href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
+				<p className="footer-legal m-0 whitespace-nowrap text-xs text-text-muted sm:text-sm">© {new Date().getFullYear()} moni · Licensed under <a className="text-inherit" href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 Universal</a></p>
 			</div>
 		</footer>
 	);

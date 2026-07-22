@@ -12,22 +12,16 @@ describe("Home", () => {
 		expect(screen.getByRole("heading", { level: 1, name: "moni" })).toBeInTheDocument();
 		expect(screen.getByRole("heading", { level: 2, name: "最近の記事" })).toBeInTheDocument();
 		expect(screen.getByLabelText("moniの自己紹介インタビュー")).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: "TypeScriptを学び始めました" })).toHaveAttribute(
+		const featuredPost = screen.getByRole("link", { name: "このサイトは Vibe code と Vibe design で作られています" });
+		expect(featuredPost).toHaveAttribute(
 			"href",
-			"/blog/2026/20260503-learning-typescript",
+			"/blog/2026/20260721-vibe-code-and-design",
 		);
-		const mathematicsPost = screen.getByRole("link", { name: "数式を文章の一部として配置する" });
-		const diaryPost = screen.getByRole("link", { name: "静かな個人ブログを作り直した記録" });
-		expect(mathematicsPost.querySelector("img")).toHaveAttribute(
-			"src",
-			"/post-assets/2026/20260702-math-as-prose/cat.jpg",
-		);
-		expect(diaryPost.querySelector("img")).toHaveAttribute(
-			"src",
-			"/post-assets/2026/20260618-quiet-blog-renewal/cat.jpg",
-		);
-		expect(screen.getByRole("link", { name: "Rustの所有権を小さなコードで確かめる" })).toBeInTheDocument();
-		expect(screen.queryByText("Rust学習メモ")).not.toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "科学するミックスボイス 3. フォーマントチューニング" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "包除原理の簡単な証明" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "科学するミックスボイス 2. TA筋とCT筋" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "科学するミックスボイス 1. 解剖生理学" })).toBeInTheDocument();
+		expect(screen.queryByText("読みやすい技術記事の余白を考える")).not.toBeInTheDocument();
 	});
 
 	it("uses the configured social destinations", () => {

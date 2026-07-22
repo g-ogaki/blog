@@ -25,6 +25,10 @@ function MoonIcon() {
 	return <svg aria-hidden="true" className="theme-icon theme-icon--moon" fill="none" viewBox="0 0 24 24"><path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z" /></svg>;
 }
 
+function MoreIcon() {
+	return <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.75" /><circle cx="12" cy="12" r="1.75" /><circle cx="19" cy="12" r="1.75" /></svg>;
+}
+
 function getThemeSnapshot(): Theme {
 	try {
 		const value = localStorage.getItem("theme");
@@ -65,6 +69,33 @@ function usePopupMenu() {
 		if (returnFocus) requestAnimationFrame(() => triggerRef.current?.focus());
 	};
 	return { close, containerRef, open, setOpen, triggerRef };
+}
+
+function useHeaderDisclosure() {
+	const detailsRef = useRef<HTMLDetailsElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
+	const triggerRef = useRef<HTMLElement>(null);
+	useEffect(() => {
+		const closeOutside = (event: PointerEvent) => {
+			const details = detailsRef.current;
+			const target = event.target as Node;
+			if (details?.open && !details.contains(target) && !panelRef.current?.contains(target)) details.open = false;
+		};
+		const closeWithEscape = (event: KeyboardEvent) => {
+			const details = detailsRef.current;
+			if (event.key !== "Escape" || event.defaultPrevented || !details?.open) return;
+			event.preventDefault();
+			details.open = false;
+			triggerRef.current?.focus();
+		};
+		document.addEventListener("pointerdown", closeOutside);
+		document.addEventListener("keydown", closeWithEscape);
+		return () => {
+			document.removeEventListener("pointerdown", closeOutside);
+			document.removeEventListener("keydown", closeWithEscape);
+		};
+	}, []);
+	return { detailsRef, panelRef, triggerRef };
 }
 
 function moveMenuFocus(event: React.KeyboardEvent, selector: string, close: (returnFocus?: boolean) => void) {
@@ -196,20 +227,26 @@ export function SiteHeader({ locale = "ja" }: { locale?: Locale }) {
 	const isHome = pathname === localeHome;
 	const isArchive = pathname === localeBlog;
 	const isBlog = pathname === localeBlog || pathname.startsWith(`${localeBlog}/`);
-	const innerClass = isArchive
-		? "grid min-h-16 grid-cols-[minmax(0,1fr)_auto] [grid-template-areas:'wordmark_nav'_'utilities_utilities'] gap-x-4 gap-y-3 py-3 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:py-0"
-		: "grid min-h-16 grid-cols-[minmax(0,1fr)_auto] [grid-template-areas:'brand_navigation'_'search_utilities'] gap-3 py-4 md:flex md:items-center md:justify-between md:gap-6 md:py-0";
-	const navigationLinkClass = `inline-flex min-h-11 items-center whitespace-nowrap rounded-md py-2 text-sm font-medium no-underline hover:bg-hover-surface aria-[current=page]:bg-selected-surface aria-[current=page]:font-semibold aria-[current=page]:text-action motion-safe:transition-colors motion-safe:duration-150 ${isArchive ? "px-2 sm:px-3" : "px-3"}`;
+	const { detailsRef, panelRef, triggerRef } = useHeaderDisclosure();
+	const navigationLinkClass = `inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium no-underline hover:bg-hover-surface aria-[current=page]:bg-selected-surface aria-[current=page]:font-semibold aria-[current=page]:text-action motion-safe:transition-colors motion-safe:duration-150 ${isArchive ? "sm:px-3" : "md:px-3"}`;
+	const panelClass = isArchive
+		? "absolute top-full right-0 left-0 z-30 hidden items-center justify-end gap-3 border-b border-site-border bg-surface px-4 py-3 shadow-sm sm:static sm:flex sm:gap-6 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none"
+		: "absolute top-full right-0 left-0 z-30 hidden items-center gap-3 border-b border-site-border bg-surface px-4 py-3 shadow-sm md:static md:flex md:gap-6 md:border-0 md:bg-transparent md:p-0 md:shadow-none";
 	return (
 		<header className={`site-header relative z-20 border-b border-site-border bg-surface${isArchive ? " site-header--archive" : ""}`}>
-			<div className={`site-header__inner mx-auto w-full max-w-7xl px-4 sm:px-6 ${innerClass}`}>
-				<Link className={`wordmark whitespace-nowrap text-base font-semibold tracking-tight no-underline ${isArchive ? "[grid-area:wordmark] sm:[grid-area:auto]" : "[grid-area:brand] md:[grid-area:auto]"}`} href={localeHome}>moni&apos;s page</Link>
-				<div className={`header-actions contents ${isArchive ? "sm:flex sm:min-w-0 sm:items-center sm:gap-6" : "md:flex md:min-w-0 md:items-center md:gap-6"}`}>
-					<nav className={`primary-nav justify-self-end ${isArchive ? "[grid-area:nav] sm:[grid-area:auto]" : "[grid-area:navigation] md:[grid-area:auto]"}`} aria-label={copy.navigation.label}>
+			<div className="site-header__inner mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 sm:px-6">
+				<Link className="wordmark inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-base font-semibold tracking-tight no-underline" href={localeHome}>moni&apos;s page</Link>
+				<div className={`header-actions flex min-w-0 items-center gap-1 ${isArchive ? "sm:gap-6" : "md:gap-6"}`}>
+					<nav className="primary-nav" aria-label={copy.navigation.label}>
 						<ul className={`m-0 flex list-none flex-nowrap items-center gap-1 p-0 ${isArchive ? "sm:gap-5" : "md:gap-5"}`}><li><Link aria-current={isHome ? "page" : undefined} className={navigationLinkClass} href={localeHome}>{copy.navigation.home}</Link></li><li><Link aria-current={isBlog ? "page" : undefined} className={navigationLinkClass} href={localeBlog}>{copy.navigation.blog}</Link></li></ul>
 					</nav>
-					{isArchive ? null : <form action={localeBlog} className="header-search relative flex min-w-0 items-center [grid-area:search] md:w-auto md:[grid-area:auto]" role="search"><label className="sr-only" htmlFor="header-search-input">{copy.headerSearch.label}</label><SearchIcon /><input className="h-11 w-full rounded-md border border-control-border bg-surface-raised py-2 pr-3 pl-9 text-sm text-site-text placeholder:text-text-muted md:w-56" id="header-search-input" name="q" placeholder={copy.headerSearch.placeholder} type="search" /></form>}
-					<div className={`header-utilities flex items-center justify-self-end gap-3 ${isArchive ? "[grid-area:utilities] sm:[grid-area:auto]" : "[grid-area:utilities] md:[grid-area:auto]"}`}><LanguageControl locale={locale} pathname={pathname} viewportBound={!isArchive} /><ThemeControl locale={locale} viewportBound={!isArchive} /></div>
+					<details className="header-overflow peer" ref={detailsRef}>
+						<summary aria-controls="header-secondary-controls" aria-label={copy.navigation.more} className={`header-overflow__trigger grid size-11 cursor-pointer list-none place-items-center rounded-md border border-control-border text-site-text hover:bg-hover-surface [&::-webkit-details-marker]:hidden [&_svg]:size-5 ${isArchive ? "sm:hidden" : "md:hidden"}`} ref={triggerRef} role="button"><MoreIcon /></summary>
+					</details>
+					<div className={`header-overflow__panel peer-open:flex ${panelClass}`} id="header-secondary-controls" ref={panelRef}>
+						{isArchive ? null : <form action={localeBlog} className="header-search relative flex min-w-0 flex-1 items-center md:w-auto md:flex-none" role="search"><label className="sr-only" htmlFor="header-search-input">{copy.headerSearch.label}</label><SearchIcon /><input className="h-11 w-full rounded-md border border-control-border bg-surface-raised py-2 pr-3 pl-9 text-sm text-site-text placeholder:text-text-muted md:w-56" id="header-search-input" name="q" placeholder={copy.headerSearch.placeholder} type="search" /></form>}
+						<div className="header-utilities flex shrink-0 items-center gap-3"><LanguageControl locale={locale} pathname={pathname} viewportBound /><ThemeControl locale={locale} viewportBound /></div>
+					</div>
 				</div>
 			</div>
 		</header>

@@ -8,7 +8,7 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-const DEFAULT_TIMEOUT_MS = 3_000;
+const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_BYTES = 512 * 1024;
 const DEFAULT_MAX_REDIRECTS = 3;
 const redirectStatuses = new Set([301, 302, 303, 307, 308]);
@@ -21,6 +21,8 @@ export interface LinkPreview {
 	siteName?: string;
 	provider: string;
 }
+
+export type LinkPreviewMetadata = Omit<LinkPreview, "url">;
 
 export type LinkPreviewLoader = (url: string) => Promise<LinkPreview | null>;
 
@@ -72,6 +74,7 @@ function requestPinned(url: URL, address: string, signal: AbortSignal) {
 	return new Promise<PreviewResponse>((resolve, reject) => {
 		const request = httpsRequest(
 			{
+				agent: false,
 				hostname: address,
 				port: url.port || 443,
 				path: `${url.pathname}${url.search}`,
@@ -81,6 +84,7 @@ function requestPinned(url: URL, address: string, signal: AbortSignal) {
 				headers: {
 					accept: "text/html,application/xhtml+xml",
 					"accept-encoding": "identity",
+					connection: "close",
 					host: url.host,
 					"user-agent": "monipy-link-preview/1.0",
 				},
@@ -97,22 +101,30 @@ function requestPinned(url: URL, address: string, signal: AbortSignal) {
 	});
 }
 
-async function readLimitedBody(response: PreviewResponse, maxBytes: number) {
-	const declaredLength = Number(response.headers["content-length"]);
-	if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
-		return null;
-	}
+async function readLimitedHead(response: PreviewResponse, maxBytes: number) {
+	const iterator = response.body[Symbol.asyncIterator]();
+	let buffer = Buffer.alloc(0);
+	let completed = false;
+	try {
+		while (true) {
+			const next = await iterator.next();
+			if (next.done) {
+				completed = true;
+				return new TextDecoder().decode(buffer);
+			}
 
-	const chunks: Uint8Array[] = [];
-	let length = 0;
-	for await (const chunk of response.body) {
-		length += chunk.byteLength;
-		if (length > maxBytes) {
-			return null;
+			buffer = Buffer.concat([buffer, Buffer.from(next.value)]);
+			const boundedBuffer = buffer.subarray(0, Math.min(buffer.byteLength, maxBytes));
+			const html = new TextDecoder().decode(boundedBuffer);
+			const closingHead = /<\/head\s*>/iu.exec(html);
+			if (closingHead?.index !== undefined) {
+				return html.slice(0, closingHead.index + closingHead[0].length);
+			}
+			if (buffer.byteLength > maxBytes) return null;
 		}
-		chunks.push(chunk);
+	} finally {
+		if (!completed) await iterator.return?.();
 	}
-	return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
 async function releaseBody(body: AsyncIterable<Uint8Array>) {
@@ -253,14 +265,14 @@ export async function loadLinkPreview(urlValue: string, dependencies: LinkPrevie
 				return null;
 			}
 			const html = await abortable(
-				readLimitedBody(response, dependencies.maxBytes ?? DEFAULT_MAX_BYTES),
+				readLimitedHead(response, dependencies.maxBytes ?? DEFAULT_MAX_BYTES),
 				controller.signal,
 			);
 			if (html === null) return null;
 			const metadata = metadataFromHtml(html);
 			if (!metadata.title) return null;
 			return {
-				url: url.href,
+				url: urlValue,
 				title: metadata.title,
 				description: metadata.description || undefined,
 				image: safeHttpsUrl(metadata.image, url),
@@ -275,14 +287,3 @@ export async function loadLinkPreview(urlValue: string, dependencies: LinkPrevie
 		clearTimeout(timeout);
 	}
 }
-
-const previewCache = new Map<string, Promise<LinkPreview | null>>();
-
-export const loadCachedLinkPreview: LinkPreviewLoader = (url) => {
-	let preview = previewCache.get(url);
-	if (!preview) {
-		preview = loadLinkPreview(url);
-		previewCache.set(url, preview);
-	}
-	return preview;
-};
