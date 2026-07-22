@@ -45,17 +45,17 @@ https://www.amazon.co.jp/dp/B09J54LLDF
 
 I relied heavily on Google Image Search to understand the arrangement of the cartilage and muscles around the neck discussed below. I found it extremely difficult to interpret a three-dimensional body from flat images when I could not initially tell which direction they were viewed from, so I will first introduce a spatial coordinate system. I cite Wikipedia images because of copyright restrictions, but some of them are not especially clear. Searching Google Images yourself may make the anatomy easier to understand.
 
-Imagine a person standing upright, with the glottis as the origin. Introduce a right-handed coordinate system in which the person's line of sight—forward—is the positive $${y}$$-axis, their right side is the positive $${x}$$-axis, and vertically upward is the positive $${z}$$-axis.
+Imagine a person standing upright, with the glottis as the origin. Introduce a right-handed coordinate system in which the person's line of sight—forward—is the positive $y$-axis, their right side is the positive $x$-axis, and vertically upward is the positive $z$-axis.
 
 ### 1-3. Vocal Folds/Cords
 
-The vocal folds are the nozzle that produces these waves of air pressure. The image below shows the vocal folds from above. The right side of the image is the positive $${x}$$ direction, and the top is the positive $${y}$$ direction.
+The vocal folds are the nozzle that produces these waves of air pressure. The image below shows the vocal folds from above. The right side of the image is the positive $x$ direction, and the top is the positive $y$ direction.
 
 ![Vocal cords](vocal-cords.webp "Vocal cords (from Wikipedia)")
 
 I will also introduce the relevant physiological terminology while explaining how the voice is produced. Air supplied by the lungs passes through the trachea, or windpipe, and vibrates the vocal folds at the glottis, producing waves of air pressure. These sounds resonate in the vocal tract and are emitted as the voice.
 
-Using the coordinate system introduced above, the air from the lungs applies subglottal pressure to the glottis in the $${+z}$$ direction, causing the left and right vocal folds to vibrate along the $${x}$$-axis. Pressure along the $${z}$$-axis produces motion along the $${x}$$-axis because, as the GIF below shows, the vocal folds are vertically asymmetric. The lower portion opens first, forming a wedge $${\wedge}$$, which apparently causes aerodynamic forces to act laterally.
+Using the coordinate system introduced above, the air from the lungs applies subglottal pressure to the glottis in the $+z$ direction, causing the left and right vocal folds to vibrate along the $x$-axis. Pressure along the $z$-axis produces motion along the $x$-axis because, as the GIF below shows, the vocal folds are vertically asymmetric. The lower portion opens first, forming a wedge $\wedge$, which apparently causes aerodynamic forces to act laterally.
 
 ![Vocal folds in motion](vocal-folds-in-mortion.webp "The vocal folds in motion (from Wikipedia)")
 
@@ -69,19 +69,19 @@ Three cartilages are important in vocology:
 - Arytenoid cartilages
 - Cricoid cartilage
 
-The thyroid cartilage is the shield-shaped cartilage around the Adam's apple, and therefore lies in the positive $${y}$$ direction. On the opposite side of the Adam's apple, in the negative $${y}$$ direction, are the two small, pyramid-shaped arytenoid cartilages. As its name suggests, the cricoid cartilage forms a ring around the throat and lies below—in the negative $${z}$$ direction—the thyroid and arytenoid cartilages.
+The thyroid cartilage is the shield-shaped cartilage around the Adam's apple, and therefore lies in the positive $y$ direction. On the opposite side of the Adam's apple, in the negative $y$ direction, are the two small, pyramid-shaped arytenoid cartilages. As its name suggests, the cricoid cartilage forms a ring around the throat and lies below—in the negative $z$ direction—the thyroid and arytenoid cartilages.
 
 ![Arytenoid cartilage](arytenoid-cartilage.webp "Arytenoid cartilage (from Wikipedia)")
 
-This image appears to show the vocal folds from above. Under our definition, the left side of the image is the positive $${x}$$ direction, the bottom is the positive $${y}$$ direction, and the direction toward the viewer is the positive $${z}$$ direction. Honestly, I do not think it is easy to read at all, so this is one area where you would probably be better off searching for images yourself.
+This image appears to show the vocal folds from above. Under our definition, the left side of the image is the positive $x$ direction, the bottom is the positive $y$ direction, and the direction toward the viewer is the positive $z$ direction. Honestly, I do not think it is easy to read at all, so this is one area where you would probably be better off searching for images yourself.
 
 ### 2-2. Muscles
 
-We now come to the TA muscle (thyroarytenoid muscle) and CT muscle (cricothyroid muscle), the main topics of Part 2. Their names probably explain why the preceding subsection discussed cartilage. The TA muscle connects the thyroid and arytenoid cartilages, while the CT muscle connects the thyroid and cricoid cartilages. The TA muscle is the easier one to understand: it forms most of the folds that make up the vocal cords. See also the image in the preceding subsection. Because the thyroid cartilage is in the positive $${y}$$ direction and the arytenoid cartilages are a left–right pair in the negative $${y}$$ direction, the two TA muscles extend across the positive and negative sides of $${y}$$.
+We now come to the TA muscle (thyroarytenoid muscle) and CT muscle (cricothyroid muscle), the main topics of Part 2. Their names probably explain why the preceding subsection discussed cartilage. The TA muscle connects the thyroid and arytenoid cartilages, while the CT muscle connects the thyroid and cricoid cartilages. The TA muscle is the easier one to understand: it forms most of the folds that make up the vocal cords. See also the image in the preceding subsection. Because the thyroid cartilage is in the positive $y$ direction and the arytenoid cartilages are a left–right pair in the negative $y$ direction, the two TA muscles extend across the positive and negative sides of $y$.
 
 ![Thyroid cartilage](thyroid-cartilage.webp "Thyroid cartilage (from Wikipedia)")
 
-The CT muscle forms an arch between the upper front of the cricoid cartilage and the lower part of the thyroid cartilage. Unlike the TA muscle, it is therefore located at the front of the neck, in the positive $${y}$$ direction. It may look unrelated to the vocal folds, but when the CT muscle contracts, it tilts the thyroid cartilage in the positive $${y}$$ and negative $${z}$$ directions, like the visor of a Western suit of armor, stretching the vocal folds lengthwise.
+The CT muscle forms an arch between the upper front of the cricoid cartilage and the lower part of the thyroid cartilage. Unlike the TA muscle, it is therefore located at the front of the neck, in the positive $y$ direction. It may look unrelated to the vocal folds, but when the CT muscle contracts, it tilts the thyroid cartilage in the positive $y$ and negative $z$ directions, like the visor of a Western suit of armor, stretching the vocal folds lengthwise.
 
 These muscles are important because chest voice is produced under the control of the TA muscle, while head voice is produced under the control of the CT muscle. Mixed voice refers to the technique of transitioning smoothly from TA dominance to CT dominance, or vice versa. Balancing them is difficult because the two muscles work against each other: contracting the TA muscle makes the vocal folds thicker and shorter, whereas contracting the CT muscle makes them thinner and longer. For an inexperienced vocalist like me, producing high notes relies entirely on TA contraction to keep the vocal folds closed. At the point when the TA muscle can no longer maintain that closure, it gives up completely and suddenly hands the job to the CT muscle. The CT muscle then fails to keep the vocal folds closed, and the voice switches not to head voice but to falsetto. This is the mechanism behind a voice crack. Part 2 discusses the relationship between these muscles and vocal pitch and quality.
 
